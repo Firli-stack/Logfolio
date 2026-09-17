@@ -10,13 +10,26 @@ import { ManageLogsTable } from './components/ManageLogsTable';
 import { ContactModal } from './components/ContactModal';
 import { CreateProjectModal } from './components/CreateProjectModal';
 import { ExportModal } from './components/ExportModal';
+import { EditProfileModal } from './components/EditProfileModal';
 import { Globe, PenSquare, Flame, Code2 } from 'lucide-react';
 
+const STORAGE_KEY_PROFILE = 'logfolio_profile_v1';
 const STORAGE_KEY_LOGS = 'logfolio_entries_v1';
 const STORAGE_KEY_PROJECTS = 'logfolio_projects_v1';
 
 export function App() {
-  const [profile] = useState(INITIAL_PROFILE);
+  const [profile, setProfile] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_PROFILE);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // Fallback
+    }
+    return INITIAL_PROFILE;
+  });
+
   const [projects, setProjects] = useState<Project[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_PROJECTS);
@@ -45,8 +58,17 @@ export function App() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   // Sync to LocalStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(profile));
+    } catch {
+      // Ignore quota errors
+    }
+  }, [profile]);
+
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(logs));
@@ -187,6 +209,7 @@ export function App() {
             profile={profile}
             onContactClick={() => setIsContactOpen(true)}
             onExportClick={() => setIsExportOpen(true)}
+            onEditProfileClick={() => setIsEditProfileOpen(true)}
           />
 
           {/* Navigation Filter Pills */}
@@ -317,6 +340,14 @@ export function App() {
         profile={profile}
         projects={projects}
         logs={logs}
+      />
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={isEditProfileOpen}
+        onClose={() => setIsEditProfileOpen(false)}
+        profile={profile}
+        onSaveProfile={(updatedProfile) => setProfile(updatedProfile)}
       />
     </div>
   );
