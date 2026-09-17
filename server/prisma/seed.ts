@@ -192,12 +192,14 @@ async function main() {
   console.log('✅ Seed completed successfully with full mock data alignment!');
 }
 
-try {
-  await main();
-} catch (error) {
-  console.error('❌ Error executing seed:', error);
-  process.exit(1);
-} finally {
-  await prisma.$disconnect();
-}
+void (async () => {
+  try {
+    await main();
+  } catch (error) {
+    console.error('❌ Error executing seed:', error);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
+  }
+})();
 
