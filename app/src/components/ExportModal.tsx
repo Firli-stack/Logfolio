@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { UserProfile, Project, LogEntry } from '../mockData';
 import { exportToMarkdown, exportToJson, exportToPdfPrint } from '../utils/exportData';
+import type { CvTemplateStyle } from '../utils/exportData';
 import { X, Download, FileText, Code2, CheckCircle2, ShieldCheck, Printer } from 'lucide-react';
 
 interface ExportModalProps {
@@ -19,11 +20,12 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   logs
 }) => {
   const [downloadedFormat, setDownloadedFormat] = useState<'md' | 'json' | 'pdf' | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<CvTemplateStyle>('classic_ats');
 
   if (!isOpen) return null;
 
-  const handleExportPdf = () => {
-    exportToPdfPrint(profile, projects, logs);
+  const handleExportPdf = (tpl: CvTemplateStyle = selectedTemplate) => {
+    exportToPdfPrint(profile, projects, logs, tpl);
     setDownloadedFormat('pdf');
     setTimeout(() => setDownloadedFormat(null), 3500);
   };
@@ -144,63 +146,122 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               borderRadius: 'var(--radius-md)',
               padding: '16px',
               display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
+              flexDirection: 'column',
+              gap: '12px',
               background: 'rgba(79, 70, 229, 0.03)',
               transition: 'all 0.15s ease'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-              <div style={{
-                width: '34px',
-                height: '34px',
-                borderRadius: 'var(--radius-sm)',
-                background: 'rgba(79, 70, 229, 0.12)',
-                color: 'var(--accent-primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: '2px'
-              }}>
-                <Printer size={17} />
-              </div>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
-                  <h4 style={{ fontSize: '0.94rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    PDF Resume Resmi (Layout A4)
-                  </h4>
-                  <span style={{ fontSize: '0.68rem', fontWeight: 700, background: 'var(--accent-primary)', color: '#fff', padding: '1px 6px', borderRadius: '4px' }}>
-                    Rekomendasi
-                  </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <div style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'rgba(79, 70, 229, 0.12)',
+                  color: 'var(--accent-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginTop: '2px'
+                }}>
+                  <Printer size={17} />
                 </div>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                  Format kertas CV A4 bersih tanpa elemen web. Pilih <b>"Save as PDF"</b> di dialog cetak browser.
-                </p>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                    <h4 style={{ fontSize: '0.94rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      PDF Resume Resmi (Layout A4)
+                    </h4>
+                    <span style={{ fontSize: '0.68rem', fontWeight: 700, background: 'var(--accent-primary)', color: '#fff', padding: '1px 6px', borderRadius: '4px' }}>
+                      Rekomendasi
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                    Format dokumen cetak A4. Pilih gaya template di bawah ini sebelum mencetak/menyimpan PDF:
+                  </p>
+                </div>
               </div>
+
+              <button
+                type="button"
+                onClick={() => handleExportPdf(selectedTemplate)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'var(--accent-primary)',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  fontWeight: 600,
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  whiteSpace: 'nowrap',
+                  boxShadow: 'var(--shadow-glow)'
+                }}
+              >
+                <Printer size={13} />
+                Cetak PDF
+              </button>
             </div>
 
-            <button
-              type="button"
-              onClick={handleExportPdf}
-              style={{
-                padding: '9px 16px',
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--accent-primary)',
-                color: '#FFFFFF',
-                border: 'none',
-                fontWeight: 600,
-                fontSize: '0.8rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                whiteSpace: 'nowrap',
-                boxShadow: 'var(--shadow-glow)'
-              }}
-            >
-              <Printer size={13} />
-              Cetak / Save PDF
-            </button>
+            {/* Template Selector Pills */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', paddingTop: '6px', borderTop: '1px solid rgba(79, 70, 229, 0.12)' }}>
+              <label
+                style={{
+                  flex: 1,
+                  minWidth: '200px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 10px',
+                  borderRadius: 'var(--radius-sm)',
+                  border: selectedTemplate === 'classic_ats' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                  background: selectedTemplate === 'classic_ats' ? '#FFFFFF' : 'transparent',
+                  cursor: 'pointer',
+                  fontSize: '0.78rem'
+                }}
+              >
+                <input
+                  type="radio"
+                  name="cvTemplate"
+                  checked={selectedTemplate === 'classic_ats'}
+                  onChange={() => setSelectedTemplate('classic_ats')}
+                />
+                <div>
+                  <b style={{ color: 'var(--text-primary)', display: 'block' }}>Harvard / ATS Standard</b>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Nama di tengah, font serif klasik, 1-kolom</span>
+                </div>
+              </label>
+
+              <label
+                style={{
+                  flex: 1,
+                  minWidth: '200px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 10px',
+                  borderRadius: 'var(--radius-sm)',
+                  border: selectedTemplate === 'modern_clean' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                  background: selectedTemplate === 'modern_clean' ? '#FFFFFF' : 'transparent',
+                  cursor: 'pointer',
+                  fontSize: '0.78rem'
+                }}
+              >
+                <input
+                  type="radio"
+                  name="cvTemplate"
+                  checked={selectedTemplate === 'modern_clean'}
+                  onChange={() => setSelectedTemplate('modern_clean')}
+                />
+                <div>
+                  <b style={{ color: 'var(--text-primary)', display: 'block' }}>Modern Sans-Serif</b>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Layout bersih kontemporer</span>
+                </div>
+              </label>
+            </div>
           </div>
 
           {/* Option 2: Markdown (.md) */}
