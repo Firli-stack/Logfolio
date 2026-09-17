@@ -10,6 +10,7 @@ import { ManageLogsTable } from './components/ManageLogsTable';
 import { ContactModal } from './components/ContactModal';
 import { CreateProjectModal } from './components/CreateProjectModal';
 import { ExportModal } from './components/ExportModal';
+import { exportToPdfPrint } from './utils/exportData';
 import { Globe, PenSquare, Flame, Sparkles, FolderGit2, Terminal, Flag, ShieldCheck, Code2 } from 'lucide-react';
 
 const STORAGE_KEY_LOGS = 'logfolio_entries_v1';
@@ -83,7 +84,7 @@ export function App() {
   };
 
   const handlePrintResume = () => {
-    window.print();
+    exportToPdfPrint(profile, projects, logs);
   };
 
   return (

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { UserProfile, Project, LogEntry } from '../mockData';
-import { exportToMarkdown, exportToJson } from '../utils/exportData';
-import { X, Download, FileText, Code2, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { exportToMarkdown, exportToJson, exportToPdfPrint } from '../utils/exportData';
+import { X, Download, FileText, Code2, CheckCircle2, ShieldCheck, Printer } from 'lucide-react';
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -18,9 +18,15 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   projects,
   logs
 }) => {
-  const [downloadedFormat, setDownloadedFormat] = useState<'md' | 'json' | null>(null);
+  const [downloadedFormat, setDownloadedFormat] = useState<'md' | 'json' | 'pdf' | null>(null);
 
   if (!isOpen) return null;
+
+  const handleExportPdf = () => {
+    exportToPdfPrint(profile, projects, logs);
+    setDownloadedFormat('pdf');
+    setTimeout(() => setDownloadedFormat(null), 3500);
+  };
 
   const handleExportMd = () => {
     exportToMarkdown(profile, projects, logs);
@@ -121,13 +127,83 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             gap: '8px'
           }}>
             <CheckCircle2 size={16} />
-            <span>File <b>.{downloadedFormat}</b> berhasil diunduh ke komputer Anda!</span>
+            <span>
+              {downloadedFormat === 'pdf' 
+                ? 'Jendela cetak / simpan PDF resume berhasil dibuka!' 
+                : `File .${downloadedFormat} berhasil diunduh ke komputer Anda!`}
+            </span>
           </div>
         )}
 
-        {/* Options */}
+        {/* Options List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-          {/* Option 1: Markdown (.md) */}
+          {/* Option 1: PDF Resume Resmi (A4 Clean) */}
+          <div
+            style={{
+              border: '1.5px solid var(--accent-primary)',
+              borderRadius: 'var(--radius-md)',
+              padding: '16px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              background: 'rgba(79, 70, 229, 0.03)',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <div style={{
+                width: '34px',
+                height: '34px',
+                borderRadius: 'var(--radius-sm)',
+                background: 'rgba(79, 70, 229, 0.12)',
+                color: 'var(--accent-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '2px'
+              }}>
+                <Printer size={17} />
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                  <h4 style={{ fontSize: '0.94rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    PDF Resume Resmi (Layout A4)
+                  </h4>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 700, background: 'var(--accent-primary)', color: '#fff', padding: '1px 6px', borderRadius: '4px' }}>
+                    Rekomendasi
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                  Format kertas CV A4 bersih tanpa elemen web. Pilih <b>"Save as PDF"</b> di dialog cetak browser.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleExportPdf}
+              style={{
+                padding: '9px 16px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--accent-primary)',
+                color: '#FFFFFF',
+                border: 'none',
+                fontWeight: 600,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                whiteSpace: 'nowrap',
+                boxShadow: 'var(--shadow-glow)'
+              }}
+            >
+              <Printer size={13} />
+              Cetak / Save PDF
+            </button>
+          </div>
+
+          {/* Option 2: Markdown (.md) */}
           <div
             style={{
               border: '1px solid var(--border-subtle)',
@@ -159,7 +235,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   Dokumen Markdown (.md)
                 </h4>
                 <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                  Format rapi siap dipasang di GitHub Profile README, Notion, atau blog pribadi.
+                  Format rapi berhierarki siap dipasang di GitHub Profile README, Notion, atau blog.
                 </p>
               </div>
             </div>
@@ -170,9 +246,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               style={{
                 padding: '8px 14px',
                 borderRadius: 'var(--radius-md)',
-                background: 'var(--accent-primary)',
-                color: '#FFFFFF',
-                border: 'none',
+                background: 'var(--bg-surface-elevated)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-subtle)',
                 fontWeight: 600,
                 fontSize: '0.8rem',
                 cursor: 'pointer',
