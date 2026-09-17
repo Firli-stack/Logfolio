@@ -154,6 +154,7 @@ export function App() {
             profile={profile}
             onContactClick={() => setIsContactOpen(true)}
             onExportClick={() => setIsExportOpen(true)}
+            onEditProfileClick={() => setIsEditProfileOpen(true)}
           />
 
           {/* Navigation Filter Pills */}
