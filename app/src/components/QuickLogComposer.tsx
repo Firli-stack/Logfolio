@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Project, LogEntry, ProofLink } from '../mockData';
-import { Zap, Lock, Image as ImageIcon, Star, Send, X, Plus, FolderPlus, Link as LinkIcon } from 'lucide-react';
+import { Send, X, FolderPlus, Link as LinkIcon, Lock } from 'lucide-react';
 
 interface QuickLogComposerProps {
   projects: Project[];
@@ -19,22 +19,16 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
   const [skillInput, setSkillInput] = useState('');
   const [skills, setSkills] = useState<string[]>(['PostgreSQL', 'Performance']);
   const [proofLinks, setProofLinks] = useState<{ id: string; url: string; label: string }[]>([
-    { id: '1', url: '', label: 'GitHub PR / Commit' }
+    { id: '1', url: '', label: 'GitHub PR' }
   ]);
-  const [isFeatured, setIsFeatured] = useState(false);
   const [isStealth, setIsStealth] = useState(false);
-  const [isCompressingImage, setIsCompressingImage] = useState(false);
-  const [imageBadge, setImageBadge] = useState<string | null>(null);
-
-  const MAX_TITLE = 120;
-  const MAX_CHAR = 400;
 
   const handleAddSkill = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ',') {
+    if ((e.key === 'Enter' || e.key === ',') && skillInput.trim()) {
       e.preventDefault();
-      const trimmed = skillInput.trim().replace(/^#/, '');
-      if (trimmed && !skills.includes(trimmed) && skills.length < 5) {
-        setSkills([...skills, trimmed]);
+      const clean = skillInput.trim().replace(/^#/, '');
+      if (clean && !skills.includes(clean) && skills.length < 5) {
+        setSkills([...skills, clean]);
         setSkillInput('');
       }
     }
@@ -44,40 +38,13 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
     setSkills(skills.filter(s => s !== tag));
   };
 
-  const handleAddProofLink = () => {
-    if (proofLinks.length < 5) {
-      setProofLinks([...proofLinks, { id: Date.now().toString(), url: '', label: 'Link Bukti Tambahan' }]);
-    }
-  };
-
-  const handleRemoveProofLink = (id: string) => {
-    if (proofLinks.length > 1) {
-      setProofLinks(proofLinks.filter(l => l.id !== id));
-    } else {
-      // Clear instead of removing last one
-      setProofLinks([{ id: '1', url: '', label: 'GitHub PR / Commit' }]);
-    }
-  };
-
   const handleUpdateProofLink = (id: string, field: 'url' | 'label', val: string) => {
     setProofLinks(proofLinks.map(l => l.id === id ? { ...l, [field]: val } : l));
   };
 
-  const handleImageUploadSim = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setIsCompressingImage(true);
-      // Simulate client-side WebP compression
-      setTimeout(() => {
-        setIsCompressingImage(false);
-        setImageBadge(`${file.name.slice(0, 15)}... (WebP 82 KB)`);
-      }, 600);
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const effectiveTitle = title.trim() || content.trim();
+    const effectiveTitle = title.trim();
     if (!effectiveTitle) return;
 
     const selectedProj = projects.find(p => p.id === projectId);
@@ -87,104 +54,53 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
         id: l.id,
         url: l.url.trim(),
         label: l.label.trim() || 'Link Bukti',
-        type: l.url.includes('github') ? 'github' : l.url.includes('figma') ? 'figma' : 'live'
+        type: l.url.includes('github') ? 'github' : 'live'
       }));
 
     const primaryProof = validLinks[0]?.url;
 
-    // Split content lines into structured details if multi-line
+    // Pisahkan baris detail
     const parsedDetails = content
       .split('\n')
       .map(line => line.replace(/^[•\-\*▸\d\.]+\s*/, '').trim())
       .filter(line => line.length > 0);
 
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
     const newLog: LogEntry = {
       id: `log-${Date.now()}`,
       projectId,
-      projectName: selectedProj?.title || 'Personal Work',
+      projectName: selectedProj?.title || 'Proyek Pribadi',
       isStealthNda: isStealth || (selectedProj?.isStealthNda || false),
-      title: title.trim() || undefined,
-      content: content.trim() || title.trim(),
+      title: effectiveTitle,
+      content: content.trim() || effectiveTitle,
       details: parsedDetails.length > 0 ? parsedDetails : undefined,
       skills: skills.length > 0 ? skills : ['General'],
       proofUrl: primaryProof,
       proofType: primaryProof?.includes('github') ? 'github' : 'live',
       proofLinks: validLinks,
       isProofVerified: validLinks.length > 0,
-      isFeatured,
+      isFeatured: false,
       isBackfill: false,
       kudosCount: 0,
-      logDate: new Date().toISOString().split('T')[0],
-      createdAt: new Date().toISOString()
+      logDate: dateStr,
+      createdAt: now.toISOString()
     };
 
     onAddLog(newLog);
     setTitle('');
     setContent('');
-    setProofLinks([{ id: '1', url: '', label: 'GitHub PR / Commit' }]);
-    setImageBadge(null);
-    setIsFeatured(false);
+    setProofLinks([{ id: '1', url: '', label: 'GitHub PR' }]);
   };
 
   return (
-    <div className="glass-panel composer-card" style={{ padding: '24px', marginBottom: '28px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '26px',
-            height: '26px',
-            borderRadius: '6px',
-            background: 'rgba(79, 70, 229, 0.1)',
-            color: 'var(--accent-primary)',
-          }}>
-            <Zap size={14} />
-          </span>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            Quick-Log Micro Journal (1–2 Menit)
-          </h2>
-        </div>
-        <span style={{ 
-          fontSize: '0.8rem', 
-          fontFamily: 'var(--font-mono)',
-          color: content.length > 270 ? 'var(--accent-danger)' : 'var(--text-muted)' 
-        }}>
-          {content.length}/{MAX_CHAR} Karakter
-        </span>
-      </div>
-
-      <form onSubmit={handleSubmit}>
-        {/* Project Selector & Stealth Mode */}
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '14px', alignItems: 'flex-end' }}>
-          <div style={{ flex: '1', minWidth: '220px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                Wadah Proyek:
-              </label>
-              {onOpenCreateProject && (
-                <button
-                  type="button"
-                  onClick={onOpenCreateProject}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--accent-primary)',
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    padding: '0 2px'
-                  }}
-                >
-                  <FolderPlus size={13} />
-                  + Buat Proyek Baru
-                </button>
-              )}
-            </div>
+    <div className="glass-panel" style={{ padding: '18px 20px', marginBottom: '24px', background: '#FFFFFF' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        
+        {/* Row 1: Proyek & NDA */}
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1', minWidth: '240px' }}>
             <select
               value={projectId}
               onChange={(e) => {
@@ -193,14 +109,15 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
                 if (proj) setIsStealth(proj.isStealthNda);
               }}
               style={{
-                width: '100%',
-                padding: '8px 12px',
-                borderRadius: 'var(--radius-md)',
+                flex: '1',
+                padding: '6px 10px',
+                borderRadius: 'var(--radius-sm)',
                 background: 'var(--bg-surface-elevated)',
                 border: '1px solid var(--border-subtle)',
                 color: 'var(--text-primary)',
+                fontSize: '0.82rem',
                 outline: 'none',
-                cursor: 'pointer'
+                fontWeight: 500
               }}
             >
               {projects.map(p => (
@@ -209,268 +126,169 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
                 </option>
               ))}
             </select>
+
+            {onOpenCreateProject && (
+              <button
+                type="button"
+                onClick={onOpenCreateProject}
+                title="Proyek Baru"
+                style={{
+                  background: 'none',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-sm)',
+                  padding: '6px 10px',
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.78rem',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                <FolderPlus size={13} />
+                <span>+ Proyek</span>
+              </button>
+            )}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '2px' }}>
-            <label style={{ 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '6px', 
-              fontSize: '0.8rem', 
-              color: isStealth ? 'var(--accent-amber)' : 'var(--text-secondary)',
-              cursor: 'pointer',
-              background: 'var(--bg-surface-elevated)',
-              padding: '8px 12px',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--border-subtle)'
-            }}>
-              <input 
-                type="checkbox" 
-                checked={isStealth} 
-                onChange={(e) => setIsStealth(e.target.checked)} 
-              />
-              <Lock size={12} />
-              Stealth Mode (NDA Kantor)
-            </label>
-          </div>
+          <label style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '0.78rem',
+            color: 'var(--text-secondary)',
+            cursor: 'pointer',
+            userSelect: 'none'
+          }}>
+            <input
+              type="checkbox"
+              checked={isStealth}
+              onChange={(e) => setIsStealth(e.target.checked)}
+            />
+            <Lock size={12} />
+            <span>NDA</span>
+          </label>
         </div>
 
-        {/* Structured Inputs: Action Headline (Poin Utama) + Context Details (Deskripsi/Poin Solusi) */}
-        <div style={{ marginBottom: '14px' }}>
-          <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-            <span>Poin Utama / Headline Pencapaian *</span>
-            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{title.length}/{MAX_TITLE}</span>
-          </label>
-          <input
-            type="text"
-            required
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            maxLength={MAX_TITLE}
-            placeholder="Inti hasil kerja dalam 1 kalimat tegas (contoh: Optimasi Query PostgreSQL: Latensi Turun 450ms → 35ms)"
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              borderRadius: 'var(--radius-md)',
-              background: '#FFFFFF',
-              border: '1px solid var(--border-medium)',
-              color: 'var(--text-primary)',
-              fontSize: '0.88rem',
-              fontWeight: 600,
-              outline: 'none',
-              marginBottom: '10px'
-            }}
-            onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
-            onBlur={(e) => e.target.style.borderColor = 'var(--border-medium)'}
-          />
+        {/* Row 2: Input Aktivitas / Judul */}
+        <input
+          type="text"
+          required
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Ringkasan tugas atau fitur..."
+          style={{
+            width: '100%',
+            padding: '8px 12px',
+            borderRadius: 'var(--radius-sm)',
+            background: '#FFFFFF',
+            border: '1px solid var(--border-medium)',
+            color: 'var(--text-primary)',
+            fontSize: '0.86rem',
+            outline: 'none'
+          }}
+        />
 
-          <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-            <span>Konteks Teknis & Rincian Solusi (Bisa dibuat per baris/poin)</span>
-            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{content.length}/{MAX_CHAR}</span>
-          </label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            maxLength={MAX_CHAR}
-            placeholder="Tuliskan 1-3 poin penjelasan teknis atau metrik pendukung:&#10;• Mengganti subquery sekuensial dengan composite index pada tabel ledger.&#10;• Diuji dengan 10.000 virtual users tanpa lonjakan koneksi pool."
-            rows={3}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              borderRadius: 'var(--radius-md)',
-              background: '#FFFFFF',
-              border: '1px solid var(--border-medium)',
-              color: 'var(--text-primary)',
-              fontSize: '0.85rem',
-              resize: 'none',
-              outline: 'none',
-              lineHeight: '1.5'
-            }}
-            onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
-            onBlur={(e) => e.target.style.borderColor = 'var(--border-medium)'}
-          />
-        </div>
+        {/* Row 3: Detail Singkat */}
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Detail pengerjaan (opsional)..."
+          rows={2}
+          style={{
+            width: '100%',
+            padding: '8px 12px',
+            borderRadius: 'var(--radius-sm)',
+            background: '#FFFFFF',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--text-primary)',
+            fontSize: '0.82rem',
+            resize: 'none',
+            outline: 'none',
+            lineHeight: '1.4'
+          }}
+        />
 
-        {/* Skill Tags */}
-        <div style={{ marginBottom: '14px' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', marginBottom: '6px' }}>
+        {/* Row 4: Tag & Link Bukti */}
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', paddingTop: '2px' }}>
+          {/* Tags */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
             {skills.map(tag => (
-              <span key={tag} className="skill-badge">
-                #{tag}
+              <span key={tag} className="skill-badge" style={{ fontSize: '0.72rem', padding: '2px 6px' }}>
+                {tag}
                 <button
                   type="button"
                   onClick={() => handleRemoveSkill(tag)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', padding: 0 }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: '4px', color: 'var(--text-muted)' }}
                 >
-                  <X size={12} />
+                  <X size={10} />
                 </button>
               </span>
             ))}
-            {skills.length < 5 && (
+            {skills.length < 4 && (
               <input
                 type="text"
                 value={skillInput}
                 onChange={(e) => setSkillInput(e.target.value)}
                 onKeyDown={handleAddSkill}
-                placeholder="+ Tambah Skill (Tekan Enter)"
+                placeholder="+ Tag"
                 style={{
-                  padding: '4px 8px',
-                  fontSize: '0.75rem',
-                  fontFamily: 'var(--font-mono)',
-                  background: 'transparent',
+                  padding: '2px 6px',
+                  fontSize: '0.72rem',
                   border: '1px dashed var(--border-subtle)',
                   borderRadius: 'var(--radius-sm)',
-                  color: 'var(--text-primary)',
                   outline: 'none',
-                  width: '160px'
+                  background: 'transparent',
+                  width: '65px'
                 }}
               />
             )}
           </div>
-        </div>
 
-        {/* Multiple Proof Links Section */}
-        <div style={{ marginBottom: '16px', background: 'var(--bg-surface)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <LinkIcon size={13} color="var(--accent-primary)" />
-              Tautan Bukti Kerja Nyata (Bisa lebih dari 1)
-            </span>
-            {proofLinks.length < 5 && (
-              <button
-                type="button"
-                onClick={handleAddProofLink}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--accent-primary)',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-              >
-                <Plus size={12} />
-                + Tambah Link Bukti
-              </button>
-            )}
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {proofLinks.map((link) => (
-              <div key={link.id} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <input
-                  type="text"
-                  value={link.label}
-                  onChange={(e) => handleUpdateProofLink(link.id, 'label', e.target.value)}
-                  placeholder="Nama Bukti (misal: PR GitHub / Live Demo)"
-                  style={{
-                    width: '160px',
-                    padding: '7px 10px',
-                    borderRadius: 'var(--radius-sm)',
-                    background: '#FFFFFF',
-                    border: '1px solid var(--border-subtle)',
-                    fontSize: '0.78rem',
-                    color: 'var(--text-primary)',
-                    outline: 'none'
-                  }}
-                />
-                <input
-                  type="url"
-                  value={link.url}
-                  onChange={(e) => handleUpdateProofLink(link.id, 'url', e.target.value)}
-                  placeholder="https://github.com/... atau https://app.example.com"
-                  style={{
-                    flex: '1',
-                    padding: '7px 10px',
-                    borderRadius: 'var(--radius-sm)',
-                    background: '#FFFFFF',
-                    border: '1px solid var(--border-subtle)',
-                    fontSize: '0.78rem',
-                    color: 'var(--text-primary)',
-                    outline: 'none'
-                  }}
-                />
-                {proofLinks.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveProofLink(link.id)}
-                    title="Hapus baris link"
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--text-muted)',
-                      cursor: 'pointer',
-                      padding: '4px',
-                      display: 'flex',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* WebP Image Upload Simulation */}
-          <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <label style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '0.75rem',
-              padding: '6px 12px',
-              background: '#FFFFFF',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: 'var(--radius-sm)',
-              cursor: 'pointer',
-              color: 'var(--text-secondary)'
-            }}>
-              <ImageIcon size={13} />
-              {isCompressingImage ? 'Mengompres WebP...' : (imageBadge || 'Unggah Screenshot / Diagram (WebP auto)')}
-              <input type="file" accept="image/*" onChange={handleImageUploadSim} style={{ display: 'none' }} />
-            </label>
-          </div>
-        </div>
-
-        {/* Action Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '14px' }}>
-          <label style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: isFeatured ? 'var(--accent-amber)' : 'var(--text-secondary)', cursor: 'pointer' }}>
+          {/* Proof link input single / compact */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <LinkIcon size={12} style={{ color: 'var(--text-muted)' }} />
             <input
-              type="checkbox"
-              checked={isFeatured}
-              onChange={(e) => setIsFeatured(e.target.checked)}
+              type="url"
+              value={proofLinks[0]?.url || ''}
+              onChange={(e) => handleUpdateProofLink(proofLinks[0]?.id || '1', 'url', e.target.value)}
+              placeholder="Link PR / Demo (opsional)"
+              style={{
+                width: '180px',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                background: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-subtle)',
+                fontSize: '0.75rem',
+                outline: 'none'
+              }}
             />
-            <Star size={13} fill={isFeatured ? 'var(--accent-amber)' : 'none'} />
-            Sorot sebagai Featured Highlight
-          </label>
 
-          <button
-            type="submit"
-            disabled={!content.trim()}
-            style={{
-              background: content.trim() ? 'var(--accent-primary)' : 'rgba(99, 102, 241, 0.3)',
-              color: '#FFFFFF',
-              border: 'none',
-              padding: '8px 20px',
-              borderRadius: 'var(--radius-md)',
-              fontWeight: 600,
-              fontSize: '0.85rem',
-              cursor: content.trim() ? 'pointer' : 'not-allowed',
-              boxShadow: content.trim() ? 'var(--shadow-glow)' : 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            <span>Publikasikan Log</span>
-            <Send size={13} />
-          </button>
+            <button
+              type="submit"
+              disabled={!title.trim()}
+              style={{
+                background: title.trim() ? 'var(--accent-primary)' : '#CBD5E1',
+                color: '#FFFFFF',
+                border: 'none',
+                padding: '5px 14px',
+                borderRadius: 'var(--radius-sm)',
+                fontWeight: 600,
+                fontSize: '0.78rem',
+                cursor: title.trim() ? 'pointer' : 'not-allowed',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              <span>Simpan</span>
+              <Send size={11} />
+            </button>
+          </div>
         </div>
+
       </form>
     </div>
   );
