@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import type { Project, LogEntry, ProofLink } from '../mockData';
-import { Send, X, FolderPlus, Link as LinkIcon, Lock } from 'lucide-react';
+import { Send, X, FolderPlus, Link as LinkIcon, Lock, Image as ImageIcon, Plus, Info } from 'lucide-react';
 
 interface QuickLogComposerProps {
   projects: Project[];
@@ -19,9 +19,11 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
   const [skillInput, setSkillInput] = useState('');
   const [skills, setSkills] = useState<string[]>(['PostgreSQL', 'Performance']);
   const [proofLinks, setProofLinks] = useState<{ id: string; url: string; label: string }[]>([
-    { id: '1', url: '', label: 'GitHub PR' }
+    { id: '1', url: '', label: 'PR' }
   ]);
+  const [images, setImages] = useState<string[]>([]);
   const [isStealth, setIsStealth] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleAddSkill = (e: React.KeyboardEvent) => {
     if ((e.key === 'Enter' || e.key === ',') && skillInput.trim()) {
@@ -38,8 +40,44 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
     setSkills(skills.filter(s => s !== tag));
   };
 
+  const handleAddProofLink = () => {
+    if (proofLinks.length < 4) {
+      setProofLinks([...proofLinks, { id: Date.now().toString(), url: '', label: 'Demo' }]);
+    }
+  };
+
+  const handleRemoveProofLink = (id: string) => {
+    if (proofLinks.length > 1) {
+      setProofLinks(proofLinks.filter(l => l.id !== id));
+    } else {
+      setProofLinks([{ id: '1', url: '', label: 'PR' }]);
+    }
+  };
+
   const handleUpdateProofLink = (id: string, field: 'url' | 'label', val: string) => {
     setProofLinks(proofLinks.map(l => l.id === id ? { ...l, [field]: val } : l));
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach(file => {
+      if (images.length >= 3) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setImages(prev => prev.length < 3 ? [...prev, event.target!.result as string] : prev);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImages(images.filter((_, idx) => idx !== index));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -80,6 +118,7 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
       proofUrl: primaryProof,
       proofType: primaryProof?.includes('github') ? 'github' : 'live',
       proofLinks: validLinks,
+      imageUrls: images.length > 0 ? images : undefined,
       isProofVerified: validLinks.length > 0,
       isFeatured: false,
       isBackfill: false,
@@ -91,16 +130,17 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
     onAddLog(newLog);
     setTitle('');
     setContent('');
-    setProofLinks([{ id: '1', url: '', label: 'GitHub PR' }]);
+    setImages([]);
+    setProofLinks([{ id: '1', url: '', label: 'PR' }]);
   };
 
   return (
-    <div className="glass-panel" style={{ padding: '18px 20px', marginBottom: '24px', background: '#FFFFFF' }}>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <div className="glass-panel" style={{ padding: '16px 20px', marginBottom: '22px', background: '#FFFFFF' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
         
-        {/* Row 1: Proyek & NDA */}
+        {/* Row 1: Proyek & Opsi NDA */}
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1', minWidth: '240px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1', minWidth: '220px' }}>
             <select
               value={projectId}
               onChange={(e) => {
@@ -153,32 +193,47 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
             )}
           </div>
 
-          <label style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontSize: '0.78rem',
-            color: 'var(--text-secondary)',
-            cursor: 'pointer',
-            userSelect: 'none'
-          }}>
-            <input
-              type="checkbox"
-              checked={isStealth}
-              onChange={(e) => setIsStealth(e.target.checked)}
-            />
-            <Lock size={12} />
-            <span>NDA</span>
-          </label>
+          {/* Opsi NDA dengan penjelasan fungsi yang rapi */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <label style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              fontSize: '0.78rem',
+              color: isStealth ? 'var(--accent-amber)' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              userSelect: 'none',
+              fontWeight: 600
+            }}>
+              <input
+                type="checkbox"
+                checked={isStealth}
+                onChange={(e) => setIsStealth(e.target.checked)}
+              />
+              <Lock size={12} />
+              <span>Mode NDA</span>
+            </label>
+            <span
+              title="NDA: Melindungi kerahasiaan klien/kantor. Hanya metrik teknis & solusi yang ditampilkan tanpa mengekspos rahasia bisnis."
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                color: 'var(--text-muted)',
+                cursor: 'help'
+              }}
+            >
+              <Info size={13} />
+            </span>
+          </div>
         </div>
 
-        {/* Row 2: Input Aktivitas / Judul */}
+        {/* Row 2: Input Ringkasan Tugas */}
         <input
           type="text"
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Ringkasan tugas atau fitur..."
+          placeholder="Ringkasan tugas atau fitur yang diselesaikan..."
           style={{
             width: '100%',
             padding: '8px 12px',
@@ -191,11 +246,11 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
           }}
         />
 
-        {/* Row 3: Detail Singkat */}
+        {/* Row 3: Detail Poin Teknis */}
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Detail pengerjaan (opsional)..."
+          placeholder="Rincian teknis / dampak penyelesaian (opsional)..."
           rows={2}
           style={{
             width: '100%',
@@ -211,10 +266,89 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
           }}
         />
 
-        {/* Row 4: Tag & Link Bukti */}
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', paddingTop: '2px' }}>
-          {/* Tags */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
+        {/* Row 4: Multi-Link Bukti Pengerjaan */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <LinkIcon size={12} />
+              Tautan Bukti Pengerjaan
+            </span>
+            {proofLinks.length < 4 && (
+              <button
+                type="button"
+                onClick={handleAddProofLink}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--accent-primary)',
+                  fontSize: '0.73rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                  padding: 0
+                }}
+              >
+                <Plus size={11} />
+                <span>+ Tambah Link</span>
+              </button>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            {proofLinks.map((link) => (
+              <div key={link.id} style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  value={link.label}
+                  onChange={(e) => handleUpdateProofLink(link.id, 'label', e.target.value)}
+                  placeholder="Label (PR, Demo, Doc)"
+                  style={{
+                    width: '95px',
+                    padding: '5px 8px',
+                    borderRadius: '4px',
+                    background: 'var(--bg-surface-elevated)',
+                    border: '1px solid var(--border-subtle)',
+                    fontSize: '0.75rem',
+                    outline: 'none'
+                  }}
+                />
+                <input
+                  type="url"
+                  value={link.url}
+                  onChange={(e) => handleUpdateProofLink(link.id, 'url', e.target.value)}
+                  placeholder="https://..."
+                  style={{
+                    flex: '1',
+                    padding: '5px 8px',
+                    borderRadius: '4px',
+                    background: 'var(--bg-surface-elevated)',
+                    border: '1px solid var(--border-subtle)',
+                    fontSize: '0.75rem',
+                    outline: 'none'
+                  }}
+                />
+                {proofLinks.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveProofLink(link.id)}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '2px' }}
+                  >
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 5: Upload Foto / Screenshot & Skill Tags & Submit */}
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', paddingTop: '4px', borderTop: '1px solid var(--border-subtle)' }}>
+          
+          {/* Tags & Upload Button */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center' }}>
+            {/* Tag Pills */}
             {skills.map(tag => (
               <span key={tag} className="skill-badge" style={{ fontSize: '0.72rem', padding: '2px 6px' }}>
                 {tag}
@@ -241,53 +375,111 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
                   borderRadius: 'var(--radius-sm)',
                   outline: 'none',
                   background: 'transparent',
-                  width: '65px'
+                  width: '60px'
                 }}
               />
             )}
-          </div>
 
-          {/* Proof link input single / compact */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <LinkIcon size={12} style={{ color: 'var(--text-muted)' }} />
+            {/* Tombol Unggah Foto Screenshot */}
             <input
-              type="url"
-              value={proofLinks[0]?.url || ''}
-              onChange={(e) => handleUpdateProofLink(proofLinks[0]?.id || '1', 'url', e.target.value)}
-              placeholder="Link PR / Demo (opsional)"
-              style={{
-                width: '180px',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                background: 'var(--bg-surface-elevated)',
-                border: '1px solid var(--border-subtle)',
-                fontSize: '0.75rem',
-                outline: 'none'
-              }}
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              multiple
+              onChange={handleImageUpload}
+              style={{ display: 'none' }}
             />
-
             <button
-              type="submit"
-              disabled={!title.trim()}
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              title="Unggah Foto / Screenshot bukti pengerjaan"
               style={{
-                background: title.trim() ? 'var(--accent-primary)' : '#CBD5E1',
-                color: '#FFFFFF',
-                border: 'none',
-                padding: '5px 14px',
-                borderRadius: 'var(--radius-sm)',
-                fontWeight: 600,
-                fontSize: '0.78rem',
-                cursor: title.trim() ? 'pointer' : 'not-allowed',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '4px'
+                gap: '4px',
+                background: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '3px 8px',
+                fontSize: '0.73rem',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer'
               }}
             >
-              <span>Simpan</span>
-              <Send size={11} />
+              <ImageIcon size={12} />
+              <span>Foto {images.length > 0 ? `(${images.length})` : ''}</span>
             </button>
           </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={!title.trim()}
+            style={{
+              background: title.trim() ? 'var(--accent-primary)' : '#CBD5E1',
+              color: '#FFFFFF',
+              border: 'none',
+              padding: '6px 16px',
+              borderRadius: 'var(--radius-sm)',
+              fontWeight: 600,
+              fontSize: '0.8rem',
+              cursor: title.trim() ? 'pointer' : 'not-allowed',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
+          >
+            <span>Simpan</span>
+            <Send size={11} />
+          </button>
         </div>
+
+        {/* Thumbnail Foto Terunggah (Kecil & Rapi) */}
+        {images.length > 0 && (
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '2px' }}>
+            {images.map((img, idx) => (
+              <div
+                key={idx}
+                style={{
+                  position: 'relative',
+                  width: '64px',
+                  height: '46px',
+                  borderRadius: '4px',
+                  overflow: 'hidden',
+                  border: '1px solid var(--border-medium)'
+                }}
+              >
+                <img
+                  src={img}
+                  alt="Bukti kerja"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(idx)}
+                  style={{
+                    position: 'absolute',
+                    top: '2px',
+                    right: '2px',
+                    background: 'rgba(0,0,0,0.6)',
+                    color: '#FFF',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '15px',
+                    height: '15px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    padding: 0
+                  }}
+                >
+                  <X size={10} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
 
       </form>
     </div>

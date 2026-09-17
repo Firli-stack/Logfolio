@@ -404,8 +404,8 @@ export function exportToPdfPrint(
   ${logs.map(log => `
     <div class="log-card">
       <div class="log-top">
-        <span class="log-headline">▸ ${log.title || log.content}</span>
-        <span class="log-date">${log.logDate} · ${log.projectName}</span>
+        <span class="log-headline">${log.title || log.content}</span>
+        <span class="log-date">${log.logDate} · ${log.projectName} ${log.isStealthNda ? '(NDA Protected)' : ''}</span>
       </div>
       ${log.details && log.details.length > 0 ? `
         <ul class="log-bullets">
@@ -416,7 +416,11 @@ export function exportToPdfPrint(
       `}
       ${log.proofLinks && log.proofLinks.length > 0 ? `
         <div class="log-proof-tags">
-          Bukti Terverifikasi: ${log.proofLinks.map(pl => `[${pl.label}: ${pl.url}]`).join(' · ')}
+          <b>Tautan Bukti:</b> ${log.proofLinks.map(pl => `<a href="${pl.url}" target="_blank" style="color: #4F46E5; text-decoration: none; margin-right: 8px;">${pl.label}</a>`).join(' ')}
+        </div>
+      ` : log.proofUrl ? `
+        <div class="log-proof-tags">
+          <b>Tautan Bukti:</b> <a href="${log.proofUrl}" target="_blank" style="color: #4F46E5; text-decoration: none;">Tautan Pengerjaan</a>
         </div>
       ` : ''}
     </div>

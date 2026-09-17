@@ -93,7 +93,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
                 <span style={{ color: 'var(--border-medium)' }}>·</span>
                 <span style={{
                   fontWeight: 600,
-                  color: log.isStealthNda ? 'var(--text-secondary)' : 'var(--accent-primary)',
+                  color: log.isStealthNda ? '#B45309' : 'var(--accent-primary)',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '4px'
@@ -101,6 +101,22 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
                   {log.isStealthNda && <Lock size={11} />}
                   {log.projectName}
                 </span>
+                {log.isStealthNda && (
+                  <span
+                    title="Catatan ini berada di bawah perlindungan kerahasiaan (NDA). Menyajikan solusi rekayasa dan indikator performa tanpa membuka informasi kepemilikan bisnis."
+                    style={{
+                      fontSize: '0.68rem',
+                      background: '#FEF3C7',
+                      color: '#92400E',
+                      padding: '1px 6px',
+                      borderRadius: '4px',
+                      fontWeight: 600,
+                      cursor: 'help'
+                    }}
+                  >
+                    NDA Protected
+                  </span>
+                )}
               </div>
 
               {/* Tombol Apresiasi Ringkas */}
@@ -140,7 +156,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
             {/* Poin-Poin Solusi Ringkas */}
             {log.details && log.details.length > 0 && (
               <ul style={{
-                margin: '6px 0 12px 18px',
+                margin: '6px 0 10px 18px',
                 padding: 0,
                 fontSize: '0.84rem',
                 color: 'var(--text-secondary)',
@@ -152,6 +168,35 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
                   </li>
                 ))}
               </ul>
+            )}
+
+            {/* Foto / Screenshot Lampiran (Jika Ada) */}
+            {log.imageUrls && log.imageUrls.length > 0 && (
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', margin: '8px 0 10px 0' }}>
+                {log.imageUrls.map((imgSrc, imgIdx) => (
+                  <a
+                    key={imgIdx}
+                    href={imgSrc}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      display: 'block',
+                      width: '120px',
+                      height: '75px',
+                      borderRadius: '6px',
+                      overflow: 'hidden',
+                      border: '1px solid var(--border-medium)',
+                      background: 'var(--bg-surface-elevated)'
+                    }}
+                  >
+                    <img
+                      src={imgSrc}
+                      alt={`Dokumentasi ${imgIdx + 1}`}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  </a>
+                ))}
+              </div>
             )}
 
             {/* Footer: Tags & Bukti Kerja */}

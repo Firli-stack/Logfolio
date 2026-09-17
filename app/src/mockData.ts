@@ -17,6 +17,7 @@ export interface LogEntry {
   proofUrl?: string;
   proofType?: 'github' | 'live' | 'figma' | 'document';
   proofLinks?: ProofLink[];
+  imageUrls?: string[];
   isProofVerified: boolean;
   isFeatured: boolean;
   isBackfill: boolean;
