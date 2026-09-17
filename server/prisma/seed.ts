@@ -41,8 +41,20 @@ async function main() {
   await prisma.log.deleteMany({ where: { userId: profile.id } });
   await prisma.project.deleteMany({ where: { userId: profile.id } });
 
-  // 2. Seed Skills
-  const skillNames = ['PostgreSQL', 'Go', 'TypeScript', 'Docker', 'React', 'Kubernetes', 'WebP', 'Kafka', 'Redis'];
+  // 2. Seed Skills (Lengkap sesuai mockData frontend)
+  const skillNames = [
+    'PostgreSQL',
+    'Go',
+    'TypeScript',
+    'Docker',
+    'React',
+    'Kubernetes',
+    'WebP',
+    'Kafka',
+    'Redis',
+    'Database',
+    'Backend'
+  ];
   const skillMap: Record<string, string> = {};
 
   for (const name of skillNames) {
@@ -57,7 +69,7 @@ async function main() {
     skillMap[name] = skill.id;
   }
 
-  // 3. Seed Projects
+  // 3. Seed Projects (Lengkap dengan technologies)
   const p1 = await prisma.project.create({
     data: {
       userId: profile.id,
@@ -93,12 +105,11 @@ async function main() {
     },
   });
 
-  // 4. Seed Logs dengan variasi tanggal (Streak aktif)
-  const today = new Date();
-  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+  // 4. Seed 4 Logs Realistis (Berurutan per hari)
+  const now = Date.now();
+  const dayMs = 24 * 60 * 60 * 1000;
 
-  // Log Hari Ini
+  // Log 1: Optimasi Query (Hari Ini)
   const log1 = await prisma.log.create({
     data: {
       userId: profile.id,
@@ -108,18 +119,17 @@ async function main() {
       isProofVerified: true,
       isFeatured: true,
       kudosCount: 16,
-      logDate: today,
+      logDate: new Date(now),
     },
   });
-
   await prisma.logSkill.createMany({
     data: [
       { logId: log1.id, skillId: skillMap['PostgreSQL'] },
-      { logId: log1.id, skillId: skillMap['Go'] },
+      { logId: log1.id, skillId: skillMap['Database'] },
     ],
   });
 
-  // Log Kemarin
+  // Log 2: Kompresi Gambar WebP (Kemarin)
   const log2 = await prisma.log.create({
     data: {
       userId: profile.id,
@@ -129,10 +139,9 @@ async function main() {
       isProofVerified: true,
       isFeatured: true,
       kudosCount: 9,
-      logDate: yesterday,
+      logDate: new Date(now - 1 * dayMs),
     },
   });
-
   await prisma.logSkill.createMany({
     data: [
       { logId: log2.id, skillId: skillMap['TypeScript'] },
@@ -140,29 +149,47 @@ async function main() {
     ],
   });
 
-  // Log 2 Hari Lalu
+  // Log 3: Pengecilan Container (2 Hari Lalu)
   const log3 = await prisma.log.create({
     data: {
       userId: profile.id,
       projectId: p3.id,
-      content: 'Implementasi Horizontal Pod Autoscaler berbasis metrik Kafka consumer lag.',
-      proofUrl: 'https://github.com/alexdev/k8s-autoscale/pull/12',
+      content: 'Pengecilan ukuran container service dari 1.2GB menjadi 24MB dengan multi-stage build binary Go.',
+      proofUrl: 'https://hub.docker.com/r/alexdev/mesh',
       isProofVerified: true,
-      isFeatured: false,
-      kudosCount: 7,
-      logDate: twoDaysAgo,
+      isFeatured: true,
+      kudosCount: 12,
+      logDate: new Date(now - 2 * dayMs),
     },
   });
-
   await prisma.logSkill.createMany({
     data: [
-      { logId: log3.id, skillId: skillMap['Kubernetes'] },
-      { logId: log3.id, skillId: skillMap['Kafka'] },
+      { logId: log3.id, skillId: skillMap['Docker'] },
       { logId: log3.id, skillId: skillMap['Go'] },
     ],
   });
 
-  console.log('✅ Seed completed successfully!');
+  // Log 4: Pencegahan Transaksi Ganda (3 Hari Lalu)
+  const log4 = await prisma.log.create({
+    data: {
+      userId: profile.id,
+      projectId: p1.id,
+      content: 'Implementasi kunci unik idempotency transaksi perbankan dengan Redis untuk cegah penarikan ganda.',
+      proofUrl: 'https://github.com/enterprise/gateway/commit/3ef91',
+      isProofVerified: true,
+      isFeatured: false,
+      kudosCount: 7,
+      logDate: new Date(now - 3 * dayMs),
+    },
+  });
+  await prisma.logSkill.createMany({
+    data: [
+      { logId: log4.id, skillId: skillMap['Redis'] },
+      { logId: log4.id, skillId: skillMap['Backend'] },
+    ],
+  });
+
+  console.log('✅ Seed completed successfully with full mock data alignment!');
 }
 
 main()
