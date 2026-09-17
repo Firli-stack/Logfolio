@@ -36,19 +36,9 @@ app.get('/api/health', (_req: Request, res: Response) => {
   });
 });
 
-// 4. API Routes Stub
-app.get('/api/v1', (_req: Request, res: Response) => {
-  res.status(200).json({
-    message: 'Welcome to Logfolio API v1',
-    endpoints: {
-      health: '/api/health',
-      profile: '/api/v1/profile/:username',
-      projects: '/api/v1/projects',
-      logs: '/api/v1/logs',
-      contactRelay: '/api/v1/contact',
-    },
-  });
-});
+// 4. API Routes
+import apiRouter from './routes/api.js';
+app.use('/api/v1', apiRouter);
 
 // 5. Global Error Handler
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
