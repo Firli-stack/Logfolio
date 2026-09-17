@@ -13,6 +13,7 @@ import { ExportModal } from './components/ExportModal';
 import { EditProfileModal } from './components/EditProfileModal';
 import { SettingsModal } from './components/SettingsModal';
 import { Navbar } from './components/Navbar';
+import { api } from './services/api';
 
 const STORAGE_KEY_PROFILE = 'logfolio_profile_v1';
 const STORAGE_KEY_LOGS = 'logfolio_entries_v1';
@@ -37,6 +38,36 @@ export function App() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_LANG, appLang);
   }, [appLang]);
+
+  // Fetch dari API saat load (fallback ke localStorage/mockData bila offline)
+  useEffect(() => {
+    const fetchApiData = async () => {
+      const data = await api.getProfile('alexdev');
+      if (data) {
+        setProfile({
+          username: data.username,
+          fullName: data.fullName,
+          headline: data.headline,
+          bio: data.bio,
+          avatarUrl: data.avatarUrl,
+          timezone: data.timezone,
+          socialLinks: data.socialLinks,
+          streakFreezeLeft: data.streakFreezeLeft,
+          streakDays: data.streakDays,
+          totalLogs: data.totalLogs,
+          topSkills: data.topSkills,
+          location: 'Jakarta, Indonesia',
+        });
+        if (data.projects && data.projects.length > 0) {
+          setProjects(data.projects);
+        }
+        if (data.logs && data.logs.length > 0) {
+          setLogs(data.logs);
+        }
+      }
+    };
+    fetchApiData();
+  }, []);
   const [profile, setProfile] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_PROFILE);
@@ -120,23 +151,54 @@ export function App() {
     }
   }, [projects]);
 
-  const handleAddLog = (newLog: LogEntry) => {
+  const handleAddLog = async (newLog: LogEntry) => {
+    // Optimistic update
     setLogs([newLog, ...logs]);
-    // update project log count
     setProjects(projects.map(p => p.id === newLog.projectId ? { ...p, logCount: p.logCount + 1 } : p));
     setActiveTab('public_preview');
+
+    // Sync to backend API
+    const created = await api.createLog({
+      username: profile.username,
+      projectId: newLog.projectId || null,
+      content: newLog.content,
+      proofUrl: newLog.proofUrl,
+      skills: newLog.skills,
+      isFeatured: newLog.isFeatured,
+      isBackfill: newLog.isBackfill,
+    });
+
+    if (created) {
+      // Perbarui ID jika berhasil disimpan di database PostgreSQL
+      setLogs((prev) => [created, ...prev.filter((l) => l.id !== newLog.id)]);
+    }
   };
 
-  const handleCreateProject = (newProject: Project) => {
+  const handleCreateProject = async (newProject: Project) => {
+    // Optimistic update
     setProjects([newProject, ...projects]);
+
+    // Sync to backend API
+    await api.createProject({
+      username: profile.username,
+      title: newProject.title,
+      description: newProject.description,
+      repoUrl: newProject.repoUrl,
+      liveUrl: newProject.liveUrl,
+      isStealthNda: newProject.isStealthNda,
+      status: newProject.status,
+    });
   };
 
   const handleDeleteLog = (logId: string) => {
     setLogs(logs.filter(l => l.id !== logId));
   };
 
-  const handleAddKudos = (logId: string) => {
+  const handleAddKudos = async (logId: string) => {
+    // Optimistic update
     setLogs(logs.map(l => l.id === logId ? { ...l, kudosCount: l.kudosCount + 1 } : l));
+    // Sync to backend
+    await api.addKudos(logId);
   };
 
   return (
