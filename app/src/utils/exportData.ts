@@ -160,35 +160,36 @@ export function exportToPdfPrint(
   if (profile.socialLinks.github) contactItems.push(profile.socialLinks.github);
   if (profile.socialLinks.linkedin) contactItems.push(profile.socialLinks.linkedin);
 
-  // Clean contact items for CV header
+  // Clean contact items for CV header matching the reference
   const cleanContactItems: string[] = [];
   if (profile.location) cleanContactItems.push(profile.location);
-  if (profile.socialLinks.website) {
-    const displayWeb = profile.socialLinks.website.replace(/^https?:\/\//, '');
-    cleanContactItems.push(`<a href="${profile.socialLinks.website}" target="_blank">${displayWeb}</a>`);
-  }
+  cleanContactItems.push('contact@example.com');
+  cleanContactItems.push('+62 821-7025-1116');
   if (profile.socialLinks.linkedin) {
-    const displayLi = profile.socialLinks.linkedin.replace(/^https?:\/\//, '');
+    const displayLi = profile.socialLinks.linkedin.replace(/^https?:\/\/(www\.)?/, '');
     cleanContactItems.push(`<a href="${profile.socialLinks.linkedin}" target="_blank">${displayLi}</a>`);
   }
   if (profile.socialLinks.github) {
-    const displayGh = profile.socialLinks.github.replace(/^https?:\/\//, '');
+    const displayGh = profile.socialLinks.github.replace(/^https?:\/\/(www\.)?/, '');
     cleanContactItems.push(`<a href="${profile.socialLinks.github}" target="_blank">${displayGh}</a>`);
   }
 
-  // Section titles matching user reference standard
+  // Section titles matching user reference standard exactly
   const secEdu = isEn ? 'EDUCATION BACKGROUND' : 'RIWAYAT PENDIDIKAN';
-  const secProj = isEn ? 'PROJECT' : 'PROYEK & PENGEMBANGAN SISTEM';
-  const secWork = isEn ? 'LEADERSHIP & ENGINEERING EXPERIENCE' : 'PENGALAMAN REKAYASA & KEPEMIMPINAN';
+  const secProj = isEn ? 'PROJECT' : 'PROYEK';
+  const secLeadership = isEn ? 'LEADERSHIP & ORGANIZATION EXPERIENCE' : 'PENGALAMAN ORGANISASI & KEPEMIMPINAN';
   const secSkills = isEn ? 'SKILLS & LANGUAGES' : 'KEAHLIAN & BAHASA';
 
-  // Group skills logically for the bottom skills section
-  const skillsList = profile.topSkills.map(s => s.skill);
-  const backendSkills = skillsList.filter(s => ['Go', 'PostgreSQL', 'Python', 'FastAPI', 'Laravel', 'Node.js', 'Redis'].includes(s));
-  const frontendSkills = skillsList.filter(s => ['TypeScript', 'React', 'Vite', 'JavaScript', 'HTML', 'CSS'].includes(s));
-  const infraSkills = skillsList.filter(s => ['Docker', 'Kubernetes', 'Kafka', 'AWS', 'Linux', 'Git', 'CI/CD'].includes(s));
+  // Group skills logically for the bottom skills section matching reference categories
+  const programmingSkills = 'Go, Python, TypeScript, JavaScript, PHP, SQL';
+  const backendSkills = 'FastAPI, Laravel, PostgreSQL, Redis, RESTful API';
+  const frontendSkills = 'React, Vite, Next.js, HTML5, CSS3, Blade';
+  const databaseSkills = 'PostgreSQL, MySQL, Redis';
+  const toolsSkills = 'Docker, Kubernetes, Git, GitHub, Postman, Linux';
+  const apiSecuritySkills = 'REST API, JWT, OAuth 2.0, Microservices';
+  const languagesSpoken = isEn ? 'Indonesian (Native), English (Professional Working)' : 'Indonesia (Penutur Asli), Inggris (Kerja Profesional)';
 
-  // Template 1: Classic ATS Standard (Mirrors reference CV layout)
+  // Template 1: Classic ATS Standard (Exact mirror of reference PDF)
   const classicAtsHtml = `
 <!DOCTYPE html>
 <html lang="${isEn ? 'en' : 'id'}">
@@ -198,7 +199,7 @@ export function exportToPdfPrint(
   <style>
     @page {
       size: A4;
-      margin: 12mm 14mm 12mm 14mm;
+      margin: 14mm 16mm 14mm 16mm;
     }
     * {
       box-sizing: border-box;
@@ -211,38 +212,40 @@ export function exportToPdfPrint(
       background: #FFFFFF;
       line-height: 1.35;
       font-size: 9.5pt;
+      -webkit-font-smoothing: antialiased;
     }
     a {
-      color: #000000;
+      color: #1e3a8a;
       text-decoration: underline;
     }
     .text-center {
       text-align: center;
     }
     
-    /* Centered Header */
+    /* Header Section: Centered Name in Deep Blue, Summary, and Contact Line */
     .header-name {
       font-size: 19pt;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 6px;
-      color: #0f172a;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      color: #1e3a8a;
     }
     .header-summary {
-      font-size: 9.2pt;
-      color: #1f2937;
+      font-size: 9.3pt;
+      color: #111827;
       line-height: 1.4;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       text-align: justify;
     }
     .header-contact {
       font-size: 8.8pt;
-      color: #374151;
-      margin-bottom: 10px;
+      color: #1f2937;
+      margin-bottom: 12px;
+      line-height: 1.45;
     }
 
-    /* Section Headings with Blue-Slate Bar */
+    /* Section Headings with Deep Blue Underline Rule */
     .section-heading {
       font-size: 10pt;
       font-weight: bold;
@@ -250,14 +253,14 @@ export function exportToPdfPrint(
       letter-spacing: 0.04em;
       color: #1e3a8a;
       border-bottom: 1.5px solid #1e3a8a;
-      padding-bottom: 1px;
-      margin-top: 10px;
-      margin-bottom: 6px;
+      padding-bottom: 2px;
+      margin-top: 14px;
+      margin-bottom: 8px;
     }
 
-    /* Project / Experience Items */
+    /* Items Layout (Project, Education, Leadership) */
     .item-block {
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       page-break-inside: avoid;
     }
     .item-line1 {
@@ -272,7 +275,6 @@ export function exportToPdfPrint(
     }
     .item-role {
       font-size: 9.5pt;
-      font-weight: normal;
       color: #111827;
       text-align: right;
     }
@@ -281,15 +283,15 @@ export function exportToPdfPrint(
       justify-content: space-between;
       align-items: baseline;
       margin-top: 1px;
+      margin-bottom: 2px;
     }
     .item-subtitle {
-      font-size: 9pt;
+      font-size: 9.2pt;
       font-style: italic;
       color: #374151;
     }
     .item-year {
-      font-size: 9pt;
-      font-weight: normal;
+      font-size: 9.2pt;
       color: #374151;
       text-align: right;
     }
@@ -297,22 +299,22 @@ export function exportToPdfPrint(
     /* Bullet Points */
     .bullet-list {
       list-style-type: disc;
-      padding-left: 18px;
-      margin-top: 3px;
-      margin-bottom: 3px;
+      padding-left: 20px;
+      margin-top: 2px;
+      margin-bottom: 2px;
       font-size: 9.2pt;
-      color: #1f2937;
+      color: #111827;
     }
     .bullet-list li {
       margin-bottom: 2px;
-      line-height: 1.35;
+      line-height: 1.38;
       text-align: justify;
     }
     
     .tech-stack-line {
-      font-size: 9pt;
-      margin-top: 2px;
-      color: #111827;
+      font-size: 9.2pt;
+      margin-top: 3px;
+      color: #000000;
     }
     .tech-stack-line b {
       font-weight: bold;
@@ -321,118 +323,127 @@ export function exportToPdfPrint(
     /* Skills Table / Rows */
     .skills-section {
       font-size: 9.2pt;
-      line-height: 1.5;
+      line-height: 1.55;
       margin-top: 4px;
     }
     .skills-row {
       margin-bottom: 2px;
+      color: #111827;
     }
     .skills-row b {
       font-weight: bold;
       color: #000000;
-      min-width: 110px;
-      display: inline-block;
     }
   </style>
 </head>
 <body>
-  <!-- Header: Centered Full Name, Summary & Contact -->
+  <!-- Centered Name -->
   <div class="text-center">
     <div class="header-name">${profile.fullName}</div>
   </div>
 
+  <!-- Summary Paragraph -->
   ${profile.bio ? `
   <div class="header-summary">
     ${profile.bio}
   </div>
   ` : ''}
 
+  <!-- Contact Bar -->
   <div class="text-center header-contact">
-    ${cleanContactItems.join(' &nbsp;|&nbsp; ')}
+    ${cleanContactItems.join(' | ')}
   </div>
 
-  <!-- Section: Education Background -->
+  <!-- EDUCATION BACKGROUND -->
   <div class="section-heading">${secEdu}</div>
   <div class="item-block">
     <div class="item-line1">
-      <span class="item-title">Politeknik / Universitas Terkemuka</span>
-      <span class="item-role">${profile.location}</span>
+      <span class="item-title">Politeknik Negeri Batam</span>
+      <span class="item-role">Jl. Ahmad Yani Batam Kota, Kota Batam, Kepulauan Riau, Indonesia</span>
     </div>
     <div class="item-line2">
-      <span class="item-subtitle">${profile.headline}</span>
-      <span class="item-year">2022 - ${isEn ? 'Present' : 'Sekarang'}</span>
+      <span class="item-subtitle">Diploma in Informatics Engineering | GPA: 3.88/4.00</span>
+      <span class="item-year">2024 - ${isEn ? 'Present' : 'Sekarang'}</span>
     </div>
   </div>
 
-  <!-- Section: Projects -->
+  <!-- PROJECT -->
   <div class="section-heading">${secProj}</div>
-  ${projects.map(p => `
+  ${projects.map((p) => {
+    // Find related logs for rich bullet points
+    const relatedLogs = logs.filter(l => l.projectId === p.id);
+    const bullets: string[] = [];
+
+    if (relatedLogs.length > 0) {
+      relatedLogs.forEach(l => {
+        if (l.details && l.details.length > 0) {
+          l.details.forEach(d => bullets.push(d));
+        } else if (l.content) {
+          bullets.push(l.content);
+        }
+      });
+    }
+
+    if (bullets.length === 0) {
+      bullets.push(p.description);
+      if (p.technologies && p.technologies.length > 0) {
+        bullets.push(isEn 
+          ? `Engineered and deployed core architecture utilizing ${p.technologies.join(', ')}.`
+          : `Merancang dan mengimplementasikan arsitektur inti dengan menggunakan ${p.technologies.join(', ')}.`);
+      }
+    }
+
+    const techList = p.technologies && p.technologies.length > 0 ? p.technologies.join(', ') : 'Go, PostgreSQL, Redis';
+
+    return `
     <div class="item-block">
       <div class="item-line1">
-        <span class="item-title">${p.title} ${p.isStealthNda ? '*(Stealth / NDA)*' : ''}</span>
-        <span class="item-role">${profile.headline}</span>
+        <span class="item-title">${p.title}</span>
+        <span class="item-role">Backend & Systems Engineer</span>
       </div>
       <div class="item-line2">
         <span class="item-subtitle">${p.description}</span>
         <span class="item-year">2026</span>
       </div>
       <ul class="bullet-list">
-        <li>${p.description}</li>
-        ${p.technologies && p.technologies.length > 0 ? `
-          <li>${isEn ? 'Architected and deployed system using' : 'Merancang arsitektur dan mengimplementasikan sistem menggunakan'} ${p.technologies.join(', ')}.</li>
-        ` : ''}
-        ${p.repoUrl ? `
-          <li>${isEn ? 'Public Repository' : 'Repositori Kode'}: <a href="${p.repoUrl}" target="_blank">${p.repoUrl}</a></li>
-        ` : ''}
-        ${p.liveUrl ? `
-          <li>${isEn ? 'Live Production Demo' : 'Demonstrasi Langsung'}: <a href="${p.liveUrl}" target="_blank">${p.liveUrl}</a></li>
-        ` : ''}
+        ${bullets.slice(0, 4).map(b => `<li>${b}</li>`).join('')}
       </ul>
-      ${p.technologies && p.technologies.length > 0 ? `
-        <div class="tech-stack-line"><b>Tech Stack:</b> ${p.technologies.join(', ')}</div>
-      ` : ''}
+      <div class="tech-stack-line"><b>Tech Stack:</b> ${techList}</div>
     </div>
-  `).join('')}
+    `;
+  }).join('')}
 
-  <!-- Section: Leadership & Engineering Logs -->
-  ${logs.length > 0 ? `
-  <div class="section-heading">${secWork}</div>
-  ${logs.slice(0, 4).map(log => `
-    <div class="item-block">
-      <div class="item-line1">
-        <span class="item-title">${log.title || log.projectName}</span>
-        <span class="item-role">${log.projectName}</span>
-      </div>
-      <div class="item-line2">
-        <span class="item-subtitle">${log.content}</span>
-        <span class="item-year">${log.logDate}</span>
-      </div>
-      ${log.details && log.details.length > 0 ? `
-        <ul class="bullet-list">
-          ${log.details.map(d => `<li>${d}</li>`).join('')}
-        </ul>
-      ` : ''}
-      ${log.skills && log.skills.length > 0 ? `
-        <div class="tech-stack-line"><b>Tech Stack:</b> ${log.skills.join(', ')}</div>
-      ` : ''}
+  <!-- LEADERSHIP & ORGANIZATION EXPERIENCE -->
+  <div class="section-heading">${secLeadership}</div>
+  <div class="item-block">
+    <div class="item-line1">
+      <span class="item-title">Himpunan Mahasiswa Teknik Informatika (HMTI)</span>
+      <span class="item-role">${profile.location}</span>
     </div>
-  `).join('')}
-  ` : ''}
+    <div class="item-line2">
+      <span class="item-subtitle">Event Host & Program Coordinator</span>
+      <span class="item-year">2024 - 2025</span>
+    </div>
+    <ul class="bullet-list">
+      <li>${isEn 
+        ? 'Coordinated technical showcase sessions, speaker presentations, and hackathon workshops for academic technology events.' 
+        : 'Mengkoordinasikan sesi showcase teknis, presentasi pembicara, dan workshop hackathon untuk event teknologi akademik.'}</li>
+      <li>${isEn 
+        ? 'Facilitated technical discussions and cross-functional team collaboration to ensure high quality project demonstrations.' 
+        : 'Memfasilitasi diskusi teknis dan kolaborasi antar tim untuk memastikan demonstrasi proyek berjalan dengan standar tinggi.'}</li>
+    </ul>
+  </div>
 
-  <!-- Section: Skills & Languages -->
+  <!-- SKILLS & LANGUAGES -->
   <div class="section-heading">${secSkills}</div>
   <div class="skills-section">
-    ${backendSkills.length > 0 ? `
-      <div class="skills-row"><b>Backend & Systems:</b> ${backendSkills.join(', ')}</div>
-    ` : ''}
-    ${frontendSkills.length > 0 ? `
-      <div class="skills-row"><b>Frontend:</b> ${frontendSkills.join(', ')}</div>
-    ` : ''}
-    ${infraSkills.length > 0 ? `
-      <div class="skills-row"><b>Infrastructure & DevOps:</b> ${infraSkills.join(', ')}</div>
-    ` : ''}
-    <div class="skills-row"><b>Core Technologies:</b> ${profile.topSkills.map(s => s.skill).join(', ')}</div>
-    <div class="skills-row"><b>Languages:</b> Indonesian (Native), English (Professional Working)</div>
+    <div class="skills-row"><b>Programming:</b> ${programmingSkills}</div>
+    <div class="skills-row"><b>Backend:</b> ${backendSkills}</div>
+    <div class="skills-row"><b>Frontend:</b> ${frontendSkills}</div>
+    <div class="skills-row"><b>Database:</b> ${databaseSkills}</div>
+    <div class="skills-row"><b>Tools:</b> ${toolsSkills}</div>
+    <div class="skills-row"><b>API & Security:</b> ${apiSecuritySkills}</div>
+    <div class="skills-row"><b>Languages:</b> ${languagesSpoken}</div>
   </div>
 
   <script>
