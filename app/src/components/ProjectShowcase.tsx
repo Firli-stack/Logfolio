@@ -13,11 +13,11 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, profile, on
     <div style={{ marginBottom: '32px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-            Featured Workstreams & System Case Studies
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+            Studi Kasus & Arsitektur Sistem
           </h2>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-            Arsitektur sistem dan aplikasi dengan dampak produksi nyata.
+          <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+            Karya nyata dan sistem produksi yang dirancang untuk skala besar dan stabilitas tinggi.
           </p>
         </div>
 

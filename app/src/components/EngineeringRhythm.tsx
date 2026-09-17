@@ -47,12 +47,12 @@ export const EngineeringRhythm: React.FC<RhythmProps> = ({ logs }) => {
             }}>
               <Activity size={15} />
             </span>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-              Engineering Momentum & Focus Breakdown
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+              Ritme Rekayasa & Fokus Teknis
             </h3>
           </div>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            Ritme penyelesaian masalah dan distribusi waktu rekayasa sistem berdasarkan {logs.length} bukti log teruji.
+          <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+            Konsistensi penyelesaian masalah mingguan dan proporsi fokus arsitektur berdasarkan {logs.length} bukti pengerjaan terverifikasi.
           </p>
         </div>
 

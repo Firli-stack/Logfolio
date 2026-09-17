@@ -277,12 +277,7 @@ export function App() {
             </span>
           </div>
 
-          {/* Section 1: Engineering Rhythm (Bento Metric, menggantikan GitHub Heatmap) */}
-          {(publicViewMode === 'all' || publicViewMode === 'logs') && (
-            <EngineeringRhythm logs={logs} />
-          )}
-
-          {/* Section 2: Workstreams & Case Studies */}
+          {/* Section 1: Workstreams & Case Studies (Karya Nyata Ditampilkan Terlebih Dahulu) */}
           {(publicViewMode === 'all' || publicViewMode === 'case_studies') && (
             <ProjectShowcase
               projects={projects}
@@ -290,7 +285,12 @@ export function App() {
             />
           )}
 
-          {/* Section 3: Engineering Logbook Stream */}
+          {/* Section 2: Engineering Rhythm & Momentum (Bukti Konsistensi & Fokus) */}
+          {(publicViewMode === 'all' || publicViewMode === 'logs') && (
+            <EngineeringRhythm logs={logs} />
+          )}
+
+          {/* Section 3: Engineering Logbook Stream (Catatan Pengerjaan Harian) */}
           {(publicViewMode === 'all' || publicViewMode === 'logs') && (
             <LogTimeline
               logs={logs}

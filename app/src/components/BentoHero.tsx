@@ -77,36 +77,89 @@ export const BentoHero: React.FC<BentoHeroProps> = ({ profile, onContactClick, o
               <h1 style={{ fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-primary)', lineHeight: '1.2', wordBreak: 'break-word' }}>
                 {profile.fullName}
               </h1>
-              <p style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--accent-primary)', marginTop: '4px', wordBreak: 'break-word' }}>
+              <p style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--accent-primary)', marginTop: '4px', wordBreak: 'break-word' }}>
                 {profile.headline}
               </p>
             </div>
           </div>
 
-
-          {/* Key Value Bullets (Scannable untuk Rekruter) */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-            gap: '10px',
-            marginTop: '10px'
+          {/* Warm Intro / Bio Narrative (Dimanusiakan) */}
+          <p style={{
+            fontSize: '0.92rem',
+            color: 'var(--text-secondary)',
+            lineHeight: '1.6',
+            marginBottom: '16px',
+            maxWidth: '680px'
           }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
-              <CheckCircle2 size={16} color="var(--accent-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
-              <span style={{ wordBreak: 'break-word', flex: 1 }}><b>High Uptime:</b> Merancang sistem cloud dengan SLA 99.99%</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
-              <CheckCircle2 size={16} color="var(--accent-cyan)" style={{ flexShrink: 0, marginTop: '2px' }} />
-              <span style={{ wordBreak: 'break-word', flex: 1 }}><b>Fintech Core:</b> Spesialis payment gateway & idempotent flow</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
-              <CheckCircle2 size={16} color="var(--accent-emerald)" style={{ flexShrink: 0, marginTop: '2px' }} />
-              <span style={{ wordBreak: 'break-word', flex: 1 }}><b>Performance First:</b> Optimasi latency DB & konkurensi Go</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
-              <CheckCircle2 size={16} color="var(--accent-amber)" style={{ flexShrink: 0, marginTop: '2px' }} />
-              <span style={{ wordBreak: 'break-word', flex: 1 }}><b>Cloud Cost:</b> Efisiensi resource container hingga 70%</span>
-            </div>
+            {profile.bio}
+          </p>
+
+          {/* Key Specialization Pills (Rapi, Bersih, Tidak Kaku) */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '8px',
+            marginTop: '8px'
+          }}>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 12px',
+              borderRadius: 'var(--radius-sm)',
+              background: 'rgba(79, 70, 229, 0.06)',
+              border: '1px solid rgba(79, 70, 229, 0.15)',
+              fontSize: '0.82rem',
+              color: 'var(--text-primary)'
+            }}>
+              <CheckCircle2 size={14} color="var(--accent-primary)" />
+              <span><b>High Uptime:</b> SLA Cloud 99.99%</span>
+            </span>
+
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 12px',
+              borderRadius: 'var(--radius-sm)',
+              background: 'rgba(2, 132, 199, 0.06)',
+              border: '1px solid rgba(2, 132, 199, 0.15)',
+              fontSize: '0.82rem',
+              color: 'var(--text-primary)'
+            }}>
+              <CheckCircle2 size={14} color="var(--accent-cyan)" />
+              <span><b>Fintech Core:</b> Payment Gateway Idempotent</span>
+            </span>
+
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 12px',
+              borderRadius: 'var(--radius-sm)',
+              background: 'rgba(16, 185, 129, 0.06)',
+              border: '1px solid rgba(16, 185, 129, 0.15)',
+              fontSize: '0.82rem',
+              color: 'var(--text-primary)'
+            }}>
+              <CheckCircle2 size={14} color="var(--accent-emerald)" />
+              <span><b>Performance:</b> Tuning Query & Konkurensi</span>
+            </span>
+
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 12px',
+              borderRadius: 'var(--radius-sm)',
+              background: 'rgba(245, 158, 11, 0.06)',
+              border: '1px solid rgba(245, 158, 11, 0.15)',
+              fontSize: '0.82rem',
+              color: 'var(--text-primary)'
+            }}>
+              <CheckCircle2 size={14} color="var(--accent-amber)" />
+              <span><b>Cloud Cost:</b> Efisiensi Resource 70%</span>
+            </span>
           </div>
         </div>
 

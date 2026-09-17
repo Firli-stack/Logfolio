@@ -25,11 +25,11 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '18px' }}>
         <div>
-          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            Micro-Logbook & Proof-of-Work
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            Catatan Rekayasa Harian (Engineering Logbook)
           </h3>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Riwayat pengerjaan harian terverifikasi ({filteredLogs.length} catatan)
+          <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+            Rincian tantangan teknis, keputusan arsitektur, dan bukti penyelesaian harian ({filteredLogs.length} catatan)
           </p>
         </div>
 
