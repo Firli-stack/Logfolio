@@ -390,12 +390,92 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
           </div>
         </div>
 
-        {/* Row 5: Upload Foto / Screenshot & Skill Tags & Submit */}
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', paddingTop: '4px', borderTop: '1px solid var(--border-subtle)' }}>
+        {/* Row 5: Bukti Foto / Screenshot (Jelas & Nyaman Digunakan) */}
+        <div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            multiple
+            onChange={handleImageUpload}
+            style={{ display: 'none' }}
+          />
+
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '7px 12px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px dashed var(--border-medium)',
+                background: images.length > 0 ? 'var(--bg-surface-elevated)' : '#F8FAFC',
+                color: 'var(--text-secondary)',
+                fontSize: '0.78rem',
+                fontWeight: 500,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <ImageIcon size={14} style={{ color: 'var(--accent-primary)' }} />
+              <span>{images.length > 0 ? `+ Tambah Foto (${images.length}/3)` : 'Lampirkan Foto / Tangkapan Layar'}</span>
+            </button>
+
+            {/* Thumbnail Foto Terunggah */}
+            {images.map((img, idx) => (
+              <div
+                key={idx}
+                style={{
+                  position: 'relative',
+                  width: '68px',
+                  height: '48px',
+                  borderRadius: '6px',
+                  overflow: 'hidden',
+                  border: '1px solid var(--border-medium)',
+                  background: '#F1F5F9'
+                }}
+              >
+                <img
+                  src={img}
+                  alt="Bukti kerja"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(idx)}
+                  title="Hapus foto"
+                  style={{
+                    position: 'absolute',
+                    top: '2px',
+                    right: '2px',
+                    background: 'rgba(15, 23, 42, 0.75)',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '16px',
+                    height: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    padding: 0
+                  }}
+                >
+                  <X size={10} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 6: Skill Tags & Tombol Simpan */}
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', paddingTop: '6px', borderTop: '1px solid var(--border-subtle)' }}>
           
-          {/* Tags & Upload Button */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center' }}>
-            {/* Tag Pills */}
+          {/* Tag Pills */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
             {skills.map(tag => (
               <span key={tag} className="skill-badge" style={{ fontSize: '0.72rem', padding: '2px 6px' }}>
                 {tag}
@@ -426,36 +506,6 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
                 }}
               />
             )}
-
-            {/* Tombol Unggah Foto Screenshot */}
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept="image/*"
-              multiple
-              onChange={handleImageUpload}
-              style={{ display: 'none' }}
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              title="Unggah Foto / Screenshot bukti pengerjaan"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                background: 'var(--bg-surface-elevated)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                padding: '3px 8px',
-                fontSize: '0.73rem',
-                color: 'var(--text-secondary)',
-                cursor: 'pointer'
-              }}
-            >
-              <ImageIcon size={12} />
-              <span>Foto {images.length > 0 ? `(${images.length})` : ''}</span>
-            </button>
           </div>
 
           {/* Submit Button */}
@@ -466,67 +516,20 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
               background: title.trim() ? 'var(--accent-primary)' : '#CBD5E1',
               color: '#FFFFFF',
               border: 'none',
-              padding: '6px 16px',
+              padding: '6px 18px',
               borderRadius: 'var(--radius-sm)',
               fontWeight: 600,
-              fontSize: '0.8rem',
+              fontSize: '0.82rem',
               cursor: title.trim() ? 'pointer' : 'not-allowed',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '4px'
+              gap: '6px'
             }}
           >
             <span>Simpan</span>
-            <Send size={11} />
+            <Send size={12} />
           </button>
         </div>
-
-        {/* Thumbnail Foto Terunggah (Kecil & Rapi) */}
-        {images.length > 0 && (
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '2px' }}>
-            {images.map((img, idx) => (
-              <div
-                key={idx}
-                style={{
-                  position: 'relative',
-                  width: '64px',
-                  height: '46px',
-                  borderRadius: '4px',
-                  overflow: 'hidden',
-                  border: '1px solid var(--border-medium)'
-                }}
-              >
-                <img
-                  src={img}
-                  alt="Bukti kerja"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(idx)}
-                  style={{
-                    position: 'absolute',
-                    top: '2px',
-                    right: '2px',
-                    background: 'rgba(0,0,0,0.6)',
-                    color: '#FFF',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: '15px',
-                    height: '15px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    padding: 0
-                  }}
-                >
-                  <X size={10} />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
 
       </form>
     </div>
