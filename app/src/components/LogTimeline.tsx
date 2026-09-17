@@ -141,29 +141,60 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
                 ))}
               </div>
 
-              {log.proofUrl && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {/* Proof links (multiple supported) */}
+              {((log.proofLinks && log.proofLinks.length > 0) || log.proofUrl) && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <span className="status-badge status-verified" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                     <CheckCheck size={12} />
-                    Verified Proof
+                    Verified Proof ({log.proofLinks?.length || 1})
                   </span>
-                  <a
-                    href={log.proofUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{
-                      fontSize: '0.8rem',
-                      fontFamily: 'var(--font-mono)',
-                      color: 'var(--accent-cyan)',
-                      textDecoration: 'none',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
-                  >
-                    <span>Inspect</span>
-                    <ExternalLink size={11} />
-                  </a>
+
+                  {log.proofLinks && log.proofLinks.length > 0 ? (
+                    log.proofLinks.map((pl) => (
+                      <a
+                        key={pl.id || pl.url}
+                        href={pl.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        title={pl.url}
+                        style={{
+                          fontSize: '0.78rem',
+                          fontFamily: 'var(--font-mono)',
+                          color: 'var(--accent-primary)',
+                          background: 'rgba(79, 70, 229, 0.06)',
+                          border: '1px solid rgba(79, 70, 229, 0.2)',
+                          padding: '3px 8px',
+                          borderRadius: 'var(--radius-sm)',
+                          textDecoration: 'none',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <span>{pl.label || 'Tautan'}</span>
+                        <ExternalLink size={10} />
+                      </a>
+                    ))
+                  ) : (
+                    <a
+                      href={log.proofUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        fontSize: '0.8rem',
+                        fontFamily: 'var(--font-mono)',
+                        color: 'var(--accent-cyan)',
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <span>Inspect Proof</span>
+                      <ExternalLink size={11} />
+                    </a>
+                  )}
                 </div>
               )}
             </div>

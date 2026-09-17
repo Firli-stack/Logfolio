@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { INITIAL_PROFILE, INITIAL_PROJECTS, INITIAL_LOGS } from './mockData';
-import type { LogEntry } from './mockData';
+import type { LogEntry, Project } from './mockData';
 import { BentoHero } from './components/BentoHero';
 import { EngineeringRhythm } from './components/EngineeringRhythm';
 import { ProjectShowcase } from './components/ProjectShowcase';
@@ -8,13 +8,26 @@ import { QuickLogComposer } from './components/QuickLogComposer';
 import { LogTimeline } from './components/LogTimeline';
 import { ManageLogsTable } from './components/ManageLogsTable';
 import { ContactModal } from './components/ContactModal';
+import { CreateProjectModal } from './components/CreateProjectModal';
 import { Globe, PenSquare, Flame, Sparkles, FolderGit2, Terminal, Flag, ShieldCheck, Code2 } from 'lucide-react';
 
 const STORAGE_KEY_LOGS = 'logfolio_entries_v1';
+const STORAGE_KEY_PROJECTS = 'logfolio_projects_v1';
 
 export function App() {
   const [profile] = useState(INITIAL_PROFILE);
-  const [projects] = useState(INITIAL_PROJECTS);
+  const [projects, setProjects] = useState<Project[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_PROJECTS);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // Fallback
+    }
+    return INITIAL_PROJECTS;
+  });
+
   const [logs, setLogs] = useState<LogEntry[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_LOGS);
@@ -29,6 +42,7 @@ export function App() {
   const [activeTab, setActiveTab] = useState<'public_preview' | 'dashboard_composer'>('public_preview');
   const [publicViewMode, setPublicViewMode] = useState<'all' | 'case_studies' | 'logs'>('all');
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
 
   // Sync to LocalStorage
   useEffect(() => {
@@ -39,9 +53,23 @@ export function App() {
     }
   }, [logs]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY_PROJECTS, JSON.stringify(projects));
+    } catch {
+      // Ignore quota errors
+    }
+  }, [projects]);
+
   const handleAddLog = (newLog: LogEntry) => {
     setLogs([newLog, ...logs]);
+    // update project log count
+    setProjects(projects.map(p => p.id === newLog.projectId ? { ...p, logCount: p.logCount + 1 } : p));
     setActiveTab('public_preview');
+  };
+
+  const handleCreateProject = (newProject: Project) => {
+    setProjects([newProject, ...projects]);
   };
 
   const handleDeleteLog = (logId: string) => {
@@ -51,7 +79,6 @@ export function App() {
   const handleAddKudos = (logId: string) => {
     setLogs(logs.map(l => l.id === logId ? { ...l, kudosCount: l.kudosCount + 1 } : l));
   };
-
 
   const handlePrintResume = () => {
     window.print();
@@ -144,7 +171,11 @@ export function App() {
       {/* VIEW 1: DASHBOARD QUICK-LOG COMPOSER */}
       {activeTab === 'dashboard_composer' && (
         <main>
-          <QuickLogComposer projects={projects} onAddLog={handleAddLog} />
+          <QuickLogComposer
+            projects={projects}
+            onAddLog={handleAddLog}
+            onOpenCreateProject={() => setIsCreateProjectOpen(true)}
+          />
           <ManageLogsTable logs={logs} onDeleteLog={handleDeleteLog} />
           <EngineeringRhythm logs={logs} />
         </main>
@@ -252,19 +283,22 @@ export function App() {
             <ProjectShowcase
               projects={projects}
               profile={profile}
-              onFilterByProject={() => setPublicViewMode('logs')}
             />
           )}
 
-          {/* Section 3: Deep Timeline & Micro-Logbook */}
+          {/* Section 3: Engineering Logbook Stream */}
           {(publicViewMode === 'all' || publicViewMode === 'logs') && (
-            <LogTimeline logs={logs} projects={projects} onAddKudos={handleAddKudos} />
+            <LogTimeline
+              logs={logs}
+              projects={projects}
+              onAddKudos={handleAddKudos}
+            />
           )}
         </main>
       )}
 
 
-      {/* Footer */}
+      {/* Footer Branding & Disclaimer */}
       <footer className="no-print" style={{
         marginTop: '60px',
         paddingTop: '20px',
@@ -296,6 +330,13 @@ export function App() {
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
         candidateName={profile.fullName}
+      />
+
+      {/* Create Project Container Modal */}
+      <CreateProjectModal
+        isOpen={isCreateProjectOpen}
+        onClose={() => setIsCreateProjectOpen(false)}
+        onCreateProject={handleCreateProject}
       />
     </div>
   );

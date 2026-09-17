@@ -81,9 +81,20 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, profile, on
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
                   {proj.title}
                 </h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.55', marginBottom: '18px' }}>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.55', marginBottom: '14px' }}>
                   {proj.description}
                 </p>
+
+                {/* Tech Stack Pills */}
+                {proj.technologies && proj.technologies.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '14px' }}>
+                    {proj.technologies.map(t => (
+                      <span key={t} className="skill-badge" style={{ fontSize: '0.72rem', padding: '2px 7px' }}>
+                        #{t}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Bottom links and action */}

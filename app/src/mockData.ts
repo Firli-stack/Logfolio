@@ -1,3 +1,10 @@
+export interface ProofLink {
+  id: string;
+  url: string;
+  label: string;
+  type?: 'github' | 'live' | 'figma' | 'document' | 'other';
+}
+
 export interface LogEntry {
   id: string;
   projectId: string;
@@ -5,8 +12,9 @@ export interface LogEntry {
   isStealthNda: boolean;
   content: string;
   skills: string[];
-  proofUrl?: string;
+  proofUrl?: string; // backwards compatibility
   proofType?: 'github' | 'live' | 'figma' | 'document';
+  proofLinks?: ProofLink[]; // multiple proof links support
   isProofVerified: boolean;
   isFeatured: boolean;
   isBackfill: boolean;
@@ -20,6 +28,7 @@ export interface Project {
   title: string;
   description: string;
   isStealthNda: boolean;
+  technologies?: string[];
   repoUrl?: string;
   liveUrl?: string;
   status: 'in_progress' | 'completed' | 'archived';
