@@ -26,26 +26,30 @@
 
 ## 2. Arsitektur Solusi & Alur Pengguna (User Flow)
 
+Platform dibangun dengan arsitektur **Fullstack Client-Server (REST API)**:
+- **Frontend Client (`client/`)**: React + TypeScript + Vite + Vanilla CSS Glassmorphism
+- **Backend API Server (`server/`)**: Node.js + Express + TypeScript + Prisma ORM
+- **Database**: PostgreSQL (Relasional, Hosted di Supabase / Neon / Railway)
+
 ```
 [Pengguna / Job Seeker]
        │
        ▼ (1-2 Menit / Hari)
-[Dashboard Quick-Log] ──► Input Terpandu (Micro-Templates): Teks (<300 char) + Proyek + Skill Tags
-       │                  (Kompresi Gambar Otomatis WebP <150KB, Stealth NDA, Local Timezone)
+[Dashboard Quick-Log (React Client)] ──► Input Terpandu: Teks (<300 char) + Proyek + Skill Tags
+       │                                  (Kompresi Gambar Otomatis WebP <150KB, Stealth NDA, Local Timezone)
        ▼
-[Database Supabase + RLS] ──► Validasi Kualitas, Sanitasi Anti-XSS, Rate Limiting, View Agregasi
+[Express REST API Server] ────────────► Middleware: Auth JWT, Input Sanitizer (Zod), Rate Limiting
+       │                                  Service: Masked Contact Relay, SSRF-Safe Link Checker
+       ▼
+[Prisma ORM & PostgreSQL] ────────────► Transaksi Data Relasional, Indexing Cepat, View Agregasi
        │
        ▼
-[Generator Engine] ───────► Agregasi 2-Tier Caching (ISR):
-       │                   ├── Tier 1: Executive Snapshot (Top Skills, Proyek Utama, Streak)
-       │                   └── Tier 2: Deep Logbook (Filterable Timeline & Proof Verification)
-       ▼
-[Halaman Publik: /p/:username] ◄── [Perekrut / Klien / Publik]
+[Halaman Publik: /p/:username] ◄─────── [Perekrut / Klien / Publik]
        │
-       ├── Executive 10-Second Pitch
+       ├── Executive 10-Second Pitch (Top Skills, Streak, Featured Highlights)
        ├── Project Cards (Termasuk Stealth Mode NDA)
-       ├── Verified Proof-of-Work Timeline (Link Health Checked)
-       ├── Masked Recruiter Contact Form (Anti-Spam Relay)
+       ├── Verified Proof-of-Work Timeline (Link Health Checked via Server Proxy)
+       ├── Masked Recruiter Contact Form (Anti-Spam Relay via Server)
        ├── Report Profile / Abuse Trigger
        └── Export Friendly (Print to PDF Resume)
 ```
@@ -101,9 +105,11 @@
 
 ---
 
-## 5. Perancangan Skema Basis Data Relasional (PostgreSQL / Supabase)
+## 5. Perancangan Skema Basis Data Relasional (PostgreSQL & Prisma ORM)
 
-### 5.1 Entitas & Struktur Tabel
+Backend menggunakan **Prisma ORM** yang memetakan model langsung ke basis data **PostgreSQL**. Skema dapat didefinisikan dalam format SQL standar maupun Prisma Schema (`server/prisma/schema.prisma`).
+
+### 5.1 Entitas & Struktur Tabel (SQL DDL Reference)
 
 ```sql
 -- 1. TABEL PROFIL PENGGUNA

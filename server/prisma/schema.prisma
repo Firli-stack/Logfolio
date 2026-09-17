@@ -1,0 +1,89 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Profile {
+  id                String    @id @default(uuid())
+  username          String    @unique
+  fullName          String    @map("full_name")
+  headline          String?
+  bio               String?
+  avatarUrl         String?   @map("avatar_url")
+  timezone          String    @default("Asia/Jakarta")
+  socialLinks       Json?     @default("{}") @map("social_links")
+  isPublic          Boolean   @default(true) @map("is_public")
+  streakFreezeCount Int       @default(2) @map("streak_freeze_count")
+  lastActiveDate    DateTime? @map("last_active_date") @db.Date
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  projects          Project[]
+  logs              Log[]
+
+  @@map("profiles")
+}
+
+model Project {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  title         String
+  description   String?
+  repoUrl       String?  @map("repo_url")
+  liveUrl       String?  @map("live_url")
+  status        String   @default("in_progress") // in_progress, completed, archived
+  isStealthNda  Boolean  @default(false) @map("is_stealth_nda")
+  isFeatured    Boolean  @default(false) @map("is_featured")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  profile       Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs          Log[]
+
+  @@map("projects")
+}
+
+model Log {
+  id              String     @id @default(uuid())
+  userId          String     @map("user_id")
+  projectId       String?    @map("project_id")
+  content         String     @db.VarChar(300)
+  proofUrl        String?    @map("proof_url")
+  proofImageUrl   String?    @map("proof_image_url")
+  isProofVerified Boolean    @default(false) @map("is_proof_verified")
+  isFeatured      Boolean    @default(false) @map("is_featured")
+  isBackfill      Boolean    @default(false) @map("is_backfill")
+  kudosCount      Int        @default(0) @map("kudos_count")
+  logDate         DateTime   @default(now()) @map("log_date") @db.Date
+  createdAt       DateTime   @default(now()) @map("created_at")
+
+  profile         Profile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project         Project?   @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  skills          LogSkill[]
+
+  @@map("logs")
+}
+
+model Skill {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  slug      String     @unique
+  logs      LogSkill[]
+
+  @@map("skills")
+}
+
+model LogSkill {
+  logId   String @map("log_id")
+  skillId String @map("skill_id")
+
+  log     Log    @relation(fields: [logId], references: [id], onDelete: Cascade)
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([logId, skillId])
+  @@map("log_skills")
+}
