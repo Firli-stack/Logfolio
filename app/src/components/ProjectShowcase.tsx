@@ -1,43 +1,32 @@
 import React from 'react';
-import type { Project, UserProfile } from '../mockData';
-import { Lock, Globe, ExternalLink, GitBranch, ArrowRight } from 'lucide-react';
+import type { Project } from '../mockData';
+import { ExternalLink, GitBranch, Lock } from 'lucide-react';
 
 interface ShowcaseProps {
   projects: Project[];
-  profile: UserProfile;
   onFilterByProject?: (projectId: string) => void;
 }
 
-export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, profile, onFilterByProject }) => {
+export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, onFilterByProject }) => {
   return (
     <div style={{ marginBottom: '32px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '14px' }}>
         <div>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-            Studi Kasus & Arsitektur Sistem
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+            Proyek & Arsitektur
           </h2>
-          <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
-            Karya nyata dan sistem produksi yang dirancang untuk skala besar dan stabilitas tinggi.
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+            Sistem dan aplikasi yang pernah dibangun
           </p>
-        </div>
-
-        {/* Tech summary chips */}
-        <div className="no-print" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-          {profile.topSkills.map(s => (
-            <span key={s.skill} className="skill-badge" style={{ fontSize: '0.75rem' }}>
-              #{s.skill}
-            </span>
-          ))}
         </div>
       </div>
 
-      {/* Grid of Bento Case Studies */}
+      {/* Grid Proyek Sederhana & Bersih */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '18px'
+        gap: '16px'
       }}>
-
         {projects.map((proj) => {
           const isStealth = proj.isStealthNda;
           return (
@@ -45,77 +34,75 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, profile, on
               key={proj.id}
               className="glass-panel"
               style={{
-                padding: '24px',
+                padding: '20px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                position: 'relative',
-                overflow: 'hidden',
-                background: isStealth ? 'linear-gradient(135deg, #FFFFFF, #F8FAFC)' : '#FFFFFF',
-                borderLeft: isStealth ? '3px solid #64748B' : '3px solid var(--accent-primary)'
+                background: '#FFFFFF'
               }}
             >
               <div>
                 {/* Header Tag */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    {isStealth ? (
-                      <span className="status-badge status-nda" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                        <Lock size={12} />
-                        Enterprise Stealth / NDA
-                      </span>
-                    ) : (
-                      <span className="status-badge status-verified" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                        <Globe size={12} />
-                        Public Workstream
-                      </span>
-                    )}
-                  </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 600,
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    background: isStealth ? '#F1F5F9' : 'rgba(79, 70, 229, 0.08)',
+                    color: isStealth ? '#475569' : 'var(--accent-primary)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    {isStealth && <Lock size={11} />}
+                    {isStealth ? 'NDA Kantor' : 'Proyek Publik'}
+                  </span>
 
-                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
-                    {proj.logCount} logged proofs
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    {proj.logCount} catatan
                   </span>
                 </div>
 
-                {/* Title & Description */}
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
+                <h3 style={{ fontSize: '1.02rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
                   {proj.title}
                 </h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.55', marginBottom: '14px' }}>
+
+                <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: '1.5', marginBottom: '14px' }}>
                   {proj.description}
                 </p>
 
-                {/* Tech Stack Pills */}
+                {/* Tech Chips Ringkas */}
                 {proj.technologies && proj.technologies.length > 0 && (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '14px' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '14px' }}>
                     {proj.technologies.map(t => (
                       <span key={t} className="skill-badge" style={{ fontSize: '0.72rem', padding: '2px 7px' }}>
-                        #{t}
+                        {t}
                       </span>
                     ))}
                   </div>
                 )}
               </div>
 
-              {/* Bottom links and action */}
+              {/* Action Links */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                paddingTop: '14px',
+                paddingTop: '12px',
                 borderTop: '1px solid var(--border-subtle)',
-                marginTop: '10px'
+                fontSize: '0.8rem'
               }}>
-                <div style={{ display: 'flex', gap: '12px', fontSize: '0.8rem', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                   {proj.liveUrl && (
                     <a
                       href={proj.liveUrl}
                       target="_blank"
                       rel="noreferrer"
-                      style={{ color: 'var(--accent-primary)', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}
+                      style={{ color: 'var(--accent-primary)', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}
                     >
-                      <span>Live Demo</span>
-                      <ExternalLink size={12} />
+                      <span>Demo</span>
+                      <ExternalLink size={11} />
                     </a>
                   )}
                   {proj.repoUrl && (
@@ -123,15 +110,15 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, profile, on
                       href={proj.repoUrl}
                       target="_blank"
                       rel="noreferrer"
-                      style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}
+                      style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: '3px' }}
                     >
-                      <GitBranch size={12} />
-                      <span>Repository</span>
+                      <GitBranch size={11} />
+                      <span>Repo</span>
                     </a>
                   )}
                   {isStealth && (
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      Detail arsitektur disanitasi dari data rahasia
+                      Klien dirahasiakan
                     </span>
                   )}
                 </div>
@@ -141,21 +128,16 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, profile, on
                     type="button"
                     onClick={() => onFilterByProject(proj.id)}
                     style={{
-                      background: 'var(--bg-surface-elevated)',
-                      border: '1px solid var(--border-subtle)',
-                      borderRadius: 'var(--radius-sm)',
-                      padding: '4px 10px',
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--accent-primary)',
                       fontSize: '0.75rem',
                       fontWeight: 600,
                       cursor: 'pointer',
-                      color: 'var(--text-primary)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
+                      padding: 0
                     }}
                   >
-                    <span>Bukti Kerja</span>
-                    <ArrowRight size={12} />
+                    Lihat Catatan →
                   </button>
                 )}
               </div>
@@ -166,4 +148,3 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, profile, on
     </div>
   );
 };
-

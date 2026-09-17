@@ -11,7 +11,7 @@ import { ContactModal } from './components/ContactModal';
 import { CreateProjectModal } from './components/CreateProjectModal';
 import { ExportModal } from './components/ExportModal';
 import { exportToPdfPrint } from './utils/exportData';
-import { Globe, PenSquare, Flame, Sparkles, FolderGit2, Terminal, Flag, ShieldCheck, Code2 } from 'lucide-react';
+import { Globe, PenSquare, Flame, Code2 } from 'lucide-react';
 
 const STORAGE_KEY_LOGS = 'logfolio_entries_v1';
 const STORAGE_KEY_PROJECTS = 'logfolio_projects_v1';
@@ -195,93 +195,73 @@ export function App() {
             onExportClick={() => setIsExportOpen(true)}
           />
 
-          {/* Navigation Filter Pills (Showcase Mode) */}
+          {/* Navigation Filter Pills */}
           <div className="no-print" style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '12px',
+            justifyContent: 'flex-start',
+            gap: '8px',
             marginBottom: '20px',
             borderBottom: '1px solid var(--border-subtle)',
             paddingBottom: '12px'
           }}>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                onClick={() => setPublicViewMode('all')}
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--border-subtle)',
-                  background: publicViewMode === 'all' ? 'var(--accent-primary)' : 'var(--bg-surface)',
-                  color: publicViewMode === 'all' ? '#fff' : 'var(--text-secondary)',
-                  fontWeight: 600,
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                <Sparkles size={13} />
-                Semua Sorotan
-              </button>
-              <button
-                type="button"
-                onClick={() => setPublicViewMode('case_studies')}
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--border-subtle)',
-                  background: publicViewMode === 'case_studies' ? 'var(--accent-primary)' : 'var(--bg-surface)',
-                  color: publicViewMode === 'case_studies' ? '#fff' : 'var(--text-secondary)',
-                  fontWeight: 600,
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                <FolderGit2 size={13} />
-                Arsitektur & Studi Kasus ({projects.length})
-              </button>
-              <button
-                type="button"
-                onClick={() => setPublicViewMode('logs')}
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--border-subtle)',
-                  background: publicViewMode === 'logs' ? 'var(--accent-primary)' : 'var(--bg-surface)',
-                  color: publicViewMode === 'logs' ? '#fff' : 'var(--text-secondary)',
-                  fontWeight: 600,
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                <Terminal size={13} />
-                Live Engineering Logs ({logs.length})
-              </button>
-            </div>
-
-            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              Proof-of-Work Level: <b>Production Ready</b>
-            </span>
+            <button
+              type="button"
+              onClick={() => setPublicViewMode('all')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-full)',
+                border: '1px solid var(--border-subtle)',
+                background: publicViewMode === 'all' ? 'var(--accent-primary)' : 'var(--bg-surface)',
+                color: publicViewMode === 'all' ? '#fff' : 'var(--text-secondary)',
+                fontWeight: 600,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              Semua
+            </button>
+            <button
+              type="button"
+              onClick={() => setPublicViewMode('case_studies')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-full)',
+                border: '1px solid var(--border-subtle)',
+                background: publicViewMode === 'case_studies' ? 'var(--accent-primary)' : 'var(--bg-surface)',
+                color: publicViewMode === 'case_studies' ? '#fff' : 'var(--text-secondary)',
+                fontWeight: 600,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              Proyek ({projects.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setPublicViewMode('logs')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-full)',
+                border: '1px solid var(--border-subtle)',
+                background: publicViewMode === 'logs' ? 'var(--accent-primary)' : 'var(--bg-surface)',
+                color: publicViewMode === 'logs' ? '#fff' : 'var(--text-secondary)',
+                fontWeight: 600,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              Catatan ({logs.length})
+            </button>
           </div>
 
           {/* Section 1: Workstreams & Case Studies (Karya Nyata Ditampilkan Terlebih Dahulu) */}
           {(publicViewMode === 'all' || publicViewMode === 'case_studies') && (
             <ProjectShowcase
               projects={projects}
-              profile={profile}
             />
           )}
 
@@ -315,16 +295,9 @@ export function App() {
         fontSize: '0.8rem',
         color: 'var(--text-muted)'
       }}>
-        <span>Ditenagai oleh <b>Logfolio</b> · Micro-Journaling & Proof-of-Work</span>
+        <span>Portofolio dibuat dengan <b>Logfolio</b></span>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <a href="#report" onClick={(e) => { e.preventDefault(); alert('Laporan terkirim untuk ditinjau oleh tim keamanan.'); }} style={{ color: 'var(--text-muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Flag size={13} />
-            Laporkan Profil / DMCA
-          </a>
-          <span style={{ color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <ShieldCheck size={14} />
-            Sistem Stabil
-          </span>
+          <span>Alex Pratama &copy; {new Date().getFullYear()}</span>
         </div>
       </footer>
 
