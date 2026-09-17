@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import type { UserProfile, Project, LogEntry } from '../mockData';
 import { exportToMarkdown, exportToJson, exportToPdfPrint } from '../utils/exportData';
-import type { CvTemplateStyle } from '../utils/exportData';
-import { X, Download, FileText, Code2, CheckCircle2, ShieldCheck, Printer } from 'lucide-react';
+import type { CvTemplateStyle, CvLanguage } from '../utils/exportData';
+import { X, Download, FileText, Code2, CheckCircle2, ShieldCheck, Printer, Languages } from 'lucide-react';
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -21,11 +21,12 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 }) => {
   const [downloadedFormat, setDownloadedFormat] = useState<'md' | 'json' | 'pdf' | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<CvTemplateStyle>('classic_ats');
+  const [selectedLang, setSelectedLang] = useState<CvLanguage>('id');
 
   if (!isOpen) return null;
 
-  const handleExportPdf = (tpl: CvTemplateStyle = selectedTemplate) => {
-    exportToPdfPrint(profile, projects, logs, tpl);
+  const handleExportPdf = (tpl: CvTemplateStyle = selectedTemplate, lang: CvLanguage = selectedLang) => {
+    exportToPdfPrint(profile, projects, logs, tpl, lang);
     setDownloadedFormat('pdf');
     setTimeout(() => setDownloadedFormat(null), 3500);
   };
@@ -184,7 +185,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
               <button
                 type="button"
-                onClick={() => handleExportPdf(selectedTemplate)}
+                onClick={() => handleExportPdf(selectedTemplate, selectedLang)}
                 style={{
                   padding: '8px 16px',
                   borderRadius: 'var(--radius-md)',
@@ -206,61 +207,107 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               </button>
             </div>
 
-            {/* Template Selector Pills */}
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', paddingTop: '6px', borderTop: '1px solid rgba(79, 70, 229, 0.12)' }}>
-              <label
-                style={{
-                  flex: 1,
-                  minWidth: '200px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '8px 10px',
-                  borderRadius: 'var(--radius-sm)',
-                  border: selectedTemplate === 'classic_ats' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
-                  background: selectedTemplate === 'classic_ats' ? '#FFFFFF' : 'transparent',
-                  cursor: 'pointer',
-                  fontSize: '0.78rem'
-                }}
-              >
-                <input
-                  type="radio"
-                  name="cvTemplate"
-                  checked={selectedTemplate === 'classic_ats'}
-                  onChange={() => setSelectedTemplate('classic_ats')}
-                />
-                <div>
-                  <b style={{ color: 'var(--text-primary)', display: 'block' }}>Harvard / ATS Standard</b>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Nama di tengah, font serif klasik, 1-kolom</span>
+            {/* Template Selector & Language Switcher */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '8px', borderTop: '1px solid rgba(79, 70, 229, 0.12)' }}>
+              
+              {/* Bahasa Resume */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                <span style={{ fontSize: '0.76rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <Languages size={13} />
+                  Bahasa CV:
+                </span>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedLang('id')}
+                    style={{
+                      padding: '3px 10px',
+                      borderRadius: '4px',
+                      fontSize: '0.74rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      border: selectedLang === 'id' ? '1px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                      background: selectedLang === 'id' ? 'var(--accent-primary)' : '#FFFFFF',
+                      color: selectedLang === 'id' ? '#FFFFFF' : 'var(--text-secondary)'
+                    }}
+                  >
+                    Bahasa Indonesia
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedLang('en')}
+                    style={{
+                      padding: '3px 10px',
+                      borderRadius: '4px',
+                      fontSize: '0.74rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      border: selectedLang === 'en' ? '1px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                      background: selectedLang === 'en' ? 'var(--accent-primary)' : '#FFFFFF',
+                      color: selectedLang === 'en' ? '#FFFFFF' : 'var(--text-secondary)'
+                    }}
+                  >
+                    English (International)
+                  </button>
                 </div>
-              </label>
+              </div>
 
-              <label
-                style={{
-                  flex: 1,
-                  minWidth: '200px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '8px 10px',
-                  borderRadius: 'var(--radius-sm)',
-                  border: selectedTemplate === 'modern_clean' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
-                  background: selectedTemplate === 'modern_clean' ? '#FFFFFF' : 'transparent',
-                  cursor: 'pointer',
-                  fontSize: '0.78rem'
-                }}
-              >
-                <input
-                  type="radio"
-                  name="cvTemplate"
-                  checked={selectedTemplate === 'modern_clean'}
-                  onChange={() => setSelectedTemplate('modern_clean')}
-                />
-                <div>
-                  <b style={{ color: 'var(--text-primary)', display: 'block' }}>Modern Sans-Serif</b>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Layout bersih kontemporer</span>
-                </div>
-              </label>
+              {/* Template Options */}
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <label
+                  style={{
+                    flex: 1,
+                    minWidth: '180px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 10px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: selectedTemplate === 'classic_ats' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                    background: selectedTemplate === 'classic_ats' ? '#FFFFFF' : 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '0.78rem'
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="cvTemplate"
+                    checked={selectedTemplate === 'classic_ats'}
+                    onChange={() => setSelectedTemplate('classic_ats')}
+                  />
+                  <div>
+                    <b style={{ color: 'var(--text-primary)', display: 'block' }}>Harvard / ATS Standard</b>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Klasik, 1-kolom, sentral</span>
+                  </div>
+                </label>
+
+                <label
+                  style={{
+                    flex: 1,
+                    minWidth: '180px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 10px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: selectedTemplate === 'modern_clean' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                    background: selectedTemplate === 'modern_clean' ? '#FFFFFF' : 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '0.78rem'
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="cvTemplate"
+                    checked={selectedTemplate === 'modern_clean'}
+                    onChange={() => setSelectedTemplate('modern_clean')}
+                  />
+                  <div>
+                    <b style={{ color: 'var(--text-primary)', display: 'block' }}>Modern Sans-Serif</b>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Layout kontemporer</span>
+                  </div>
+                </label>
+              </div>
             </div>
           </div>
 

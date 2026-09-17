@@ -10,7 +10,6 @@ import { ManageLogsTable } from './components/ManageLogsTable';
 import { ContactModal } from './components/ContactModal';
 import { CreateProjectModal } from './components/CreateProjectModal';
 import { ExportModal } from './components/ExportModal';
-import { exportToPdfPrint } from './utils/exportData';
 import { Globe, PenSquare, Flame, Code2 } from 'lucide-react';
 
 const STORAGE_KEY_LOGS = 'logfolio_entries_v1';
@@ -81,10 +80,6 @@ export function App() {
 
   const handleAddKudos = (logId: string) => {
     setLogs(logs.map(l => l.id === logId ? { ...l, kudosCount: l.kudosCount + 1 } : l));
-  };
-
-  const handlePrintResume = () => {
-    exportToPdfPrint(profile, projects, logs);
   };
 
   return (
@@ -191,7 +186,6 @@ export function App() {
           <BentoHero
             profile={profile}
             onContactClick={() => setIsContactOpen(true)}
-            onPrintClick={handlePrintResume}
             onExportClick={() => setIsExportOpen(true)}
           />
 

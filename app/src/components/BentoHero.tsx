@@ -1,18 +1,17 @@
 import React from 'react';
 import type { UserProfile } from '../mockData';
-import { MapPin, Mail, FileDown, Download, CheckCircle2 } from 'lucide-react';
+import { MapPin, Mail, Download, CheckCircle2 } from 'lucide-react';
 
 interface BentoHeroProps {
   profile: UserProfile;
   onContactClick: () => void;
-  onPrintClick: () => void;
+  onPrintClick?: () => void;
   onExportClick?: () => void;
 }
 
 export const BentoHero: React.FC<BentoHeroProps> = ({
   profile,
   onContactClick,
-  onPrintClick,
   onExportClick
 }) => {
   return (
@@ -87,34 +86,13 @@ export const BentoHero: React.FC<BentoHeroProps> = ({
             Hubungi
           </button>
 
-          <button
-            type="button"
-            onClick={onPrintClick}
-            style={{
-              background: 'var(--bg-surface-elevated)',
-              color: 'var(--text-primary)',
-              border: '1px solid var(--border-subtle)',
-              padding: '9px 14px',
-              borderRadius: 'var(--radius-md)',
-              fontWeight: 600,
-              fontSize: '0.82rem',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <FileDown size={14} />
-            PDF Resume
-          </button>
-
           {onExportClick && (
             <button
               type="button"
               onClick={onExportClick}
               style={{
                 background: 'var(--bg-surface-elevated)',
-                color: 'var(--text-secondary)',
+                color: 'var(--text-primary)',
                 border: '1px solid var(--border-subtle)',
                 padding: '9px 14px',
                 borderRadius: 'var(--radius-md)',

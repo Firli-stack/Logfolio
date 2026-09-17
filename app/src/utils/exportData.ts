@@ -117,6 +117,7 @@ export function exportToJson(
 }
 
 export type CvTemplateStyle = 'classic_ats' | 'modern_clean';
+export type CvLanguage = 'id' | 'en';
 
 /**
  * Ekspor Resume HTML Bersih & Elegan (Layout CV Standar A4 Manusiawi)
@@ -125,13 +126,33 @@ export function exportToPdfPrint(
   profile: UserProfile,
   projects: Project[],
   logs: LogEntry[],
-  template: CvTemplateStyle = 'classic_ats'
+  template: CvTemplateStyle = 'classic_ats',
+  lang: CvLanguage = 'id'
 ): void {
   const printWindow = window.open('', '_blank');
   if (!printWindow) {
     window.print();
     return;
   }
+
+  const isEn = lang === 'en';
+
+  // Kamus label multi-bahasa
+  const t = {
+    summary: isEn ? 'Professional Summary' : 'Ringkasan Profesional',
+    skills: isEn ? 'Technical Skills' : 'Keahlian Teknis',
+    techStack: isEn ? 'Technologies & Tools' : 'Teknologi & Infrastruktur',
+    projects: isEn ? 'Engineering Projects & Systems' : 'Proyek Rekayasa & Portofolio Sistem',
+    workHistory: isEn ? 'Engineering Workstream & Verified Proof-of-Work' : 'Riwayat Rekayasa & Bukti Pengerjaan Nyata',
+    techLabel: isEn ? 'Technologies' : 'Teknologi',
+    demo: isEn ? 'Demo' : 'Demo',
+    repo: isEn ? 'Repository' : 'Repositori',
+    proofLinks: isEn ? 'Verified Proofs' : 'Tautan Bukti',
+    proofLinkSingle: isEn ? 'Proof' : 'Bukti Kerja',
+    location: isEn ? 'Location' : 'Lokasi',
+    verifiedLogs: isEn ? 'Verified Logs' : 'Catatan Rekayasa',
+    entries: isEn ? 'Entries' : 'Entri'
+  };
 
   const contactItems: string[] = [];
   if (profile.location) contactItems.push(profile.location);
@@ -281,18 +302,18 @@ export function exportToPdfPrint(
   </div>
 
   ${profile.bio ? `
-  <div class="section-heading">Ringkasan Profesional</div>
+  <div class="section-heading">${t.summary}</div>
   <p class="summary-p">${profile.bio}</p>
   ` : ''}
 
   <!-- Keahlian Teknis -->
-  <div class="section-heading">Keahlian Teknis</div>
+  <div class="section-heading">${t.skills}</div>
   <div class="skills-line">
-    <b>Teknologi & Infrastruktur:</b> ${profile.topSkills.map(s => s.skill).join(', ')}
+    <b>${t.techStack}:</b> ${profile.topSkills.map(s => s.skill).join(', ')}
   </div>
 
   <!-- Pengalaman & Proyek Rekayasa -->
-  <div class="section-heading">Proyek Rekayasa & Portofolio Sistem</div>
+  <div class="section-heading">${t.projects}</div>
   ${projects.map(p => `
     <div class="item-block">
       <div class="item-row">
@@ -301,17 +322,17 @@ export function exportToPdfPrint(
       </div>
       <p class="item-desc">${p.description}</p>
       ${p.technologies && p.technologies.length > 0 ? `
-        <div class="item-subtitle">Teknologi: ${p.technologies.join(', ')}</div>
+        <div class="item-subtitle">${t.techLabel}: ${p.technologies.join(', ')}</div>
       ` : ''}
       <div class="links-line">
-        ${p.liveUrl ? `<a href="${p.liveUrl}" target="_blank">Demo: ${p.liveUrl}</a>` : ''}
-        ${p.repoUrl ? `<a href="${p.repoUrl}" target="_blank">Repositori: ${p.repoUrl}</a>` : ''}
+        ${p.liveUrl ? `<a href="${p.liveUrl}" target="_blank">${t.demo}: ${p.liveUrl}</a>` : ''}
+        ${p.repoUrl ? `<a href="${p.repoUrl}" target="_blank">${t.repo}: ${p.repoUrl}</a>` : ''}
       </div>
     </div>
   `).join('')}
 
   <!-- Catatan Pengerjaan Terverifikasi (Proof-of-Work) -->
-  <div class="section-heading">Riwayat Rekayasa & Bukti Pengerjaan Nyata</div>
+  <div class="section-heading">${t.workHistory}</div>
   ${logs.map(log => `
     <div class="item-block">
       <div class="item-row">
@@ -327,11 +348,11 @@ export function exportToPdfPrint(
       `}
       ${log.proofLinks && log.proofLinks.length > 0 ? `
         <div class="links-line">
-          <b>Tautan Bukti:</b> ${log.proofLinks.map(pl => `<a href="${pl.url}" target="_blank">${pl.label} (${pl.url})</a>`).join(' ')}
+          <b>${t.proofLinks}:</b> ${log.proofLinks.map(pl => `<a href="${pl.url}" target="_blank">${pl.label} (${pl.url})</a>`).join(' ')}
         </div>
       ` : log.proofUrl ? `
         <div class="links-line">
-          <b>Tautan Bukti:</b> <a href="${log.proofUrl}" target="_blank">${log.proofUrl}</a>
+          <b>${t.proofLinks}:</b> <a href="${log.proofUrl}" target="_blank">${log.proofUrl}</a>
         </div>
       ` : ''}
     </div>
@@ -500,17 +521,17 @@ export function exportToPdfPrint(
       </div>
     </div>
     <div class="meta-tags">
-      <span>Lokasi: ${profile.location}</span> · <span>Catatan Rekayasa: ${profile.totalLogs} Entri</span>
+      <span>${t.location}: ${profile.location}</span> · <span>${t.verifiedLogs}: ${profile.totalLogs} ${t.entries}</span>
     </div>
     ${profile.bio ? `<p class="summary-text">${profile.bio}</p>` : ''}
   </div>
 
-  <div class="section-title">Keahlian & Teknologi</div>
+  <div class="section-title">${t.skills}</div>
   <div style="margin-bottom: 10px;">
     ${profile.topSkills.map(s => `<span class="skill-chip">${s.skill}</span>`).join('')}
   </div>
 
-  <div class="section-title">Proyek Rekayasa</div>
+  <div class="section-title">${t.projects}</div>
   ${projects.map(p => `
     <div class="project-card">
       <div class="project-top">
@@ -519,12 +540,12 @@ export function exportToPdfPrint(
       </div>
       <p style="font-size: 8.5pt; color: #334155; margin-top: 2px;">${p.description}</p>
       ${p.technologies && p.technologies.length > 0 ? `
-        <div style="font-size: 8pt; color: #475569; margin-top: 2px;">Teknologi: ${p.technologies.join(', ')}</div>
+        <div style="font-size: 8pt; color: #475569; margin-top: 2px;">${t.techLabel}: ${p.technologies.join(', ')}</div>
       ` : ''}
     </div>
   `).join('')}
 
-  <div class="section-title">Riwayat Rekayasa & Catatan Pengerjaan</div>
+  <div class="section-title">${t.workHistory}</div>
   ${logs.map(log => `
     <div class="log-card">
       <div class="log-top">
@@ -540,11 +561,11 @@ export function exportToPdfPrint(
       `}
       ${log.proofLinks && log.proofLinks.length > 0 ? `
         <div class="log-proof-tags">
-          Tautan: ${log.proofLinks.map(pl => `<a href="${pl.url}" target="_blank">${pl.label}</a>`).join(' ')}
+          ${t.proofLinks}: ${log.proofLinks.map(pl => `<a href="${pl.url}" target="_blank">${pl.label}</a>`).join(' ')}
         </div>
       ` : log.proofUrl ? `
         <div class="log-proof-tags">
-          Tautan: <a href="${log.proofUrl}" target="_blank">Bukti Kerja</a>
+          ${t.proofLinks}: <a href="${log.proofUrl}" target="_blank">${t.proofLinkSingle}</a>
         </div>
       ` : ''}
     </div>
