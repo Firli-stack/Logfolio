@@ -5,10 +5,22 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // 1. Seed Profile
+  // 1. Seed Profile (Upsert)
   const profile = await prisma.profile.upsert({
     where: { username: 'alexdev' },
-    update: {},
+    update: {
+      fullName: 'Alex Pratama',
+      headline: 'Backend & Systems Engineer',
+      bio: 'Fokus pada arsitektur backend, database tuning, dan layanan berkinerja tinggi. Berpengalaman menangani sistem transaksi dan otomasi cloud.',
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+      timezone: 'Asia/Jakarta',
+      socialLinks: {
+        github: 'https://github.com',
+        linkedin: 'https://linkedin.com',
+        website: 'https://alexpratama.dev',
+      },
+      streakFreezeCount: 2,
+    },
     create: {
       username: 'alexdev',
       fullName: 'Alex Pratama',
@@ -24,6 +36,10 @@ async function main() {
       streakFreezeCount: 2,
     },
   });
+
+  // Bersihkan data lama milik alexdev agar seed bersifat idempoten (bisa dijalankan berkali-kali tanpa duplikasi)
+  await prisma.log.deleteMany({ where: { userId: profile.id } });
+  await prisma.project.deleteMany({ where: { userId: profile.id } });
 
   // 2. Seed Skills
   const skillNames = ['PostgreSQL', 'Go', 'TypeScript', 'Docker', 'React', 'Kubernetes', 'WebP', 'Kafka', 'Redis'];
@@ -77,7 +93,12 @@ async function main() {
     },
   });
 
-  // 4. Seed Logs
+  // 4. Seed Logs dengan variasi tanggal (Streak aktif)
+  const today = new Date();
+  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+
+  // Log Hari Ini
   const log1 = await prisma.log.create({
     data: {
       userId: profile.id,
@@ -87,7 +108,7 @@ async function main() {
       isProofVerified: true,
       isFeatured: true,
       kudosCount: 16,
-      logDate: new Date(),
+      logDate: today,
     },
   });
 
@@ -98,6 +119,7 @@ async function main() {
     ],
   });
 
+  // Log Kemarin
   const log2 = await prisma.log.create({
     data: {
       userId: profile.id,
@@ -107,7 +129,7 @@ async function main() {
       isProofVerified: true,
       isFeatured: true,
       kudosCount: 9,
-      logDate: new Date(),
+      logDate: yesterday,
     },
   });
 
@@ -115,6 +137,28 @@ async function main() {
     data: [
       { logId: log2.id, skillId: skillMap['TypeScript'] },
       { logId: log2.id, skillId: skillMap['WebP'] },
+    ],
+  });
+
+  // Log 2 Hari Lalu
+  const log3 = await prisma.log.create({
+    data: {
+      userId: profile.id,
+      projectId: p3.id,
+      content: 'Implementasi Horizontal Pod Autoscaler berbasis metrik Kafka consumer lag.',
+      proofUrl: 'https://github.com/alexdev/k8s-autoscale/pull/12',
+      isProofVerified: true,
+      isFeatured: false,
+      kudosCount: 7,
+      logDate: twoDaysAgo,
+    },
+  });
+
+  await prisma.logSkill.createMany({
+    data: [
+      { logId: log3.id, skillId: skillMap['Kubernetes'] },
+      { logId: log3.id, skillId: skillMap['Kafka'] },
+      { logId: log3.id, skillId: skillMap['Go'] },
     ],
   });
 
