@@ -9,6 +9,7 @@ import { LogTimeline } from './components/LogTimeline';
 import { ManageLogsTable } from './components/ManageLogsTable';
 import { ContactModal } from './components/ContactModal';
 import { CreateProjectModal } from './components/CreateProjectModal';
+import { ExportModal } from './components/ExportModal';
 import { Globe, PenSquare, Flame, Sparkles, FolderGit2, Terminal, Flag, ShieldCheck, Code2 } from 'lucide-react';
 
 const STORAGE_KEY_LOGS = 'logfolio_entries_v1';
@@ -43,6 +44,7 @@ export function App() {
   const [publicViewMode, setPublicViewMode] = useState<'all' | 'case_studies' | 'logs'>('all');
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
 
   // Sync to LocalStorage
   useEffect(() => {
@@ -189,6 +191,7 @@ export function App() {
             profile={profile}
             onContactClick={() => setIsContactOpen(true)}
             onPrintClick={handlePrintResume}
+            onExportClick={() => setIsExportOpen(true)}
           />
 
           {/* Navigation Filter Pills (Showcase Mode) */}
@@ -337,6 +340,15 @@ export function App() {
         isOpen={isCreateProjectOpen}
         onClose={() => setIsCreateProjectOpen(false)}
         onCreateProject={handleCreateProject}
+      />
+
+      {/* Export Data Modal (.md & .json) */}
+      <ExportModal
+        isOpen={isExportOpen}
+        onClose={() => setIsExportOpen(false)}
+        profile={profile}
+        projects={projects}
+        logs={logs}
       />
     </div>
   );

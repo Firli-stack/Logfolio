@@ -1,15 +1,16 @@
 import React from 'react';
 import type { UserProfile } from '../mockData';
-import { MapPin, Mail, FileDown, CheckCircle2, Award, Flame } from 'lucide-react';
+import { MapPin, Mail, FileDown, CheckCircle2, Award, Flame, Download } from 'lucide-react';
 
 
 interface BentoHeroProps {
   profile: UserProfile;
   onContactClick: () => void;
   onPrintClick: () => void;
+  onExportClick?: () => void;
 }
 
-export const BentoHero: React.FC<BentoHeroProps> = ({ profile, onContactClick, onPrintClick }) => {
+export const BentoHero: React.FC<BentoHeroProps> = ({ profile, onContactClick, onPrintClick, onExportClick }) => {
   return (
     <div className="bento-hero-grid" style={{
       display: 'grid',
@@ -156,6 +157,30 @@ export const BentoHero: React.FC<BentoHeroProps> = ({ profile, onContactClick, o
             <FileDown size={15} />
             Ekspor PDF Ringkasan
           </button>
+
+          {onExportClick && (
+            <button
+              type="button"
+              onClick={onExportClick}
+              style={{
+                background: 'var(--bg-surface-elevated)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-subtle)',
+                padding: '10px 18px',
+                borderRadius: 'var(--radius-md)',
+                fontWeight: 600,
+                fontSize: '0.85rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              <Download size={15} />
+              Ekspor Data (.md / .json)
+            </button>
+          )}
         </div>
 
       </div>
