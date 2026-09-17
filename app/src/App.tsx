@@ -17,8 +17,26 @@ import { Navbar } from './components/Navbar';
 const STORAGE_KEY_PROFILE = 'logfolio_profile_v1';
 const STORAGE_KEY_LOGS = 'logfolio_entries_v1';
 const STORAGE_KEY_PROJECTS = 'logfolio_projects_v1';
+const STORAGE_KEY_THEME = 'logfolio_theme_v1';
+const STORAGE_KEY_LANG = 'logfolio_lang_v1';
 
 export function App() {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem(STORAGE_KEY_THEME) as 'light' | 'dark') || 'light';
+  });
+
+  const [appLang, setAppLang] = useState<'id' | 'en'>(() => {
+    return (localStorage.getItem(STORAGE_KEY_LANG) as 'id' | 'en') || 'id';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(STORAGE_KEY_THEME, theme);
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_LANG, appLang);
+  }, [appLang]);
   const [profile, setProfile] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_PROFILE);
@@ -300,6 +318,10 @@ export function App() {
         onClose={() => setIsSettingsOpen(false)}
         profile={profile}
         onResetData={handleResetData}
+        theme={theme}
+        onThemeChange={(newTheme) => setTheme(newTheme)}
+        appLang={appLang}
+        onLangChange={(newLang) => setAppLang(newLang)}
       />
     </div>
   );

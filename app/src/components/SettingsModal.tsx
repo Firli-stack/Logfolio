@@ -1,27 +1,41 @@
 import React, { useState } from 'react';
 import type { UserProfile } from '../types';
-import { X, Settings, RotateCcw, Shield, Check } from 'lucide-react';
+import { X, Settings, RotateCcw, Shield, Check, Sun, Moon, Languages } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   profile: UserProfile;
   onResetData: () => void;
+  theme?: 'light' | 'dark';
+  onThemeChange?: (theme: 'light' | 'dark') => void;
+  appLang?: 'id' | 'en';
+  onLangChange?: (lang: 'id' | 'en') => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
   onClose,
   profile,
-  onResetData
+  onResetData,
+  theme = 'light',
+  onThemeChange,
+  appLang = 'id',
+  onLangChange
 }) => {
   const [resetConfirmed, setResetConfirmed] = useState(false);
   const [saveNotification, setSaveNotification] = useState(false);
 
   if (!isOpen) return null;
 
+  const isEn = appLang === 'en';
+
   const handleReset = () => {
-    if (window.confirm('Apakah Anda yakin ingin mengembalikan semua data ke status awal (default)? Perubahan lokal yang belum diekspor akan hilang.')) {
+    const confirmMsg = isEn
+      ? 'Are you sure you want to reset all data to the initial defaults? Any unsaved local edits will be lost.'
+      : 'Apakah Anda yakin ingin mengembalikan semua data ke status awal (default)? Perubahan lokal yang belum diekspor akan hilang.';
+
+    if (window.confirm(confirmMsg)) {
       onResetData();
       setResetConfirmed(true);
       setTimeout(() => {
@@ -36,7 +50,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setTimeout(() => {
       setSaveNotification(false);
       onClose();
-    }, 1200);
+    }, 1000);
   };
 
   return (
@@ -61,7 +75,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         style={{
           width: '100%',
           maxWidth: '480px',
-          background: '#FFFFFF',
+          background: 'var(--bg-surface)',
           borderRadius: 'var(--radius-lg)',
           padding: '20px 18px',
           boxShadow: 'var(--shadow-xl)',
@@ -90,10 +104,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
             <div>
               <h2 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                Pengaturan Akun & Data
+                {isEn ? 'Settings & Preferences' : 'Pengaturan & Preferensi'}
               </h2>
               <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                Kelola privasi data lokal dan preferensi sistem Logfolio.
+                {isEn ? 'Customize appearance, language, and system storage.' : 'Sesuaikan tampilan tema, bahasa, dan penyimpanan data.'}
               </p>
             </div>
           </div>
@@ -118,11 +132,130 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
         </div>
 
+        {/* Theme & Language Configuration */}
+        <div style={{
+          padding: '14px',
+          borderRadius: 'var(--radius-md)',
+          background: 'var(--bg-surface-elevated)',
+          border: '1px solid var(--border-subtle)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '14px'
+        }}>
+          {/* Theme Selector */}
+          <div>
+            <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Sun size={14} color="var(--accent-amber)" />
+              <span>{isEn ? 'Appearance Theme' : 'Tema Tampilan'}</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={() => onThemeChange && onThemeChange('light')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '8px 12px',
+                  borderRadius: 'var(--radius-sm)',
+                  border: theme === 'light' ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                  background: theme === 'light' ? 'var(--bg-surface)' : 'transparent',
+                  color: theme === 'light' ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                  fontWeight: theme === 'light' ? 700 : 500,
+                  fontSize: '0.76rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <Sun size={13} />
+                <span>{isEn ? 'Light Theme' : 'Terang (Light)'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onThemeChange && onThemeChange('dark')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '8px 12px',
+                  borderRadius: 'var(--radius-sm)',
+                  border: theme === 'dark' ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                  background: theme === 'dark' ? 'var(--bg-surface)' : 'transparent',
+                  color: theme === 'dark' ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                  fontWeight: theme === 'dark' ? 700 : 500,
+                  fontSize: '0.76rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <Moon size={13} />
+                <span>{isEn ? 'Dark Theme' : 'Gelap (Dark)'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Language Selector */}
+          <div>
+            <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Languages size={14} color="var(--accent-cyan)" />
+              <span>{isEn ? 'Application Language' : 'Bahasa Aplikasi'}</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={() => onLangChange && onLangChange('id')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '8px 12px',
+                  borderRadius: 'var(--radius-sm)',
+                  border: appLang === 'id' ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                  background: appLang === 'id' ? 'var(--bg-surface)' : 'transparent',
+                  color: appLang === 'id' ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                  fontWeight: appLang === 'id' ? 700 : 500,
+                  fontSize: '0.76rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <span>🇮🇩 Indonesia</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onLangChange && onLangChange('en')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '8px 12px',
+                  borderRadius: 'var(--radius-sm)',
+                  border: appLang === 'en' ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                  background: appLang === 'en' ? 'var(--bg-surface)' : 'transparent',
+                  color: appLang === 'en' ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                  fontWeight: appLang === 'en' ? 700 : 500,
+                  fontSize: '0.76rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <span>🇬🇧 English</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Status Info */}
         <div style={{
           padding: '12px',
           borderRadius: 'var(--radius-md)',
-          background: '#F8FAFC',
+          background: 'var(--bg-surface-elevated)',
           border: '1px solid var(--border-subtle)',
           display: 'flex',
           flexDirection: 'column',
@@ -130,10 +263,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           fontSize: '0.78rem'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: 'var(--text-secondary)' }}>Status Penyimpanan:</span>
+            <span style={{ color: 'var(--text-secondary)' }}>{isEn ? 'Storage Engine:' : 'Penyimpanan:'}</span>
             <span style={{ fontWeight: 600, color: 'var(--accent-emerald)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
               <Shield size={13} />
-              Tersimpan Lokal (Client-Side)
+              {isEn ? 'Local Client-Side (Offline Ready)' : 'Tersimpan Lokal (Client-Side)'}
             </span>
           </div>
 
@@ -143,8 +276,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: 'var(--text-secondary)' }}>Versi Logfolio:</span>
-            <span style={{ fontWeight: 600, color: 'var(--text-muted)' }}>v2.4.0 (Stable)</span>
+            <span style={{ color: 'var(--text-secondary)' }}>{isEn ? 'Logfolio Version:' : 'Versi Logfolio:'}</span>
+            <span style={{ fontWeight: 600, color: 'var(--accent-primary)' }}>v1.0.0 (Release)</span>
           </div>
         </div>
 
@@ -161,11 +294,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <RotateCcw size={14} color="var(--accent-danger)" />
             <h4 style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--accent-danger)' }}>
-              Reset Data Contoh (Factory Reset)
+              {isEn ? 'Factory Reset (Sample Data)' : 'Reset Data Contoh (Factory Reset)'}
             </h4>
           </div>
           <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.35 }}>
-            Kembalikan seluruh log, profil, dan wadah proyek ke sampel awal default. Cocok bila Anda ingin memulai portofolio dari nol.
+            {isEn
+              ? 'Reset all logs, projects, and profile back to defaults. Useful if you wish to start your portfolio completely afresh.'
+              : 'Kembalikan seluruh log, profil, dan wadah proyek ke sampel awal default. Cocok bila Anda ingin memulai portofolio dari nol.'}
           </p>
 
           <button
@@ -175,7 +310,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               alignSelf: 'flex-start',
               padding: '6px 12px',
               borderRadius: 'var(--radius-sm)',
-              background: '#FFFFFF',
+              background: 'var(--bg-surface)',
               border: '1px solid rgba(239, 68, 68, 0.3)',
               color: 'var(--accent-danger)',
               fontWeight: 600,
@@ -187,7 +322,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             }}
           >
             <RotateCcw size={12} />
-            <span>{resetConfirmed ? 'Data Berhasil Direset!' : 'Reset ke Data Default'}</span>
+            <span>
+              {resetConfirmed
+                ? (isEn ? 'Reset Successful!' : 'Data Berhasil Direset!')
+                : (isEn ? 'Reset to Default Data' : 'Reset ke Data Default')}
+            </span>
           </button>
         </div>
 
@@ -212,7 +351,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             }}
           >
             <Check size={14} />
-            <span>{saveNotification ? 'Tersimpan!' : 'Selesai'}</span>
+            <span>{saveNotification ? (isEn ? 'Saved!' : 'Tersimpan!') : (isEn ? 'Done' : 'Selesai')}</span>
           </button>
         </div>
       </div>
