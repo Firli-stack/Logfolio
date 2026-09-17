@@ -1,0 +1,377 @@
+/* ==========================================================================
+   LOGFOLIO ELEGANT MODERN THEME (Clean, Crisp, Light / Modern Tech Canvas)
+   ========================================================================== */
+
+:root {
+  /* Clean Light Theme Tokens */
+  --bg-base: #F8FAFC;              /* Latar kanvas abu lembut yang sejuk di mata */
+  --bg-surface: #FFFFFF;           /* Kartu putih bersih */
+  --bg-surface-elevated: #F1F5F9;  /* Kontainer sekunder / hover */
+  --bg-surface-glass: rgba(255, 255, 255, 0.90);
+  
+  --border-subtle: #E2E8F0;
+  --border-medium: #CBD5E1;
+  --border-focus: #4F46E5;
+
+  --text-primary: #1E293B;         /* Slate 800: Lebih lembut dan teduh dibanding 900 murni */
+  --text-secondary: #475569;       /* Slate 600 */
+  --text-muted: #64748B;           /* Slate 500 */
+
+  --accent-primary: #4F46E5;       /* Indigo Royal Modern */
+  --accent-primary-hover: #4338CA;
+  --accent-cyan: #0284C7;          /* Sky Blue */
+  --accent-emerald: #059669;       /* Emerald Green */
+  --accent-amber: #D97706;         /* Amber */
+  --accent-danger: #DC2626;
+
+  /* Typography: Inter + Natural System Fallbacks (Empuk, Natural, Nyaman dibaca berjam-jam) */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+
+  /* Layout */
+  --max-width: 1140px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  
+  --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-glow: 0 4px 14px 0 rgba(79, 70, 229, 0.25);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  background-image: 
+    radial-gradient(ellipse 60% 40% at 50% -10%, rgba(79, 70, 229, 0.08), transparent),
+    radial-gradient(circle at 95% 85%, rgba(2, 132, 199, 0.05), transparent);
+  background-attachment: fixed;
+}
+
+
+button, input, textarea, select {
+  font-family: inherit;
+  color: inherit;
+}
+
+/* Elegant Card Utility */
+.glass-panel {
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel:hover {
+  border-color: var(--border-medium);
+  box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.08);
+}
+
+/* Badges & Tags */
+.skill-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  color: #1E293B;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+}
+
+.status-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.status-verified {
+  background: #E0F2FE;
+  border: 1px solid #BAE6FD;
+  color: #0369A1;
+}
+
+.status-featured {
+  background: #FEF3C7;
+  border: 1px solid #FDE68A;
+  color: #B45309;
+}
+
+.status-stealth {
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  color: #475569;
+}
+
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES (Mobile min. 360px up to Desktop 4K)
+   ========================================================================== */
+
+/* Main Container */
+.app-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+/* Header Responsive */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  margin-bottom: 28px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-subtle);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hero-profile-card {
+  padding: 32px;
+  margin-bottom: 28px;
+}
+
+.hero-flex-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.hero-info-wrapper {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.hero-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  border: 2px solid var(--border-medium);
+  flex-shrink: 0;
+}
+
+.hero-action-btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Bento Grid Base (Default 1-Column untuk Mobile First) */
+.bento-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  max-width: 100%;
+}
+
+.bento-main-card,
+.bento-side-card {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tablets & Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 12px 10px 60px !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: var(--radius-lg);
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .header-nav-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .header-nav-toggle button {
+    flex: 1;
+    text-align: center;
+    padding: 8px 6px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .hero-profile-card {
+    padding: 16px 12px;
+  }
+
+  .hero-flex-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .hero-info-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .hero-avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .hero-action-btns {
+    width: 100%;
+  }
+
+  .hero-action-btns button,
+  .bento-action-btns button {
+    flex: 1 1 100%;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .bento-action-btns {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .composer-card {
+    padding: 18px 14px !important;
+  }
+
+  .action-bar-composer {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 12px;
+  }
+
+  .action-bar-composer button {
+    width: 100%;
+  }
+}
+
+/* Desktop Grid (min-width: 769px) */
+@media (min-width: 769px) {
+  .bento-hero-grid {
+    grid-template-columns: repeat(12, 1fr) !important;
+  }
+
+  .bento-main-card {
+    grid-column: span 8 !important;
+  }
+
+  .bento-side-card {
+    grid-column: span 4 !important;
+  }
+
+  .app-header {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+  }
+
+  .app-header-top {
+    width: auto !important;
+  }
+
+  .header-nav-toggle {
+    width: auto !important;
+  }
+}
+
+
+
+/* Small Screens (max-width: 480px) */
+@media (max-width: 480px) {
+  .app-container {
+    padding: 10px 8px 40px !important;
+  }
+
+  .glass-panel {
+    padding: 16px 14px !important;
+  }
+
+  h1 {
+    font-size: 1.35rem !important;
+  }
+
+  .bento-hero-grid {
+    gap: 12px !important;
+  }
+
+  .timeline-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 8px;
+  }
+
+  .timeline-footer {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 10px;
+  }
+}
+
+
+/* Print Optimization (@media print) */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    background-image: none !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+
+  .glass-panel {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    page-break-inside: avoid;
+  }
+
+  .skill-badge {
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #0F172A !important;
+  }
+}
