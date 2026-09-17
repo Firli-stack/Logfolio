@@ -19,7 +19,7 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
   const [skillInput, setSkillInput] = useState('');
   const [skills, setSkills] = useState<string[]>(['PostgreSQL', 'Performance']);
   const [proofLinks, setProofLinks] = useState<{ id: string; url: string; label: string }[]>([
-    { id: '1', url: '', label: 'PR' }
+    { id: '1', url: '', label: '' }
   ]);
   const [images, setImages] = useState<string[]>([]);
   const [isStealth, setIsStealth] = useState(false);
@@ -43,7 +43,7 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
 
   const handleAddProofLink = () => {
     if (proofLinks.length < 4) {
-      setProofLinks([...proofLinks, { id: Date.now().toString(), url: '', label: 'Demo' }]);
+      setProofLinks([...proofLinks, { id: Date.now().toString(), url: '', label: '' }]);
     }
   };
 
@@ -51,7 +51,7 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
     if (proofLinks.length > 1) {
       setProofLinks(proofLinks.filter(l => l.id !== id));
     } else {
-      setProofLinks([{ id: '1', url: '', label: 'PR' }]);
+      setProofLinks([{ id: '1', url: '', label: '' }]);
     }
   };
 
@@ -89,12 +89,23 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
     const selectedProj = projects.find(p => p.id === projectId);
     const validLinks: ProofLink[] = proofLinks
       .filter(l => l.url.trim().length > 0)
-      .map(l => ({
-        id: l.id,
-        url: l.url.trim(),
-        label: l.label.trim() || 'Link Bukti',
-        type: l.url.includes('github') ? 'github' : 'live'
-      }));
+      .map(l => {
+        let label = l.label.trim();
+        if (!label) {
+          const urlLower = l.url.toLowerCase();
+          if (urlLower.includes('github.com')) label = 'GitHub';
+          else if (urlLower.includes('gitlab.com')) label = 'GitLab';
+          else if (urlLower.includes('figma.com')) label = 'Figma';
+          else if (urlLower.includes('drive.google.com') || urlLower.includes('docs.google.com')) label = 'Dokumen';
+          else label = 'Demo / Web';
+        }
+        return {
+          id: l.id,
+          url: l.url.trim(),
+          label,
+          type: l.url.includes('github') ? 'github' : 'live'
+        };
+      });
 
     const primaryProof = validLinks[0]?.url;
 
@@ -132,7 +143,7 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
     setTitle('');
     setContent('');
     setImages([]);
-    setProofLinks([{ id: '1', url: '', label: 'PR' }]);
+    setProofLinks([{ id: '1', url: '', label: '' }]);
   };
 
   return (
@@ -339,9 +350,9 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
                   type="text"
                   value={link.label}
                   onChange={(e) => handleUpdateProofLink(link.id, 'label', e.target.value)}
-                  placeholder="Label (PR, Demo, Doc)"
+                  placeholder="Platform / Nama"
                   style={{
-                    width: '95px',
+                    width: '115px',
                     padding: '5px 8px',
                     borderRadius: '4px',
                     background: 'var(--bg-surface-elevated)',
