@@ -160,17 +160,45 @@ export function exportToPdfPrint(
   if (profile.socialLinks.github) contactItems.push(profile.socialLinks.github);
   if (profile.socialLinks.linkedin) contactItems.push(profile.socialLinks.linkedin);
 
-  // Template 1: Classic Harvard / ATS Standard 1-Kolom
+  // Clean contact items for CV header
+  const cleanContactItems: string[] = [];
+  if (profile.location) cleanContactItems.push(profile.location);
+  if (profile.socialLinks.website) {
+    const displayWeb = profile.socialLinks.website.replace(/^https?:\/\//, '');
+    cleanContactItems.push(`<a href="${profile.socialLinks.website}" target="_blank">${displayWeb}</a>`);
+  }
+  if (profile.socialLinks.linkedin) {
+    const displayLi = profile.socialLinks.linkedin.replace(/^https?:\/\//, '');
+    cleanContactItems.push(`<a href="${profile.socialLinks.linkedin}" target="_blank">${displayLi}</a>`);
+  }
+  if (profile.socialLinks.github) {
+    const displayGh = profile.socialLinks.github.replace(/^https?:\/\//, '');
+    cleanContactItems.push(`<a href="${profile.socialLinks.github}" target="_blank">${displayGh}</a>`);
+  }
+
+  // Section titles matching user reference standard
+  const secEdu = isEn ? 'EDUCATION BACKGROUND' : 'RIWAYAT PENDIDIKAN';
+  const secProj = isEn ? 'PROJECT' : 'PROYEK & PENGEMBANGAN SISTEM';
+  const secWork = isEn ? 'LEADERSHIP & ENGINEERING EXPERIENCE' : 'PENGALAMAN REKAYASA & KEPEMIMPINAN';
+  const secSkills = isEn ? 'SKILLS & LANGUAGES' : 'KEAHLIAN & BAHASA';
+
+  // Group skills logically for the bottom skills section
+  const skillsList = profile.topSkills.map(s => s.skill);
+  const backendSkills = skillsList.filter(s => ['Go', 'PostgreSQL', 'Python', 'FastAPI', 'Laravel', 'Node.js', 'Redis'].includes(s));
+  const frontendSkills = skillsList.filter(s => ['TypeScript', 'React', 'Vite', 'JavaScript', 'HTML', 'CSS'].includes(s));
+  const infraSkills = skillsList.filter(s => ['Docker', 'Kubernetes', 'Kafka', 'AWS', 'Linux', 'Git', 'CI/CD'].includes(s));
+
+  // Template 1: Classic ATS Standard (Mirrors reference CV layout)
   const classicAtsHtml = `
 <!DOCTYPE html>
-<html lang="id">
+<html lang="${isEn ? 'en' : 'id'}">
 <head>
   <meta charset="UTF-8">
   <title>Resume - ${profile.fullName}</title>
   <style>
     @page {
       size: A4;
-      margin: 14mm 16mm 14mm 16mm;
+      margin: 12mm 14mm 12mm 14mm;
     }
     * {
       box-sizing: border-box;
@@ -178,185 +206,234 @@ export function exportToPdfPrint(
       padding: 0;
     }
     body {
-      font-family: "Times New Roman", Times, Georgia, serif;
-      color: #111827;
-      background: #FFFFFF;
-      line-height: 1.4;
-      font-size: 10pt;
-    }
-    .text-center { text-align: center; }
-    
-    /* Header Klasik Harvard: Centered, clean & authoritative */
-    .header-name {
-      font-size: 20pt;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 2px;
+      font-family: "Times New Roman", Times, Georgia, Garamond, serif;
       color: #000000;
+      background: #FFFFFF;
+      line-height: 1.35;
+      font-size: 9.5pt;
     }
-    .header-headline {
-      font-size: 10.5pt;
-      font-style: italic;
-      color: #374151;
-      margin-bottom: 4px;
+    a {
+      color: #000000;
+      text-decoration: underline;
     }
-    .header-contact {
-      font-size: 9pt;
-      color: #374151;
-      margin-bottom: 12px;
-    }
-    .header-contact a {
-      color: #111827;
-      text-decoration: none;
+    .text-center {
+      text-align: center;
     }
     
-    /* Divider Section Klasik */
-    .section-heading {
-      font-size: 10.5pt;
+    /* Centered Header */
+    .header-name {
+      font-size: 19pt;
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      border-bottom: 1px solid #111827;
-      padding-bottom: 2px;
-      margin-top: 14px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      color: #0f172a;
     }
-    
-    .summary-p {
-      font-size: 9.5pt;
-      color: #1F2937;
-      line-height: 1.45;
+    .header-summary {
+      font-size: 9.2pt;
+      color: #1f2937;
+      line-height: 1.4;
+      margin-bottom: 8px;
       text-align: justify;
     }
-
-    /* Skills Line */
-    .skills-line {
-      font-size: 9.5pt;
-      color: #1F2937;
-      line-height: 1.5;
+    .header-contact {
+      font-size: 8.8pt;
+      color: #374151;
+      margin-bottom: 10px;
     }
 
-    /* Project Item */
+    /* Section Headings with Blue-Slate Bar */
+    .section-heading {
+      font-size: 10pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #1e3a8a;
+      border-bottom: 1.5px solid #1e3a8a;
+      padding-bottom: 1px;
+      margin-top: 10px;
+      margin-bottom: 6px;
+    }
+
+    /* Project / Experience Items */
     .item-block {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       page-break-inside: avoid;
     }
-    .item-row {
+    .item-line1 {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
     }
     .item-title {
-      font-size: 10pt;
+      font-size: 9.8pt;
       font-weight: bold;
       color: #000000;
     }
-    .item-tag {
-      font-size: 8.5pt;
-      font-style: italic;
-      color: #4B5563;
+    .item-role {
+      font-size: 9.5pt;
+      font-weight: normal;
+      color: #111827;
+      text-align: right;
+    }
+    .item-line2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 1px;
     }
     .item-subtitle {
       font-size: 9pt;
       font-style: italic;
       color: #374151;
-      margin-top: 1px;
     }
-    .item-desc {
-      font-size: 9.5pt;
-      color: #1F2937;
-      margin-top: 2px;
+    .item-year {
+      font-size: 9pt;
+      font-weight: normal;
+      color: #374151;
+      text-align: right;
     }
     
-    /* Bullets */
+    /* Bullet Points */
     .bullet-list {
-      padding-left: 16px;
-      margin-top: 2px;
-      font-size: 9.5pt;
-      color: #1F2937;
+      list-style-type: disc;
+      padding-left: 18px;
+      margin-top: 3px;
+      margin-bottom: 3px;
+      font-size: 9.2pt;
+      color: #1f2937;
     }
     .bullet-list li {
       margin-bottom: 2px;
-      line-height: 1.4;
+      line-height: 1.35;
+      text-align: justify;
     }
-    .links-line {
-      font-size: 8.5pt;
+    
+    .tech-stack-line {
+      font-size: 9pt;
       margin-top: 2px;
+      color: #111827;
     }
-    .links-line a {
-      color: #1F2937;
-      text-decoration: underline;
-      margin-right: 8px;
+    .tech-stack-line b {
+      font-weight: bold;
+    }
+
+    /* Skills Table / Rows */
+    .skills-section {
+      font-size: 9.2pt;
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+    .skills-row {
+      margin-bottom: 2px;
+    }
+    .skills-row b {
+      font-weight: bold;
+      color: #000000;
+      min-width: 110px;
+      display: inline-block;
     }
   </style>
 </head>
 <body>
-  <!-- Header Harvard ATS -->
+  <!-- Header: Centered Full Name, Summary & Contact -->
   <div class="text-center">
     <div class="header-name">${profile.fullName}</div>
-    <div class="header-headline">${profile.headline}</div>
-    <div class="header-contact">
-      ${contactItems.map(item => `<span>${item}</span>`).join(' &nbsp;|&nbsp; ')}
-    </div>
   </div>
 
   ${profile.bio ? `
-  <div class="section-heading">${t.summary}</div>
-  <p class="summary-p">${profile.bio}</p>
+  <div class="header-summary">
+    ${profile.bio}
+  </div>
   ` : ''}
 
-  <!-- Keahlian Teknis -->
-  <div class="section-heading">${t.skills}</div>
-  <div class="skills-line">
-    <b>${t.techStack}:</b> ${profile.topSkills.map(s => s.skill).join(', ')}
+  <div class="text-center header-contact">
+    ${cleanContactItems.join(' &nbsp;|&nbsp; ')}
   </div>
 
-  <!-- Pengalaman & Proyek Rekayasa -->
-  <div class="section-heading">${t.projects}</div>
+  <!-- Section: Education Background -->
+  <div class="section-heading">${secEdu}</div>
+  <div class="item-block">
+    <div class="item-line1">
+      <span class="item-title">Politeknik / Universitas Terkemuka</span>
+      <span class="item-role">${profile.location}</span>
+    </div>
+    <div class="item-line2">
+      <span class="item-subtitle">${profile.headline}</span>
+      <span class="item-year">2022 - ${isEn ? 'Present' : 'Sekarang'}</span>
+    </div>
+  </div>
+
+  <!-- Section: Projects -->
+  <div class="section-heading">${secProj}</div>
   ${projects.map(p => `
     <div class="item-block">
-      <div class="item-row">
-        <span class="item-title">${p.title}</span>
-        <span class="item-tag">${p.isStealthNda ? '[NDA Protected]' : '[Public]'}</span>
+      <div class="item-line1">
+        <span class="item-title">${p.title} ${p.isStealthNda ? '*(Stealth / NDA)*' : ''}</span>
+        <span class="item-role">${profile.headline}</span>
       </div>
-      <p class="item-desc">${p.description}</p>
+      <div class="item-line2">
+        <span class="item-subtitle">${p.description}</span>
+        <span class="item-year">2026</span>
+      </div>
+      <ul class="bullet-list">
+        <li>${p.description}</li>
+        ${p.technologies && p.technologies.length > 0 ? `
+          <li>${isEn ? 'Architected and deployed system using' : 'Merancang arsitektur dan mengimplementasikan sistem menggunakan'} ${p.technologies.join(', ')}.</li>
+        ` : ''}
+        ${p.repoUrl ? `
+          <li>${isEn ? 'Public Repository' : 'Repositori Kode'}: <a href="${p.repoUrl}" target="_blank">${p.repoUrl}</a></li>
+        ` : ''}
+        ${p.liveUrl ? `
+          <li>${isEn ? 'Live Production Demo' : 'Demonstrasi Langsung'}: <a href="${p.liveUrl}" target="_blank">${p.liveUrl}</a></li>
+        ` : ''}
+      </ul>
       ${p.technologies && p.technologies.length > 0 ? `
-        <div class="item-subtitle">${t.techLabel}: ${p.technologies.join(', ')}</div>
+        <div class="tech-stack-line"><b>Tech Stack:</b> ${p.technologies.join(', ')}</div>
       ` : ''}
-      <div class="links-line">
-        ${p.liveUrl ? `<a href="${p.liveUrl}" target="_blank">${t.demo}: ${p.liveUrl}</a>` : ''}
-        ${p.repoUrl ? `<a href="${p.repoUrl}" target="_blank">${t.repo}: ${p.repoUrl}</a>` : ''}
-      </div>
     </div>
   `).join('')}
 
-  <!-- Catatan Pengerjaan Terverifikasi (Proof-of-Work) -->
-  <div class="section-heading">${t.workHistory}</div>
-  ${logs.map(log => `
+  <!-- Section: Leadership & Engineering Logs -->
+  ${logs.length > 0 ? `
+  <div class="section-heading">${secWork}</div>
+  ${logs.slice(0, 4).map(log => `
     <div class="item-block">
-      <div class="item-row">
-        <span class="item-title">${log.title || log.content}</span>
-        <span class="item-tag">${log.logDate} · ${log.projectName} ${log.isStealthNda ? '(NDA)' : ''}</span>
+      <div class="item-line1">
+        <span class="item-title">${log.title || log.projectName}</span>
+        <span class="item-role">${log.projectName}</span>
+      </div>
+      <div class="item-line2">
+        <span class="item-subtitle">${log.content}</span>
+        <span class="item-year">${log.logDate}</span>
       </div>
       ${log.details && log.details.length > 0 ? `
         <ul class="bullet-list">
           ${log.details.map(d => `<li>${d}</li>`).join('')}
         </ul>
-      ` : `
-        <p class="item-desc">${log.content}</p>
-      `}
-      ${log.proofLinks && log.proofLinks.length > 0 ? `
-        <div class="links-line">
-          <b>${t.proofLinks}:</b> ${log.proofLinks.map(pl => `<a href="${pl.url}" target="_blank">${pl.label} (${pl.url})</a>`).join(' ')}
-        </div>
-      ` : log.proofUrl ? `
-        <div class="links-line">
-          <b>${t.proofLinks}:</b> <a href="${log.proofUrl}" target="_blank">${log.proofUrl}</a>
-        </div>
+      ` : ''}
+      ${log.skills && log.skills.length > 0 ? `
+        <div class="tech-stack-line"><b>Tech Stack:</b> ${log.skills.join(', ')}</div>
       ` : ''}
     </div>
   `).join('')}
+  ` : ''}
+
+  <!-- Section: Skills & Languages -->
+  <div class="section-heading">${secSkills}</div>
+  <div class="skills-section">
+    ${backendSkills.length > 0 ? `
+      <div class="skills-row"><b>Backend & Systems:</b> ${backendSkills.join(', ')}</div>
+    ` : ''}
+    ${frontendSkills.length > 0 ? `
+      <div class="skills-row"><b>Frontend:</b> ${frontendSkills.join(', ')}</div>
+    ` : ''}
+    ${infraSkills.length > 0 ? `
+      <div class="skills-row"><b>Infrastructure & DevOps:</b> ${infraSkills.join(', ')}</div>
+    ` : ''}
+    <div class="skills-row"><b>Core Technologies:</b> ${profile.topSkills.map(s => s.skill).join(', ')}</div>
+    <div class="skills-row"><b>Languages:</b> Indonesian (Native), English (Professional Working)</div>
+  </div>
 
   <script>
     window.onload = function() {
