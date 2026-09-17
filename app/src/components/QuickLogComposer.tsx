@@ -147,12 +147,12 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
   };
 
   return (
-    <div className="glass-panel" style={{ padding: '16px 20px', marginBottom: '22px', background: '#FFFFFF' }}>
+    <div className="glass-panel composer-panel" style={{ padding: '16px 20px', marginBottom: '22px', background: '#FFFFFF' }}>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
         
         {/* Row 1: Proyek & Opsi NDA */}
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1', minWidth: '220px' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 200px', minWidth: 0 }}>
             <select
               value={projectId}
               onChange={(e) => {
@@ -162,12 +162,13 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
               }}
               style={{
                 flex: '1',
-                padding: '6px 10px',
+                minWidth: 0,
+                padding: '6px 8px',
                 borderRadius: 'var(--radius-sm)',
                 background: 'var(--bg-surface-elevated)',
                 border: '1px solid var(--border-subtle)',
                 color: 'var(--text-primary)',
-                fontSize: '0.82rem',
+                fontSize: '0.8rem',
                 outline: 'none',
                 fontWeight: 500
               }}
@@ -188,15 +189,16 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
                   background: 'none',
                   border: '1px solid var(--border-subtle)',
                   borderRadius: 'var(--radius-sm)',
-                  padding: '6px 10px',
+                  padding: '6px 8px',
                   color: 'var(--text-secondary)',
-                  fontSize: '0.78rem',
+                  fontSize: '0.75rem',
                   fontWeight: 500,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '4px',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
                 }}
               >
                 <FolderPlus size={13} />
@@ -206,16 +208,17 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
           </div>
 
           {/* Opsi NDA dengan tombol info yang bisa diklik */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', position: 'relative' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
             <label style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '5px',
-              fontSize: '0.78rem',
+              fontSize: '0.76rem',
               color: isStealth ? 'var(--accent-amber)' : 'var(--text-secondary)',
               cursor: 'pointer',
               userSelect: 'none',
-              fontWeight: 600
+              fontWeight: 600,
+              whiteSpace: 'nowrap'
             }}>
               <input
                 type="checkbox"

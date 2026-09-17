@@ -324,7 +324,11 @@ button, input, textarea, select {
   }
 
   .glass-panel {
-    padding: 16px 14px !important;
+    padding: 14px 10px !important;
+  }
+
+  .composer-panel {
+    padding: 12px 10px !important;
   }
 
   h1 {
