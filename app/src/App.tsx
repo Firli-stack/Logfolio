@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { INITIAL_PROFILE, INITIAL_PROJECTS, INITIAL_LOGS } from './mockData';
 import type { LogEntry } from './mockData';
 import { BentoHero } from './components/BentoHero';
@@ -6,26 +6,52 @@ import { EngineeringRhythm } from './components/EngineeringRhythm';
 import { ProjectShowcase } from './components/ProjectShowcase';
 import { QuickLogComposer } from './components/QuickLogComposer';
 import { LogTimeline } from './components/LogTimeline';
+import { ManageLogsTable } from './components/ManageLogsTable';
 import { ContactModal } from './components/ContactModal';
 import { Globe, PenSquare, Flame, Sparkles, FolderGit2, Terminal, Flag, ShieldCheck, Code2 } from 'lucide-react';
 
+const STORAGE_KEY_LOGS = 'logfolio_entries_v1';
 
 export function App() {
   const [profile] = useState(INITIAL_PROFILE);
   const [projects] = useState(INITIAL_PROJECTS);
-  const [logs, setLogs] = useState<LogEntry[]>(INITIAL_LOGS);
+  const [logs, setLogs] = useState<LogEntry[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_LOGS);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // Fallback
+    }
+    return INITIAL_LOGS;
+  });
   const [activeTab, setActiveTab] = useState<'public_preview' | 'dashboard_composer'>('public_preview');
   const [publicViewMode, setPublicViewMode] = useState<'all' | 'case_studies' | 'logs'>('all');
   const [isContactOpen, setIsContactOpen] = useState(false);
+
+  // Sync to LocalStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(logs));
+    } catch {
+      // Ignore quota errors
+    }
+  }, [logs]);
 
   const handleAddLog = (newLog: LogEntry) => {
     setLogs([newLog, ...logs]);
     setActiveTab('public_preview');
   };
 
+  const handleDeleteLog = (logId: string) => {
+    setLogs(logs.filter(l => l.id !== logId));
+  };
+
   const handleAddKudos = (logId: string) => {
     setLogs(logs.map(l => l.id === logId ? { ...l, kudosCount: l.kudosCount + 1 } : l));
   };
+
 
   const handlePrintResume = () => {
     window.print();
@@ -119,6 +145,7 @@ export function App() {
       {activeTab === 'dashboard_composer' && (
         <main>
           <QuickLogComposer projects={projects} onAddLog={handleAddLog} />
+          <ManageLogsTable logs={logs} onDeleteLog={handleDeleteLog} />
           <EngineeringRhythm logs={logs} />
         </main>
       )}
