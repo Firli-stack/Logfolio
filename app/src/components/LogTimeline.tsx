@@ -125,12 +125,59 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
             </div>
 
 
-            {/* Content text: scannable bullet formatting */}
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', lineHeight: '1.6', marginBottom: '14px' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                <span style={{ color: 'var(--accent-primary)', fontSize: '1rem', lineHeight: '1.4' }}>▸</span>
-                <span>{log.content}</span>
-              </div>
+            {/* Content: Clear Headline + Scannable Technical Details */}
+            <div style={{ marginBottom: '16px' }}>
+              {/* Main Action Headline (Poin Utama) */}
+              <h4 style={{
+                fontSize: '1rem',
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                lineHeight: '1.45',
+                marginBottom: '8px',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '8px'
+              }}>
+                <span style={{ color: 'var(--accent-primary)', fontSize: '1.1rem', lineHeight: '1.3' }}>▸</span>
+                <span>{log.title || log.content}</span>
+              </h4>
+
+              {/* Technical Context & Solution Details (Deskripsi & Bukti Konteks) */}
+              {log.details && log.details.length > 0 ? (
+                <div style={{
+                  paddingLeft: '22px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '6px',
+                  marginTop: '4px'
+                }}>
+                  {log.details.map((detail, idx) => (
+                    <div key={idx} style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '8px',
+                      fontSize: '0.85rem',
+                      color: 'var(--text-secondary)',
+                      lineHeight: '1.5'
+                    }}>
+                      <span style={{ color: 'var(--border-medium)', fontSize: '0.9rem', lineHeight: '1.4' }}>•</span>
+                      <span>{detail}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                log.title && (
+                  <p style={{
+                    paddingLeft: '22px',
+                    fontSize: '0.85rem',
+                    color: 'var(--text-secondary)',
+                    lineHeight: '1.5',
+                    marginTop: '4px'
+                  }}>
+                    {log.content}
+                  </p>
+                )
+              )}
             </div>
 
             {/* Footer tags and Proof link */}

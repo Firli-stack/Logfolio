@@ -10,7 +10,9 @@ export interface LogEntry {
   projectId: string;
   projectName: string;
   isStealthNda: boolean;
-  content: string;
+  title?: string; // Inti / Headline pencapaian utama
+  content: string; // Teks lengkap / backward compatibility
+  details?: string[]; // Poin-poin spesifik konteks teknis
   skills: string[];
   proofUrl?: string; // backwards compatibility
   proofType?: 'github' | 'live' | 'figma' | 'document';
@@ -117,7 +119,12 @@ export const INITIAL_LOGS: LogEntry[] = [
     projectId: "p1",
     projectName: "Core Payment Engine",
     isStealthNda: true,
+    title: "Optimasi Query Agregasi PostgreSQL (Latensi Turun 450ms → 35ms)",
     content: "Selesai mengoptimasi query agregasi PostgreSQL, latency turun dari 450ms jadi 35ms. Telah diuji dengan 10k concurrent virtual users tanpa connection spike.",
+    details: [
+      "Mengganti subquery sekuensial dengan composite partial index pada tabel ledger transaksi multi-tenant.",
+      "Stress test 10.000 concurrent users via k6 tanpa lonjakan saturasi CPU (koneksi stabil pada pool PgBouncer)."
+    ],
     skills: ["PostgreSQL", "Database", "Performance"],
     proofUrl: "https://github.com/enterprise/gateway/pull/182",
     proofType: "github",
@@ -133,7 +140,12 @@ export const INITIAL_LOGS: LogEntry[] = [
     projectId: "p2",
     projectName: "Logfolio Portfolio Platform",
     isStealthNda: false,
+    title: "Client-side WebP Compression Pipeline & Proteksi SSRF",
     content: "Merancang mitigasi SSRF dan client-side WebP compression (<150KB) untuk menghemat bandwidth cloud storage hingga 85%.",
+    details: [
+      "Kompresi lossy browser Canvas otomatis mereduksi ukuran screenshot dari ~2.4MB menjadi <120KB sebelum upload.",
+      "Sanitasi URL bukti eksternal dengan DNS resolution guardrail untuk memitigasi celah intranet IP scanning."
+    ],
     skills: ["TypeScript", "Security", "WebP"],
     proofUrl: "https://github.com/alexdev/logfolio/commit/8a2f4c",
     proofType: "github",
@@ -149,7 +161,12 @@ export const INITIAL_LOGS: LogEntry[] = [
     projectId: "p3",
     projectName: "Kubernetes Autoscaling Mesh",
     isStealthNda: false,
+    title: "Pemangkasan Ukuran Image Docker Microservice: 1.2GB → 24MB",
     content: "Membuat multi-stage container build untuk Go microservice. Ukuran image berhasil dipangkas dari 1.2GB menjadi hanya 24MB.",
+    details: [
+      "Memanfaatkan multi-stage build berdasar scratch base image dengan binary Go yang di-strip flag `-ldflags=\"-s -w\"`.",
+      "Memangkas waktu cold-start pod deploy di cluster EKS dari 48 detik menjadi di bawah 4 detik."
+    ],
     skills: ["Docker", "Go", "DevOps"],
     proofUrl: "https://hub.docker.com/r/alexdev/mesh",
     proofType: "live",
@@ -165,7 +182,12 @@ export const INITIAL_LOGS: LogEntry[] = [
     projectId: "p1",
     projectName: "Core Payment Engine",
     isStealthNda: true,
+    title: "Redis Cluster Idempotency Shield untuk Pencegahan Double-Charge",
     content: "Implementasi idempotency key cache menggunakan Redis cluster untuk mencegah double-charge transaksi perbankan.",
+    details: [
+      "Atomic `SET NX EX` berdurasi 120 detik per request ID perbankan untuk menjamin single execution guarantee.",
+      "Pencegahan total terhadap duplikasi payment ketika koneksi klien mengalami network timeout / retry mendadak."
+    ],
     skills: ["Redis", "Distributed Systems"],
     proofUrl: "https://github.com/enterprise/gateway/commit/3ef91",
     proofType: "github",

@@ -62,7 +62,13 @@ export const ManageLogsTable: React.FC<ManageLogsProps> = ({ logs, onDeleteLog }
                 )}
               </div>
 
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: '1.45', wordBreak: 'break-word' }}>
+              {log.title && (
+                <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
+                  {log.title}
+                </h4>
+              )}
+
+              <p style={{ fontSize: '0.82rem', color: log.title ? 'var(--text-secondary)' : 'var(--text-primary)', lineHeight: '1.45', wordBreak: 'break-word' }}>
                 {log.content}
               </p>
 

@@ -13,6 +13,7 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
   onAddLog,
   onOpenCreateProject
 }) => {
+  const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [projectId, setProjectId] = useState(projects[0]?.id || '');
   const [skillInput, setSkillInput] = useState('');
@@ -25,7 +26,8 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
   const [isCompressingImage, setIsCompressingImage] = useState(false);
   const [imageBadge, setImageBadge] = useState<string | null>(null);
 
-  const MAX_CHAR = 300;
+  const MAX_TITLE = 120;
+  const MAX_CHAR = 400;
 
   const handleAddSkill = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ',') {
@@ -75,7 +77,8 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    const effectiveTitle = title.trim() || content.trim();
+    if (!effectiveTitle) return;
 
     const selectedProj = projects.find(p => p.id === projectId);
     const validLinks: ProofLink[] = proofLinks
@@ -89,12 +92,20 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
 
     const primaryProof = validLinks[0]?.url;
 
+    // Split content lines into structured details if multi-line
+    const parsedDetails = content
+      .split('\n')
+      .map(line => line.replace(/^[•\-\*▸\d\.]+\s*/, '').trim())
+      .filter(line => line.length > 0);
+
     const newLog: LogEntry = {
       id: `log-${Date.now()}`,
       projectId,
       projectName: selectedProj?.title || 'Personal Work',
       isStealthNda: isStealth || (selectedProj?.isStealthNda || false),
-      content: content.trim(),
+      title: title.trim() || undefined,
+      content: content.trim() || title.trim(),
+      details: parsedDetails.length > 0 ? parsedDetails : undefined,
       skills: skills.length > 0 ? skills : ['General'],
       proofUrl: primaryProof,
       proofType: primaryProof?.includes('github') ? 'github' : 'live',
@@ -108,6 +119,7 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
     };
 
     onAddLog(newLog);
+    setTitle('');
     setContent('');
     setProofLinks([{ id: '1', url: '', label: 'GitHub PR / Commit' }]);
     setImageBadge(null);
@@ -223,29 +235,61 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
           </div>
         </div>
 
-        {/* Quick Micro-Journal Input */}
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          maxLength={MAX_CHAR}
-          placeholder="Tulis ringkas apa yang Anda kerjakan & pecahkan hari ini (contoh: Mengurangi memory footprint container 30% dengan scratch base image)..."
-          rows={3}
-          style={{
-            width: '100%',
-            padding: '12px',
-            borderRadius: 'var(--radius-md)',
-            background: '#FFFFFF',
-            border: '1px solid var(--border-medium)',
-            color: 'var(--text-primary)',
-            fontSize: '0.9rem',
-            resize: 'none',
-            outline: 'none',
-            lineHeight: '1.5',
-            marginBottom: '12px'
-          }}
-          onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
-          onBlur={(e) => e.target.style.borderColor = 'var(--border-subtle)'}
-        />
+        {/* Structured Inputs: Action Headline (Poin Utama) + Context Details (Deskripsi/Poin Solusi) */}
+        <div style={{ marginBottom: '14px' }}>
+          <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+            <span>Poin Utama / Headline Pencapaian *</span>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{title.length}/{MAX_TITLE}</span>
+          </label>
+          <input
+            type="text"
+            required
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            maxLength={MAX_TITLE}
+            placeholder="Inti hasil kerja dalam 1 kalimat tegas (contoh: Optimasi Query PostgreSQL: Latensi Turun 450ms → 35ms)"
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              borderRadius: 'var(--radius-md)',
+              background: '#FFFFFF',
+              border: '1px solid var(--border-medium)',
+              color: 'var(--text-primary)',
+              fontSize: '0.88rem',
+              fontWeight: 600,
+              outline: 'none',
+              marginBottom: '10px'
+            }}
+            onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
+            onBlur={(e) => e.target.style.borderColor = 'var(--border-medium)'}
+          />
+
+          <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+            <span>Konteks Teknis & Rincian Solusi (Bisa dibuat per baris/poin)</span>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{content.length}/{MAX_CHAR}</span>
+          </label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            maxLength={MAX_CHAR}
+            placeholder="Tuliskan 1-3 poin penjelasan teknis atau metrik pendukung:&#10;• Mengganti subquery sekuensial dengan composite index pada tabel ledger.&#10;• Diuji dengan 10.000 virtual users tanpa lonjakan koneksi pool."
+            rows={3}
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              borderRadius: 'var(--radius-md)',
+              background: '#FFFFFF',
+              border: '1px solid var(--border-medium)',
+              color: 'var(--text-primary)',
+              fontSize: '0.85rem',
+              resize: 'none',
+              outline: 'none',
+              lineHeight: '1.5'
+            }}
+            onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
+            onBlur={(e) => e.target.style.borderColor = 'var(--border-medium)'}
+          />
+        </div>
 
         {/* Skill Tags */}
         <div style={{ marginBottom: '14px' }}>
