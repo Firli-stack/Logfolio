@@ -187,61 +187,34 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               background: 'rgba(79, 70, 229, 0.03)'
             }}
           >
-            {/* Top row: Title + Button (Mobile friendly) */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 auto', minWidth: '180px' }}>
-                <div style={{
-                  width: '30px',
-                  height: '30px',
-                  borderRadius: 'var(--radius-sm)',
-                  background: 'rgba(79, 70, 229, 0.12)',
-                  color: 'var(--accent-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}>
-                  <Printer size={15} />
-                </div>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                      PDF Resume Resmi (Layout A4)
-                    </h4>
-                    <span style={{ fontSize: '0.62rem', fontWeight: 700, background: 'var(--accent-primary)', color: '#fff', padding: '1px 5px', borderRadius: '4px' }}>
-                      Rekomendasi
-                    </span>
-                  </div>
-                  <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.25, marginTop: '1px' }}>
-                    Format dokumen cetak A4 siap simpan PDF.
-                  </p>
-                </div>
+            {/* Top row: Icon + Title + Rekomendasi badge */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: 'var(--radius-sm)',
+                background: 'rgba(79, 70, 229, 0.12)',
+                color: 'var(--accent-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <Printer size={15} />
               </div>
-
-              <button
-                type="button"
-                onClick={() => handleExportPdf(selectedTemplate, selectedLang)}
-                style={{
-                  padding: '7px 14px',
-                  borderRadius: 'var(--radius-md)',
-                  background: 'var(--accent-primary)',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  fontWeight: 600,
-                  fontSize: '0.76rem',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '5px',
-                  boxShadow: 'var(--shadow-glow)',
-                  flex: '1 1 auto',
-                  minWidth: '100px'
-                }}
-              >
-                <Printer size={13} />
-                <span>Cetak / Simpan PDF</span>
-              </button>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    PDF Resume Resmi (Layout A4)
+                  </h4>
+                  <span style={{ fontSize: '0.62rem', fontWeight: 700, background: 'var(--accent-primary)', color: '#fff', padding: '1px 5px', borderRadius: '4px' }}>
+                    Rekomendasi
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.25, marginTop: '1px' }}>
+                  Format dokumen cetak A4 siap simpan PDF sesuai standar industri.
+                </p>
+              </div>
             </div>
 
             {/* Template Selector & Language Switcher */}
@@ -258,14 +231,15 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     type="button"
                     onClick={() => setSelectedLang('id')}
                     style={{
-                      padding: '3px 8px',
+                      padding: '4px 10px',
                       borderRadius: '4px',
-                      fontSize: '0.7rem',
+                      fontSize: '0.72rem',
                       fontWeight: 600,
                       cursor: 'pointer',
-                      border: selectedLang === 'id' ? '1px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                      border: selectedLang === 'id' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
                       background: selectedLang === 'id' ? 'var(--accent-primary)' : '#FFFFFF',
-                      color: selectedLang === 'id' ? '#FFFFFF' : 'var(--text-secondary)'
+                      color: selectedLang === 'id' ? '#FFFFFF' : 'var(--text-secondary)',
+                      transition: 'all 0.15s ease'
                     }}
                   >
                     Bahasa Indonesia
@@ -274,14 +248,15 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     type="button"
                     onClick={() => setSelectedLang('en')}
                     style={{
-                      padding: '3px 8px',
+                      padding: '4px 10px',
                       borderRadius: '4px',
-                      fontSize: '0.7rem',
+                      fontSize: '0.72rem',
                       fontWeight: 600,
                       cursor: 'pointer',
-                      border: selectedLang === 'en' ? '1px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                      border: selectedLang === 'en' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
                       background: selectedLang === 'en' ? 'var(--accent-primary)' : '#FFFFFF',
-                      color: selectedLang === 'en' ? '#FFFFFF' : 'var(--text-secondary)'
+                      color: selectedLang === 'en' ? '#FFFFFF' : 'var(--text-secondary)',
+                      transition: 'all 0.15s ease'
                     }}
                   >
                     English (International)
@@ -312,7 +287,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   />
                   <div>
                     <b style={{ color: 'var(--text-primary)', display: 'block' }}>Harvard / ATS Standard</b>
-                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Format 1-kolom resmi</span>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Format 1-kolom resmi referensi</span>
                   </div>
                 </label>
 
@@ -341,6 +316,32 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   </div>
                 </label>
               </div>
+
+              {/* Tombol Cetak diposisikan DI BAWAH pilihan konfigurasi */}
+              <button
+                type="button"
+                onClick={() => handleExportPdf(selectedTemplate, selectedLang)}
+                style={{
+                  marginTop: '4px',
+                  padding: '9px 16px',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'var(--accent-primary)',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  fontWeight: 600,
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  boxShadow: 'var(--shadow-glow)',
+                  width: '100%'
+                }}
+              >
+                <Printer size={15} />
+                <span>Cetak / Simpan PDF ({selectedLang === 'en' ? 'English' : 'Bahasa Indonesia'})</span>
+              </button>
             </div>
           </div>
 
