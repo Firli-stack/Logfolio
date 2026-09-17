@@ -110,21 +110,21 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Dropdown Popup Panel */}
             {isDropdownOpen && (
               <div
-                className="glass-panel"
                 style={{
                   position: 'absolute',
                   top: 'calc(100% + 8px)',
                   right: 0,
-                  width: '210px',
-                  background: '#FFFFFF',
-                  borderRadius: 'var(--radius-md)',
+                  width: '220px',
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '12px',
                   padding: '6px',
-                  boxShadow: 'var(--shadow-xl)',
-                  zIndex: 1000,
+                  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.08)',
+                  zIndex: 9999,
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '2px',
-                  border: '1px solid var(--border-subtle)'
+                  border: '1px solid var(--border-medium)',
+                  overflow: 'hidden'
                 }}
               >
                 {/* User Info Header */}
