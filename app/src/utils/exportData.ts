@@ -9,46 +9,47 @@ export function exportToMarkdown(
   projects: Project[],
   logs: LogEntry[]
 ): void {
-  let md = `# 👋 Halo, Saya ${profile.fullName}\n\n`;
-  md += `### ${profile.headline}\n\n`;
-  md += `📍 **Lokasi**: ${profile.location} &nbsp;|&nbsp; 🕒 **Zona Waktu**: ${profile.timezone} &nbsp;|&nbsp; 🔥 **Konsistensi**: ${profile.streakDays} Hari Aktif\n\n`;
+  let md = `# ${profile.fullName}\n\n`;
+  md += `**${profile.headline}**\n\n`;
+  md += `Lokasi: ${profile.location} | Zona Waktu: ${profile.timezone} | Keaktifan: ${profile.streakDays} Hari\n\n`;
 
   // Tentang Saya
-  md += `## 💡 Tentang Saya\n\n`;
-  md += `${profile.bio}\n\n`;
+  if (profile.bio) {
+    md += `## Tentang\n\n${profile.bio}\n\n`;
+  }
 
-  // Socials
+  // Socials / Kontak
   const contactLinks: string[] = [];
-  if (profile.socialLinks.website) contactLinks.push(`[Website Pribadi](${profile.socialLinks.website})`);
-  if (profile.socialLinks.github) contactLinks.push(`[GitHub Profile](${profile.socialLinks.github})`);
+  if (profile.socialLinks.website) contactLinks.push(`[Website](${profile.socialLinks.website})`);
+  if (profile.socialLinks.github) contactLinks.push(`[GitHub](${profile.socialLinks.github})`);
   if (profile.socialLinks.linkedin) contactLinks.push(`[LinkedIn](${profile.socialLinks.linkedin})`);
   if (contactLinks.length > 0) {
-    md += `**Mari Terhubung**: ${contactLinks.join(' &nbsp;•&nbsp; ')}\n\n`;
+    md += `Kontak: ${contactLinks.join(' · ')}\n\n`;
   }
 
   // Top Skills
   if (profile.topSkills && profile.topSkills.length > 0) {
-    md += `### 🛠️ Keahlian Utama (Berdasarkan Jam Terbang Bukti Nyata)\n\n`;
-    md += profile.topSkills.map(s => `\`${s.skill} (${s.count} logs)\``).join(' &nbsp; ') + `\n\n`;
+    md += `## Keahlian Utama\n\n`;
+    md += profile.topSkills.map(s => `\`${s.skill}\``).join(' · ') + `\n\n`;
   }
 
   md += `---\n\n`;
 
   // Projects
-  md += `## 🏗️ Proyek Utama & Arsitektur Sistem\n\n`;
+  md += `## Proyek\n\n`;
   projects.forEach((p, idx) => {
-    const ndaLabel = p.isStealthNda ? '🛡️ *Enterprise NDA / Stealth*' : '🌐 *Open Public Workstream*';
-    md += `### ${idx + 1}. ${p.title} (${ndaLabel})\n\n`;
+    const ndaLabel = p.isStealthNda ? '*(NDA Protected)*' : '';
+    md += `### ${idx + 1}. ${p.title} ${ndaLabel}\n\n`;
     md += `${p.description}\n\n`;
 
     if (p.technologies && p.technologies.length > 0) {
-      md += `* **Tech Stack**: ${p.technologies.map(t => `\`${t}\``).join(', ')}\n`;
+      md += `* Teknologi: ${p.technologies.join(', ')}\n`;
     }
     if (p.liveUrl) {
-      md += `* **Demo Live**: [${p.liveUrl}](${p.liveUrl})\n`;
+      md += `* Demo: [${p.liveUrl}](${p.liveUrl})\n`;
     }
     if (p.repoUrl) {
-      md += `* **Repositori**: [${p.repoUrl}](${p.repoUrl})\n`;
+      md += `* Repositori: [${p.repoUrl}](${p.repoUrl})\n`;
     }
     md += `\n`;
   });
@@ -56,15 +57,14 @@ export function exportToMarkdown(
   md += `---\n\n`;
 
   // Engineering Logs
-  md += `## 📜 Catatan Rekayasa & Riwayat Pengerjaan (Engineering Logbook)\n\n`;
+  md += `## Catatan Pengerjaan\n\n`;
   logs.forEach(log => {
     const title = log.title || log.content;
-    const ndaText = log.isStealthNda ? '*(Kerahasiaan Klien / NDA)*' : '';
-    md += `### ▸ ${title}\n\n`;
-    md += `📅 **Tanggal**: \`${log.logDate}\` &nbsp;•&nbsp; 📁 **Wadah Proyek**: ${log.projectName} ${ndaText}\n\n`;
+    const ndaText = log.isStealthNda ? '*(NDA Protected)*' : '';
+    md += `### ${title}\n\n`;
+    md += `Tanggal: ${log.logDate} · Proyek: ${log.projectName} ${ndaText}\n\n`;
 
     if (log.details && log.details.length > 0) {
-      md += `**Rincian Solusi & Langkah Teknis**:\n`;
       log.details.forEach(d => {
         md += `* ${d}\n`;
       });
@@ -74,25 +74,23 @@ export function exportToMarkdown(
     }
 
     if (log.skills && log.skills.length > 0) {
-      md += `**Keahlian Terpakai**: ${log.skills.map(s => `\`#${s}\``).join(' ')}\n\n`;
+      md += `Teknologi: ${log.skills.map(s => `\`${s}\``).join(', ')}\n\n`;
     }
 
     if (log.proofLinks && log.proofLinks.length > 0) {
-      md += `**Tautan Bukti Terverifikasi**:\n`;
+      md += `Tautan Bukti:\n`;
       log.proofLinks.forEach(pl => {
         md += `* [${pl.label}](${pl.url})\n`;
       });
       md += `\n`;
     } else if (log.proofUrl) {
-      md += `* [Bukti Kerja Nyata](${log.proofUrl})\n\n`;
+      md += `* [Tautan Bukti](${log.proofUrl})\n\n`;
     }
 
     md += `---\n\n`;
   });
 
-  md += `\n*Portofolio ini disusun secara otomatis melalui [Logfolio.dev](https://logfolio.dev) — Platform Portofolio Berbasis Bukti Kerja Nyata.*`;
-
-  downloadFile(md, `${profile.username}-logfolio.md`, 'text/markdown;charset=utf-8;');
+  downloadFile(md, `${profile.username}-portfolio.md`, 'text/markdown;charset=utf-8;');
 }
 
 /**
