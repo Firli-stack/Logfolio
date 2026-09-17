@@ -11,7 +11,8 @@ import { ContactModal } from './components/ContactModal';
 import { CreateProjectModal } from './components/CreateProjectModal';
 import { ExportModal } from './components/ExportModal';
 import { EditProfileModal } from './components/EditProfileModal';
-import { Globe, PenSquare, Flame, Code2 } from 'lucide-react';
+import { SettingsModal } from './components/SettingsModal';
+import { Navbar } from './components/Navbar';
 
 const STORAGE_KEY_PROFILE = 'logfolio_profile_v1';
 const STORAGE_KEY_LOGS = 'logfolio_entries_v1';
@@ -59,6 +60,22 @@ export function App() {
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const handleResetData = () => {
+    localStorage.removeItem(STORAGE_KEY_PROFILE);
+    localStorage.removeItem(STORAGE_KEY_LOGS);
+    localStorage.removeItem(STORAGE_KEY_PROJECTS);
+    setProfile(INITIAL_PROFILE);
+    setProjects(INITIAL_PROJECTS);
+    setLogs(INITIAL_LOGS);
+  };
+
+  const handleLogout = () => {
+    if (window.confirm('Keluar dari sesi profil aktif dan beralih ke Mode Tamu?')) {
+      setActiveTab('public_preview');
+    }
+  };
 
   // Sync to LocalStorage
   useEffect(() => {
@@ -106,87 +123,15 @@ export function App() {
 
   return (
     <div className="app-container">
-      {/* Top App Bar / Switcher */}
-      <header className="app-header no-print">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: '8px' }} className="app-header-top">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, var(--accent-primary), #0284C7)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-              boxShadow: '0 2px 8px rgba(79, 70, 229, 0.25)'
-            }}>
-              <Code2 size={18} strokeWidth={2.5} />
-            </div>
-            <span style={{ fontWeight: 800, fontSize: '1.05rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
-              Logfolio<span style={{ color: 'var(--accent-primary)' }}>.dev</span>
-            </span>
-          </div>
-
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Flame size={15} color="var(--accent-emerald)" />
-            <span style={{ fontSize: '0.8rem', color: 'var(--accent-emerald)', fontWeight: 600 }}>
-              {profile.streakDays}d Streak
-            </span>
-          </div>
-        </div>
-
-        {/* View Toggle */}
-        <div className="header-nav-toggle" style={{ display: 'flex', background: '#F1F5F9', padding: '4px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)', width: '100%' }}>
-          <button
-            onClick={() => setActiveTab('public_preview')}
-            style={{
-              flex: 1,
-              padding: '6px 12px',
-              borderRadius: 'var(--radius-full)',
-              border: 'none',
-              fontSize: '0.78rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              background: activeTab === 'public_preview' ? 'var(--accent-primary)' : 'transparent',
-              color: activeTab === 'public_preview' ? '#fff' : 'var(--text-secondary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            <Globe size={14} />
-            <span>Portofolio</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('dashboard_composer')}
-            style={{
-              flex: 1,
-              padding: '6px 12px',
-              borderRadius: 'var(--radius-full)',
-              border: 'none',
-              fontSize: '0.78rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              background: activeTab === 'dashboard_composer' ? 'var(--accent-primary)' : 'transparent',
-              color: activeTab === 'dashboard_composer' ? '#fff' : 'var(--text-secondary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            <PenSquare size={14} />
-            <span>Quick-Log</span>
-          </button>
-        </div>
-      </header>
-
-
+      {/* Top App Bar / Switcher & Profile Dropdown */}
+      <Navbar
+        profile={profile}
+        activeTab={activeTab}
+        onTabChange={(tab) => setActiveTab(tab)}
+        onOpenEditProfile={() => setIsEditProfileOpen(true)}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        onLogout={handleLogout}
+      />
 
       {/* VIEW 1: DASHBOARD QUICK-LOG COMPOSER */}
       {activeTab === 'dashboard_composer' && (
@@ -209,7 +154,6 @@ export function App() {
             profile={profile}
             onContactClick={() => setIsContactOpen(true)}
             onExportClick={() => setIsExportOpen(true)}
-            onEditProfileClick={() => setIsEditProfileOpen(true)}
           />
 
           {/* Navigation Filter Pills */}
@@ -348,6 +292,14 @@ export function App() {
         onClose={() => setIsEditProfileOpen(false)}
         profile={profile}
         onSaveProfile={(updatedProfile) => setProfile(updatedProfile)}
+      />
+
+      {/* Settings & Data Reset Modal */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        profile={profile}
+        onResetData={handleResetData}
       />
     </div>
   );

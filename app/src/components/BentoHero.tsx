@@ -1,20 +1,18 @@
 import React from 'react';
 import type { UserProfile } from '../mockData';
-import { MapPin, Mail, Download, CheckCircle2, UserCheck } from 'lucide-react';
+import { MapPin, Mail, Download, CheckCircle2 } from 'lucide-react';
 
 interface BentoHeroProps {
   profile: UserProfile;
   onContactClick: () => void;
   onPrintClick?: () => void;
   onExportClick?: () => void;
-  onEditProfileClick?: () => void;
 }
 
 export const BentoHero: React.FC<BentoHeroProps> = ({
   profile,
   onContactClick,
-  onExportClick,
-  onEditProfileClick
+  onExportClick
 }) => {
   return (
     <div className="glass-panel" style={{ padding: '28px', marginBottom: '28px' }}>
@@ -67,29 +65,6 @@ export const BentoHero: React.FC<BentoHeroProps> = ({
 
         {/* Right: Action Buttons */}
         <div className="no-print" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-          {onEditProfileClick && (
-            <button
-              type="button"
-              onClick={onEditProfileClick}
-              style={{
-                background: 'var(--bg-surface-elevated)',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border-subtle)',
-                padding: '9px 14px',
-                borderRadius: 'var(--radius-md)',
-                fontWeight: 600,
-                fontSize: '0.82rem',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
-            >
-              <UserCheck size={14} color="var(--accent-primary)" />
-              Edit Profil
-            </button>
-          )}
-
           <button
             type="button"
             onClick={onContactClick}
