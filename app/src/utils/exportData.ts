@@ -157,40 +157,46 @@ export function exportToPdfPrint(
     /* Header Profile */
     .resume-header {
       border-bottom: 2px solid #0F172A;
-      padding-bottom: 14px;
-      margin-bottom: 18px;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
     }
     .header-top {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: flex-start;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 12px;
     }
     .name {
-      font-size: 22pt;
+      font-size: 20pt;
       font-weight: 800;
       letter-spacing: -0.02em;
       color: #0F172A;
+      line-height: 1.1;
+    }
+    .headline {
+      font-size: 11pt;
+      font-weight: 600;
+      color: #4F46E5;
+      margin-top: 4px;
     }
     .contact-links {
       font-size: 8.5pt;
       color: #475569;
       text-align: right;
+      line-height: 1.5;
     }
-    .headline {
-      font-size: 11.5pt;
-      font-weight: 600;
+    .contact-links a {
       color: #4F46E5;
-      margin-top: 2px;
+      text-decoration: none;
     }
     .meta-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 14px;
       font-size: 8.5pt;
       color: #64748B;
-      margin-top: 6px;
+      margin-top: 8px;
     }
     .summary-text {
       margin-top: 10px;
@@ -201,24 +207,15 @@ export function exportToPdfPrint(
 
     /* Section Headers */
     .section-title {
-      font-size: 11pt;
-      font-weight: 800;
-      letter-spacing: 0.04em;
+      font-size: 10.5pt;
+      font-weight: 700;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       color: #0F172A;
       border-bottom: 1px solid #E2E8F0;
       padding-bottom: 4px;
-      margin-top: 18px;
+      margin-top: 16px;
       margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .section-subtitle {
-      font-size: 8pt;
-      font-weight: normal;
-      color: #64748B;
-      text-transform: none;
     }
 
     /* Skills Pill Grid */
@@ -226,21 +223,21 @@ export function exportToPdfPrint(
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .skill-chip {
-      background: #F1F5F9;
+      background: #F8FAFC;
       border: 1px solid #CBD5E1;
-      padding: 2px 8px;
+      padding: 3px 9px;
       border-radius: 4px;
       font-size: 8.5pt;
-      font-weight: 600;
+      font-weight: 500;
       color: #1E293B;
     }
 
     /* Project Cards */
     .project-card {
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       page-break-inside: avoid;
     }
     .project-top {
@@ -250,32 +247,33 @@ export function exportToPdfPrint(
       margin-bottom: 2px;
     }
     .project-name {
-      font-size: 11pt;
+      font-size: 10.5pt;
       font-weight: 700;
       color: #0F172A;
     }
     .badge-nda {
       font-size: 7.5pt;
-      background: #F8FAFC;
-      color: #475569;
-      border: 1px solid #CBD5E1;
-      padding: 2px 7px;
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FDE68A;
+      padding: 1px 6px;
       border-radius: 4px;
       font-weight: 600;
     }
     .badge-public {
       font-size: 7.5pt;
-      background: #EEF2FF;
-      color: #4338CA;
-      border: 1px solid #C7D2FE;
-      padding: 2px 7px;
+      background: #F1F5F9;
+      color: #475569;
+      border: 1px solid #CBD5E1;
+      padding: 1px 6px;
       border-radius: 4px;
-      font-weight: 600;
+      font-weight: 500;
     }
     .project-desc {
-      font-size: 9.5pt;
+      font-size: 9pt;
       color: #334155;
       line-height: 1.45;
+      margin-top: 2px;
     }
     .project-meta {
       font-size: 8.5pt;
@@ -286,31 +284,30 @@ export function exportToPdfPrint(
       color: #4F46E5;
       text-decoration: none;
       margin-right: 12px;
-      font-weight: 600;
+      font-weight: 500;
     }
 
     /* Log Item (Workstream proof) */
     .log-card {
-      margin-bottom: 12px;
+      margin-bottom: 11px;
       page-break-inside: avoid;
       padding-left: 10px;
-      border-left: 2px solid #E2E8F0;
+      border-left: 2px solid #CBD5E1;
     }
     .log-top {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
     .log-headline {
-      font-size: 10pt;
+      font-size: 9.8pt;
       font-weight: 700;
       color: #0F172A;
     }
     .log-date {
       font-size: 8pt;
       color: #64748B;
-      font-family: monospace;
       white-space: nowrap;
     }
     .log-bullets {
@@ -318,6 +315,7 @@ export function exportToPdfPrint(
       font-size: 9pt;
       color: #334155;
       line-height: 1.45;
+      margin-top: 2px;
     }
     .log-bullets li {
       margin-bottom: 2px;
@@ -325,12 +323,12 @@ export function exportToPdfPrint(
     .log-proof-tags {
       margin-top: 4px;
       font-size: 8pt;
-      color: #0284C7;
+      color: #4F46E5;
     }
 
     /* Footer */
     .resume-footer {
-      margin-top: 24px;
+      margin-top: 22px;
       border-top: 1px solid #E2E8F0;
       padding-top: 8px;
       font-size: 7.5pt;
@@ -343,62 +341,55 @@ export function exportToPdfPrint(
 <body>
   <div class="resume-header">
     <div class="header-top">
-      <h1 class="name">${profile.fullName}</h1>
+      <div>
+        <h1 class="name">${profile.fullName}</h1>
+        <div class="headline">${profile.headline}</div>
+      </div>
       <div class="contact-links">
-        ${profile.socialLinks.website ? `<div>🌐 ${profile.socialLinks.website}</div>` : ''}
-        ${profile.socialLinks.github ? `<div>🐙 ${profile.socialLinks.github}</div>` : ''}
-        ${profile.socialLinks.linkedin ? `<div>💼 ${profile.socialLinks.linkedin}</div>` : ''}
+        ${profile.socialLinks.website ? `<div>${profile.socialLinks.website}</div>` : ''}
+        ${profile.socialLinks.github ? `<div>${profile.socialLinks.github}</div>` : ''}
+        ${profile.socialLinks.linkedin ? `<div>${profile.socialLinks.linkedin}</div>` : ''}
       </div>
     </div>
-    <div class="headline">${profile.headline}</div>
     <div class="meta-tags">
-      <span>📍 ${profile.location}</span>
-      <span>🕒 ${profile.timezone}</span>
-      <span>🔥 ${profile.streakDays} Hari Pengerjaan Aktif (${profile.totalLogs} Log Bukti)</span>
+      <span>Lokasi: ${profile.location}</span>
+      <span>Zona Waktu: ${profile.timezone}</span>
+      <span>Catatan Rekayasa Terverifikasi: ${profile.totalLogs} Entri</span>
     </div>
-    <p class="summary-text">${profile.bio}</p>
+    ${profile.bio ? `<p class="summary-text">${profile.bio}</p>` : ''}
   </div>
 
   <!-- Keahlian Utama -->
-  <div class="section-title">
-    <span>Keahlian Rekayasa & Stack Teknologi</span>
-    <span class="section-subtitle">Divalidasi dari riwayat log</span>
-  </div>
+  <div class="section-title">Keahlian & Teknologi</div>
   <div class="skills-container">
     ${profile.topSkills.map(s => `
-      <span class="skill-chip">${s.skill} · ${s.count} bukti</span>
+      <span class="skill-chip">${s.skill}</span>
     `).join('')}
   </div>
 
   <!-- Wadah Arsitektur & Proyek -->
-  <div class="section-title">
-    <span>Studi Kasus & Wadah Proyek Pilihan</span>
-    <span class="section-subtitle">${projects.length} Proyek Aktif</span>
-  </div>
+  <div class="section-title">Proyek Rekayasa</div>
   ${projects.map(p => `
     <div class="project-card">
       <div class="project-top">
         <span class="project-name">${p.title}</span>
         <span class="${p.isStealthNda ? 'badge-nda' : 'badge-public'}">
-          ${p.isStealthNda ? 'Enterprise NDA / Stealth' : 'Public Workstream'}
+          ${p.isStealthNda ? 'NDA Protected' : 'Public'}
         </span>
       </div>
       <p class="project-desc">${p.description}</p>
       ${p.technologies && p.technologies.length > 0 ? `
-        <div class="project-meta"><b>Teknologi</b>: ${p.technologies.join(', ')}</div>
+        <div class="project-meta">Teknologi: ${p.technologies.join(', ')}</div>
       ` : ''}
       <div class="project-links project-meta">
-        ${p.liveUrl ? `<a href="${p.liveUrl}" target="_blank">↗ Live Preview</a>` : ''}
-        ${p.repoUrl ? `<a href="${p.repoUrl}" target="_blank">↗ GitHub Repository</a>` : ''}
+        ${p.liveUrl ? `<a href="${p.liveUrl}" target="_blank">Demo</a>` : ''}
+        ${p.repoUrl ? `<a href="${p.repoUrl}" target="_blank">Repositori</a>` : ''}
       </div>
     </div>
   `).join('')}
 
   <!-- Engineering Logbook (Bukti Nyata) -->
-  <div class="section-title">
-    <span>Sorotan Bukti Kerja Rekayasa (Verified Logs)</span>
-    <span class="section-subtitle">Penyelesaian Masalah Nyata</span>
-  </div>
+  <div class="section-title">Riwayat Rekayasa & Catatan Pengerjaan</div>
   ${logs.map(log => `
     <div class="log-card">
       <div class="log-top">
@@ -414,19 +405,19 @@ export function exportToPdfPrint(
       `}
       ${log.proofLinks && log.proofLinks.length > 0 ? `
         <div class="log-proof-tags">
-          <b>Tautan Bukti:</b> ${log.proofLinks.map(pl => `<a href="${pl.url}" target="_blank" style="color: #4F46E5; text-decoration: none; margin-right: 8px;">${pl.label}</a>`).join(' ')}
+          Tautan: ${log.proofLinks.map(pl => `<a href="${pl.url}" target="_blank" style="color: #4F46E5; text-decoration: none; margin-right: 8px;">${pl.label}</a>`).join(' ')}
         </div>
       ` : log.proofUrl ? `
         <div class="log-proof-tags">
-          <b>Tautan Bukti:</b> <a href="${log.proofUrl}" target="_blank" style="color: #4F46E5; text-decoration: none;">Tautan Pengerjaan</a>
+          Tautan: <a href="${log.proofUrl}" target="_blank" style="color: #4F46E5; text-decoration: none;">Bukti Kerja</a>
         </div>
       ` : ''}
     </div>
   `).join('')}
 
   <div class="resume-footer">
-    <span>Portofolio & Resume Rekayasa ini digenerasi oleh <b>Logfolio</b> (Proof-of-Work Platform).</span>
-    <span>Tanggal Cetak: ${new Date().toLocaleDateString('id-ID')}</span>
+    <span>Dokumen Riwayat Rekayasa — Dihasilkan secara otomatis</span>
+    <span>Tanggal: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
   </div>
 
   <script>
