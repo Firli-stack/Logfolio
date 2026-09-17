@@ -23,6 +23,7 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
   ]);
   const [images, setImages] = useState<string[]>([]);
   const [isStealth, setIsStealth] = useState(false);
+  const [showNdaInfo, setShowNdaInfo] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleAddSkill = (e: React.KeyboardEvent) => {
@@ -193,8 +194,8 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
             )}
           </div>
 
-          {/* Opsi NDA dengan penjelasan fungsi yang rapi */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          {/* Opsi NDA dengan tombol info yang bisa diklik */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', position: 'relative' }}>
             <label style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -213,19 +214,54 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
               <Lock size={12} />
               <span>Mode NDA</span>
             </label>
-            <span
-              title="NDA: Melindungi kerahasiaan klien/kantor. Hanya metrik teknis & solusi yang ditampilkan tanpa mengekspos rahasia bisnis."
+            <button
+              type="button"
+              onClick={() => setShowNdaInfo(!showNdaInfo)}
+              title="Klik untuk melihat fungsi Mode NDA"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                color: 'var(--text-muted)',
-                cursor: 'help'
+                justifyContent: 'center',
+                background: showNdaInfo ? 'rgba(79, 70, 229, 0.1)' : 'none',
+                border: 'none',
+                borderRadius: '50%',
+                padding: '2px',
+                color: showNdaInfo ? 'var(--accent-primary)' : 'var(--text-muted)',
+                cursor: 'pointer'
               }}
             >
-              <Info size={13} />
-            </span>
+              <Info size={14} />
+            </button>
           </div>
         </div>
+
+        {/* Banner Penjelasan Fungsi NDA jika tombol info diklik */}
+        {showNdaInfo && (
+          <div style={{
+            background: '#F8FAFC',
+            border: '1px solid #CBD5E1',
+            borderRadius: 'var(--radius-sm)',
+            padding: '8px 12px',
+            fontSize: '0.78rem',
+            color: '#334155',
+            lineHeight: '1.45',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: '8px'
+          }}>
+            <div>
+              <b style={{ color: '#0F172A' }}>Fungsi Mode NDA:</b> Menjaga kerahasiaan proyek kantor/klien. Kode sumber dan rahasia bisnis tetap terlindungi, sementara pencapaian rekayasa, metrik performa, dan solusi teknis Anda tetap bisa dipamerkan secara profesional di portofolio & CV.
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowNdaInfo(false)}
+              style={{ background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', padding: 0 }}
+            >
+              <X size={13} />
+            </button>
+          </div>
+        )}
 
         {/* Row 2: Input Ringkasan Tugas */}
         <input
@@ -291,7 +327,7 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
                 }}
               >
                 <Plus size={11} />
-                <span>+ Tambah Link</span>
+                <span>Tambah Link</span>
               </button>
             )}
           </div>
