@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { Project } from '../mockData';
 import { X, FolderGit2, Shield, Globe, Plus } from 'lucide-react';
+import { POPULAR_TECH_SUGGESTIONS } from '../utils/techSuggestions';
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -13,6 +14,8 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   onClose,
   onCreateProject
 }) => {
+  if (!isOpen) return null;
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isStealthNda, setIsStealthNda] = useState(false);
@@ -20,17 +23,74 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   const [technologies, setTechnologies] = useState<string[]>(['TypeScript', 'React']);
   const [repoUrl, setRepoUrl] = useState('');
   const [liveUrl, setLiveUrl] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const suggestionBoxRef = useRef<HTMLDivElement | null>(null);
 
-  if (!isOpen) return null;
+  // Filter recommendations based on user input
+  const query = techInput.trim().toLowerCase().replace(/^#/, '');
+  const suggestions = query
+    ? POPULAR_TECH_SUGGESTIONS.filter(
+        item =>
+          item.toLowerCase().includes(query) &&
+          !technologies.some(t => t.toLowerCase() === item.toLowerCase())
+      ).slice(0, 8)
+    : [];
+
+  useEffect(() => {
+    setHighlightedIndex(-1);
+    if (query) {
+      setShowSuggestions(true);
+    }
+  }, [query]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (suggestionBoxRef.current && !suggestionBoxRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const addTechItem = (value: string) => {
+    const clean = value.trim().replace(/^#/, '');
+    if (!clean) return;
+    if (!technologies.some(t => t.toLowerCase() === clean.toLowerCase())) {
+      setTechnologies([...technologies, clean]);
+    }
+    setTechInput('');
+    setShowSuggestions(false);
+    setHighlightedIndex(-1);
+  };
 
   const handleAddTech = (e: React.KeyboardEvent) => {
-    if ((e.key === 'Enter' || e.key === ',') && techInput.trim()) {
-      e.preventDefault();
-      const clean = techInput.trim().replace(/^#/, '');
-      if (!technologies.includes(clean)) {
-        setTechnologies([...technologies, clean]);
+    if (e.key === 'ArrowDown') {
+      if (suggestions.length > 0) {
+        e.preventDefault();
+        setHighlightedIndex(prev => (prev + 1) % suggestions.length);
       }
-      setTechInput('');
+      return;
+    }
+    if (e.key === 'ArrowUp') {
+      if (suggestions.length > 0) {
+        e.preventDefault();
+        setHighlightedIndex(prev => (prev - 1 + suggestions.length) % suggestions.length);
+      }
+      return;
+    }
+    if (e.key === 'Escape') {
+      setShowSuggestions(false);
+      return;
+    }
+    if ((e.key === 'Enter' || e.key === ',') && (techInput.trim() || highlightedIndex >= 0)) {
+      e.preventDefault();
+      if (highlightedIndex >= 0 && suggestions[highlightedIndex]) {
+        addTechItem(suggestions[highlightedIndex]);
+      } else {
+        addTechItem(techInput);
+      }
     }
   };
 
@@ -228,9 +288,15 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
 
           {/* Tech Stack */}
           <div>
-            <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '6px' }}>
-              Teknologi / Stack Utama
-            </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                Teknologi / Stack Utama
+              </label>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                {technologies.length} dipilih (tidak terbatas)
+              </span>
+            </div>
+
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', marginBottom: '6px' }}>
               {technologies.map(t => (
                 <span key={t} className="skill-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
@@ -238,28 +304,112 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                   <button
                     type="button"
                     onClick={() => handleRemoveTech(t)}
+                    title={`Hapus ${t}`}
                     style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'var(--text-muted)' }}
                   >
                     <X size={12} />
                   </button>
                 </span>
               ))}
-              <input
-                type="text"
-                value={techInput}
-                onChange={(e) => setTechInput(e.target.value)}
-                onKeyDown={handleAddTech}
-                placeholder="+ Tambah Tech (Enter)"
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '0.75rem',
-                  border: '1px dashed var(--border-subtle)',
-                  borderRadius: 'var(--radius-sm)',
-                  outline: 'none',
-                  background: 'transparent',
-                  width: '140px'
-                }}
-              />
+
+              <div ref={suggestionBoxRef} style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  value={techInput}
+                  onChange={(e) => {
+                    setTechInput(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => {
+                    if (techInput.trim()) setShowSuggestions(true);
+                  }}
+                  onKeyDown={handleAddTech}
+                  placeholder="+ Tambah Tech..."
+                  style={{
+                    padding: '4px 8px',
+                    fontSize: '0.75rem',
+                    border: '1px dashed var(--border-subtle)',
+                    borderRadius: 'var(--radius-sm)',
+                    outline: 'none',
+                    background: 'transparent',
+                    width: '135px'
+                  }}
+                />
+
+                {techInput.trim() && (
+                  <button
+                    type="button"
+                    onClick={() => addTechItem(techInput)}
+                    title="Tambah teknologi ini"
+                    style={{
+                      marginLeft: '4px',
+                      padding: '3px 7px',
+                      background: 'var(--accent-primary)',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.7rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '2px'
+                    }}
+                  >
+                    <Plus size={11} /> Tambah
+                  </button>
+                )}
+
+                {/* Suggestions Dropdown Popup */}
+                {showSuggestions && suggestions.length > 0 && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 4px)',
+                      left: 0,
+                      zIndex: 1000,
+                      minWidth: '180px',
+                      background: '#FFFFFF',
+                      borderRadius: 'var(--radius-md)',
+                      boxShadow: '0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1)',
+                      border: '1px solid var(--border-medium)',
+                      padding: '4px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '2px'
+                    }}
+                  >
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', padding: '4px 8px', fontWeight: 600, borderBottom: '1px solid var(--border-subtle)' }}>
+                      Rekomendasi Cepat:
+                    </div>
+                    {suggestions.map((s, idx) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => addTechItem(s)}
+                        onMouseEnter={() => setHighlightedIndex(idx)}
+                        style={{
+                          textAlign: 'left',
+                          background: idx === highlightedIndex ? 'rgba(79, 70, 229, 0.08)' : 'transparent',
+                          color: idx === highlightedIndex ? 'var(--accent-primary)' : 'var(--text-primary)',
+                          border: 'none',
+                          borderRadius: 'var(--radius-sm)',
+                          padding: '6px 8px',
+                          fontSize: '0.78rem',
+                          fontWeight: idx === highlightedIndex ? 600 : 500,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between'
+                        }}
+                      >
+                        <span>#{s}</span>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Pilih ↵</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

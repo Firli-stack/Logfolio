@@ -1,0 +1,88 @@
+export const POPULAR_TECH_SUGGESTIONS: string[] = [
+  // Languages
+  'Python',
+  'TypeScript',
+  'JavaScript',
+  'SQL',
+  'Go',
+  'Rust',
+  'Java',
+  'Kotlin',
+  'C++',
+  'C#',
+  'PHP',
+  'Ruby',
+  'Swift',
+  'Dart',
+  'HTML',
+  'CSS',
+  
+  // Frontend & Mobile
+  'React',
+  'Next.js',
+  'Vue',
+  'Nuxt',
+  'Svelte',
+  'React Native',
+  'Flutter',
+  'Tailwind CSS',
+  'Vite',
+  'Redux',
+  'Zustand',
+  
+  // Backend & APIs
+  'Node.js',
+  'Express',
+  'FastAPI',
+  'Django',
+  'Flask',
+  'Spring Boot',
+  'NestJS',
+  'GraphQL',
+  'REST API',
+  'gRPC',
+  'Microservices',
+  
+  // Databases & Caching
+  'PostgreSQL',
+  'MySQL',
+  'SQLite',
+  'MongoDB',
+  'Redis',
+  'Elasticsearch',
+  'Prisma',
+  'Supabase',
+  'Firebase',
+  
+  // DevOps & Cloud
+  'Docker',
+  'Kubernetes',
+  'AWS',
+  'Google Cloud',
+  'Azure',
+  'CI/CD',
+  'GitHub Actions',
+  'Terraform',
+  'Nginx',
+  'Linux',
+  'Kafka',
+  'RabbitMQ',
+  
+  // AI & Data
+  'PyTorch',
+  'TensorFlow',
+  'Pandas',
+  'NumPy',
+  'OpenAI API',
+  'LangChain',
+  'Data Pipeline',
+  'Machine Learning',
+  'Scikit-learn',
+
+  // Testing & Tooling
+  'Jest',
+  'Playwright',
+  'Cypress',
+  'Git',
+  'Figma'
+];
