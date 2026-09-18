@@ -29,8 +29,8 @@ export const api = {
       }
       const json = await res.json();
       return json.data;
-    } catch (err) {
-      console.warn('API getProfile failed, fallback to local cache/mock:', err);
+    } catch {
+      // Backend server sedang offline / belum dijalankan: fallback otomatis ke local state/mockData
       return null;
     }
   },

@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { Project, LogEntry, ProofLink } from '../mockData';
 import { Send, X, FolderPlus, Link as LinkIcon, Lock, Image as ImageIcon, Plus, Info } from 'lucide-react';
+import { POPULAR_TECH_SUGGESTIONS } from '../utils/techSuggestions';
 
 interface QuickLogComposerProps {
   projects: Project[];
@@ -18,6 +19,43 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
   const [projectId, setProjectId] = useState(projects[0]?.id || '');
   const [skillInput, setSkillInput] = useState('');
   const [skills, setSkills] = useState<string[]>(['PostgreSQL', 'Performance']);
+  const [showSkillSuggestions, setShowSkillSuggestions] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const skillSuggestionBoxRef = useRef<HTMLDivElement | null>(null);
+
+  const skillSuggestions = skillInput.trim()
+    ? POPULAR_TECH_SUGGESTIONS.filter(
+        item =>
+          item.toLowerCase().includes(skillInput.trim().toLowerCase()) &&
+          !skills.some(s => s.toLowerCase() === item.toLowerCase())
+      ).slice(0, 5)
+    : [];
+
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [skillInput]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (skillSuggestionBoxRef.current && !skillSuggestionBoxRef.current.contains(e.target as Node)) {
+        setShowSkillSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const addSkillItem = (value: string) => {
+    const clean = value.trim().replace(/^#/, '');
+    if (!clean) return;
+    if (!skills.some(s => s.toLowerCase() === clean.toLowerCase()) && skills.length < 8) {
+      setSkills([...skills, clean]);
+    }
+    setSkillInput('');
+    setShowSkillSuggestions(false);
+    setHighlightedIndex(-1);
+  };
+
   const [proofLinks, setProofLinks] = useState<{ id: string; url: string; label: string }[]>([
     { id: '1', url: '', label: '' }
   ]);
@@ -27,12 +65,30 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleAddSkill = (e: React.KeyboardEvent) => {
-    if ((e.key === 'Enter' || e.key === ',') && skillInput.trim()) {
+    if (e.key === 'ArrowDown') {
+      if (skillSuggestions.length > 0) {
+        e.preventDefault();
+        setHighlightedIndex(prev => (prev + 1) % skillSuggestions.length);
+      }
+      return;
+    }
+    if (e.key === 'ArrowUp') {
+      if (skillSuggestions.length > 0) {
+        e.preventDefault();
+        setHighlightedIndex(prev => (prev - 1 + skillSuggestions.length) % skillSuggestions.length);
+      }
+      return;
+    }
+    if (e.key === 'Escape') {
+      setShowSkillSuggestions(false);
+      return;
+    }
+    if ((e.key === 'Enter' || e.key === ',') && (skillInput.trim() || highlightedIndex >= 0)) {
       e.preventDefault();
-      const clean = skillInput.trim().replace(/^#/, '');
-      if (clean && !skills.includes(clean) && skills.length < 5) {
-        setSkills([...skills, clean]);
-        setSkillInput('');
+      if (highlightedIndex >= 0 && skillSuggestions[highlightedIndex]) {
+        addSkillItem(skillSuggestions[highlightedIndex]);
+      } else {
+        addSkillItem(skillInput);
       }
     }
   };
@@ -491,23 +547,73 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
                 </button>
               </span>
             ))}
-            {skills.length < 4 && (
-              <input
-                type="text"
-                value={skillInput}
-                onChange={(e) => setSkillInput(e.target.value)}
-                onKeyDown={handleAddSkill}
-                placeholder="+ Tag"
-                style={{
-                  padding: '2px 6px',
-                  fontSize: '0.72rem',
-                  border: '1px dashed var(--border-subtle)',
-                  borderRadius: 'var(--radius-sm)',
-                  outline: 'none',
-                  background: 'transparent',
-                  width: '60px'
-                }}
-              />
+            {skills.length < 8 && (
+              <div ref={skillSuggestionBoxRef} style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  value={skillInput}
+                  onChange={(e) => {
+                    setSkillInput(e.target.value);
+                    setShowSkillSuggestions(true);
+                  }}
+                  onFocus={() => {
+                    if (skillInput.trim()) setShowSkillSuggestions(true);
+                  }}
+                  onKeyDown={handleAddSkill}
+                  placeholder="+ Tag"
+                  style={{
+                    padding: '2px 6px',
+                    fontSize: '0.72rem',
+                    border: '1px dashed var(--border-subtle)',
+                    borderRadius: 'var(--radius-sm)',
+                    outline: 'none',
+                    background: 'transparent',
+                    width: '65px'
+                  }}
+                />
+
+                {showSkillSuggestions && skillSuggestions.length > 0 && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 4px)',
+                      left: 0,
+                      zIndex: 1000,
+                      minWidth: '140px',
+                      background: '#FFFFFF',
+                      borderRadius: 'var(--radius-md)',
+                      boxShadow: '0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1)',
+                      border: '1px solid var(--border-medium)',
+                      padding: '4px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '2px'
+                    }}
+                  >
+                    {skillSuggestions.map((s, idx) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => addSkillItem(s)}
+                        onMouseEnter={() => setHighlightedIndex(idx)}
+                        style={{
+                          textAlign: 'left',
+                          background: idx === highlightedIndex ? 'rgba(79, 70, 229, 0.08)' : 'transparent',
+                          color: idx === highlightedIndex ? 'var(--accent-primary)' : 'var(--text-primary)',
+                          border: 'none',
+                          borderRadius: 'var(--radius-sm)',
+                          padding: '4px 6px',
+                          fontSize: '0.72rem',
+                          fontWeight: idx === highlightedIndex ? 600 : 500,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        #{s}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
