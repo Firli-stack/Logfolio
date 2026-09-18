@@ -1,79 +1,277 @@
 import React, { useState } from 'react';
 import type { LogEntry, Project } from '../mockData';
-import { ThumbsUp, ExternalLink, CheckCheck, Lock } from 'lucide-react';
+import { ThumbsUp, ExternalLink, CheckCheck, Lock, Search, X, Filter } from 'lucide-react';
 
 interface LogTimelineProps {
   logs: LogEntry[];
   projects: Project[];
   onAddKudos: (logId: string) => void;
+  initialSelectedProject?: string;
 }
 
-export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddKudos }) => {
-  const [selectedProject, setSelectedProject] = useState<string>('all');
+export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddKudos, initialSelectedProject = 'all' }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProject, setSelectedProject] = useState<string>(initialSelectedProject);
   const [selectedSkill, setSelectedSkill] = useState<string>('all');
+
+  React.useEffect(() => {
+    if (initialSelectedProject) {
+      setSelectedProject(initialSelectedProject);
+    }
+  }, [initialSelectedProject]);
 
   const allSkills = Array.from(new Set(logs.flatMap(l => l.skills)));
 
+  // Filter logs berdasarkan pencarian teks, proyek, dan tag skill
   const filteredLogs = logs.filter(log => {
     const matchProj = selectedProject === 'all' || log.projectId === selectedProject;
     const matchSkill = selectedSkill === 'all' || log.skills.includes(selectedSkill);
-    return matchProj && matchSkill;
+    
+    const query = searchQuery.trim().toLowerCase();
+    const matchSearch =
+      !query ||
+      (log.title && log.title.toLowerCase().includes(query)) ||
+      log.content.toLowerCase().includes(query) ||
+      log.projectName.toLowerCase().includes(query) ||
+      log.skills.some(s => s.toLowerCase().includes(query)) ||
+      (log.details && log.details.some(d => d.toLowerCase().includes(query)));
+
+    return matchProj && matchSkill && matchSearch;
   });
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setSelectedProject('all');
+    setSelectedSkill('all');
+  };
+
+  const hasActiveFilters = searchQuery.trim() !== '' || selectedProject !== 'all' || selectedSkill !== 'all';
 
   return (
     <div style={{ marginBottom: '32px' }}>
-      {/* Header & Filter */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
-        <div>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
-            Catatan Pengerjaan
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-            Riwayat pemecahan masalah teknis ({filteredLogs.length} catatan)
-          </p>
+      {/* Header & Filter Controls */}
+      <div style={{
+        background: '#FFFFFF',
+        padding: '16px 20px',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--border-subtle)',
+        boxShadow: 'var(--shadow-subtle)',
+        marginBottom: '16px'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
+          <div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>Catatan Pengerjaan</span>
+              <span style={{
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                background: 'rgba(79, 70, 229, 0.08)',
+                color: 'var(--accent-primary)',
+                padding: '2px 8px',
+                borderRadius: 'var(--radius-full)'
+              }}>
+                {filteredLogs.length} dari {logs.length}
+              </span>
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+              Riwayat pemecahan masalah teknis dan progres arsitektur terverifikasi
+            </p>
+          </div>
+
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={resetFilters}
+              style={{
+                background: 'transparent',
+                border: '1px dashed var(--border-medium)',
+                color: 'var(--accent-danger)',
+                fontSize: '0.74rem',
+                fontWeight: 600,
+                padding: '4px 10px',
+                borderRadius: 'var(--radius-full)',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              <X size={12} />
+              Reset Filter
+            </button>
+          )}
         </div>
 
-        {/* Filter Dropdowns */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {/* Search Bar & Dropdown Controls */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', marginBottom: '12px' }}>
+          {/* Instant Search Bar */}
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <Search size={14} style={{ position: 'absolute', left: '10px', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari solusi, stack, atau judul..."
+              style={{
+                width: '100%',
+                padding: '7px 10px 7px 32px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-subtle)',
+                background: 'var(--bg-surface-elevated)',
+                color: 'var(--text-primary)',
+                fontSize: '0.8rem',
+                outline: 'none'
+              }}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                style={{
+                  position: 'absolute',
+                  right: '8px',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '2px'
+                }}
+              >
+                <X size={13} />
+              </button>
+            )}
+          </div>
+
+          {/* Project Filter */}
           <select
             value={selectedProject}
             onChange={(e) => setSelectedProject(e.target.value)}
             style={{
-              padding: '6px 10px',
+              padding: '7px 10px',
               borderRadius: 'var(--radius-sm)',
               background: 'var(--bg-surface-elevated)',
               border: '1px solid var(--border-subtle)',
               color: 'var(--text-primary)',
-              fontSize: '0.78rem',
+              fontSize: '0.8rem',
               outline: 'none'
             }}
           >
-            <option value="all">Semua Proyek</option>
+            <option value="all">Semua Proyek ({projects.length})</option>
             {projects.map(p => (
-              <option key={p.id} value={p.id}>{p.title}</option>
+              <option key={p.id} value={p.id}>{p.title} {p.isStealthNda ? '(NDA)' : ''}</option>
             ))}
           </select>
 
+          {/* Skill Filter */}
           <select
             value={selectedSkill}
             onChange={(e) => setSelectedSkill(e.target.value)}
             style={{
-              padding: '6px 10px',
+              padding: '7px 10px',
               borderRadius: 'var(--radius-sm)',
               background: 'var(--bg-surface-elevated)',
               border: '1px solid var(--border-subtle)',
               color: 'var(--text-primary)',
-              fontSize: '0.78rem',
+              fontSize: '0.8rem',
               outline: 'none'
             }}
           >
-            <option value="all">Semua Keahlian</option>
+            <option value="all">Semua Keahlian ({allSkills.length})</option>
             {allSkills.map(s => (
               <option key={s} value={s}>{s}</option>
             ))}
           </select>
         </div>
+
+        {/* Quick Clickable Skill Pills */}
+        {allSkills.length > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', paddingTop: '6px', borderTop: '1px solid var(--border-subtle)' }}>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <Filter size={11} /> Filter Cepat:
+            </span>
+            <button
+              type="button"
+              onClick={() => setSelectedSkill('all')}
+              style={{
+                fontSize: '0.7rem',
+                padding: '2px 8px',
+                borderRadius: 'var(--radius-full)',
+                border: selectedSkill === 'all' ? '1px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                background: selectedSkill === 'all' ? 'rgba(79, 70, 229, 0.1)' : 'transparent',
+                color: selectedSkill === 'all' ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                fontWeight: selectedSkill === 'all' ? 700 : 500,
+                cursor: 'pointer'
+              }}
+            >
+              Semua
+            </button>
+            {allSkills.slice(0, 8).map(s => {
+              const isSelected = selectedSkill === s;
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setSelectedSkill(isSelected ? 'all' : s)}
+                  style={{
+                    fontSize: '0.7rem',
+                    padding: '2px 8px',
+                    borderRadius: 'var(--radius-full)',
+                    border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                    background: isSelected ? 'var(--accent-primary)' : 'transparent',
+                    color: isSelected ? '#FFFFFF' : 'var(--text-secondary)',
+                    fontWeight: isSelected ? 600 : 500,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  #{s}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
+
+      {/* Empty State jika tidak ada hasil filter */}
+      {filteredLogs.length === 0 && (
+        <div className="glass-panel" style={{ padding: '36px 20px', textAlign: 'center', background: '#FFFFFF' }}>
+          <div style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            background: 'rgba(79, 70, 229, 0.08)',
+            color: 'var(--accent-primary)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '12px'
+          }}>
+            <Search size={20} />
+          </div>
+          <h4 style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
+            Tidak ada catatan yang sesuai
+          </h4>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', maxWidth: '380px', margin: '0 auto 14px auto' }}>
+            {searchQuery ? `Tidak ada hasil untuk pencarian "${searchQuery}".` : 'Coba pilih proyek atau filter keahlian yang lain.'}
+          </p>
+          <button
+            type="button"
+            onClick={resetFilters}
+            style={{
+              padding: '6px 16px',
+              borderRadius: 'var(--radius-sm)',
+              background: 'var(--accent-primary)',
+              color: '#FFFFFF',
+              border: 'none',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            Reset Semua Filter
+          </button>
+        </div>
+      )}
 
       {/* Daftar Catatan Bersih & Terbaca */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -211,11 +409,28 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
               marginTop: '8px'
             }}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                {log.skills.map(s => (
-                  <span key={s} className="skill-badge" style={{ fontSize: '0.7rem', padding: '1px 6px' }}>
-                    {s}
-                  </span>
-                ))}
+                {log.skills.map(s => {
+                  const isFiltered = selectedSkill === s;
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setSelectedSkill(isFiltered ? 'all' : s)}
+                      title={`Filter catatan dengan keahlian #${s}`}
+                      className="skill-badge"
+                      style={{
+                        fontSize: '0.7rem',
+                        padding: '1px 6px',
+                        cursor: 'pointer',
+                        border: isFiltered ? '1px solid var(--accent-primary)' : undefined,
+                        background: isFiltered ? 'rgba(79, 70, 229, 0.15)' : undefined,
+                        color: isFiltered ? 'var(--accent-primary)' : undefined
+                      }}
+                    >
+                      #{s}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Tautan Bukti */}

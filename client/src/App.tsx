@@ -105,6 +105,7 @@ export function App() {
   });
   const [activeTab, setActiveTab] = useState<'public_preview' | 'dashboard_composer'>('public_preview');
   const [publicViewMode, setPublicViewMode] = useState<'all' | 'case_studies' | 'logs'>('all');
+  const [timelineProjectFilter, setTimelineProjectFilter] = useState<string>('all');
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
@@ -303,6 +304,13 @@ export function App() {
           {(publicViewMode === 'all' || publicViewMode === 'case_studies') && (
             <ProjectShowcase
               projects={projects}
+              onFilterByProject={(projId) => {
+                setTimelineProjectFilter(projId);
+                setPublicViewMode('all');
+                // Smooth scroll ke bagian log
+                const el = document.getElementById('log-timeline-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
             />
           )}
 
@@ -313,11 +321,14 @@ export function App() {
 
           {/* Section 3: Engineering Logbook Stream (Catatan Pengerjaan Harian) */}
           {(publicViewMode === 'all' || publicViewMode === 'logs') && (
-            <LogTimeline
-              logs={logs}
-              projects={projects}
-              onAddKudos={handleAddKudos}
-            />
+            <div id="log-timeline-section">
+              <LogTimeline
+                logs={logs}
+                projects={projects}
+                onAddKudos={handleAddKudos}
+                initialSelectedProject={timelineProjectFilter}
+              />
+            </div>
           )}
         </main>
       )}
