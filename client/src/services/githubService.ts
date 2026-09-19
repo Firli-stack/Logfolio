@@ -11,7 +11,7 @@ export interface GitHubCommitItem {
 
 const COMMON_TECH_KEYWORDS: Record<string, string[]> = {
   Docker: ['docker', 'dockerfile', 'container', 'compose'],
-  PostgreSQL: ['postgres', 'postgresql', 'psql', 'sql', 'migration', 'schema'],
+  PostgreSQL: ['postgres', 'postgresql', 'psql', 'sql', 'migration', 'schema', 'db'],
   React: ['react', 'jsx', 'tsx', 'hook', 'frontend', 'component'],
   TypeScript: ['ts', 'typescript', 'interface', 'type'],
   'Node.js': ['node', 'express', 'server', 'backend', 'api', 'middleware'],
@@ -20,9 +20,7 @@ const COMMON_TECH_KEYWORDS: Record<string, string[]> = {
   TailwindCSS: ['tailwind', 'css', 'style', 'ui'],
   Git: ['git', 'ci', 'cd', 'workflow', 'action', 'pipeline'],
   Python: ['python', 'py', 'django', 'fastapi', 'flask'],
-  GraphQL: ['graphql', 'apollo', 'query', 'mutation'],
   Security: ['auth', 'jwt', 'security', 'oauth', 'token', 'permission'],
-  Testing: ['test', 'jest', 'vitest', 'cypress', 'unit', 'e2e'],
   Performance: ['perf', 'optimize', 'tune', 'speed', 'memory', 'leak']
 };
 
@@ -44,51 +42,103 @@ export async function fetchGitHubCommits(username: string): Promise<GitHubCommit
   if (!cleanUsername) return [];
 
   try {
-    const res = await fetch(`https://api.github.com/users/${cleanUsername}/events/public`, {
-      headers: {
-        Accept: 'application/vnd.github.v3+json'
-      }
+    const reposRes = await fetch(`https://api.github.com/users/${cleanUsername}/repos?sort=updated&per_page=5`, {
+      headers: { Accept: 'application/vnd.github.v3+json' }
     });
 
-    if (!res.ok) {
-      return getFallbackCommits(cleanUsername);
+    if (!reposRes.ok) {
+      return fetchFromEvents(cleanUsername);
     }
 
-    const events = await res.json();
-    if (!Array.isArray(events)) {
-      return getFallbackCommits(cleanUsername);
+    const repos = await reposRes.json();
+    if (!Array.isArray(repos) || repos.length === 0) {
+      return fetchFromEvents(cleanUsername);
     }
 
-    const items: GitHubCommitItem[] = [];
+    const allCommits: GitHubCommitItem[] = [];
 
-    for (const ev of events) {
-      if (ev.type === 'PushEvent' && ev.payload?.commits && Array.isArray(ev.payload.commits)) {
-        const repoName = ev.repo?.name || 'repository';
-        for (const c of ev.payload.commits) {
+    const commitFetches = repos.slice(0, 3).map(async (repo: any) => {
+      try {
+        const cRes = await fetch(`https://api.github.com/repos/${repo.full_name}/commits?per_page=5`, {
+          headers: { Accept: 'application/vnd.github.v3+json' }
+        });
+        if (!cRes.ok) return [];
+        const commitList = await cRes.json();
+        if (!Array.isArray(commitList)) return [];
+
+        return commitList.map((c: any) => {
           const sha = c.sha || Math.random().toString(36).substring(2, 9);
           const shortSha = sha.substring(0, 7);
-          const commitMsg = c.message || 'Updated codebase';
-          const detectedSkills = extractSkills(commitMsg, repoName);
+          const msg = c.commit?.message || 'Updated repository';
+          const detected = extractSkills(msg, repo.name);
 
-          items.push({
+          return {
             id: sha,
             sha,
             shortSha,
-            repoName,
-            message: commitMsg,
-            date: ev.created_at || new Date().toISOString(),
-            url: `https://github.com/${repoName}/commit/${sha}`,
-            detectedSkills: detectedSkills.length > 0 ? detectedSkills : ['Git', 'Codebase']
-          });
-        }
+            repoName: repo.full_name,
+            message: msg,
+            date: c.commit?.author?.date || c.commit?.committer?.date || new Date().toISOString(),
+            url: c.html_url || `https://github.com/${repo.full_name}/commit/${sha}`,
+            detectedSkills: detected.length > 0 ? detected : ['Git', 'Codebase']
+          };
+        });
+      } catch {
+        return [];
+      }
+    });
+
+    const results = await Promise.all(commitFetches);
+    for (const resList of results) {
+      allCommits.push(...resList);
+    }
+
+    allCommits.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    if (allCommits.length > 0) {
+      return allCommits.slice(0, 10);
+    }
+
+    return fetchFromEvents(cleanUsername);
+  } catch {
+    return getFallbackCommits(cleanUsername);
+  }
+}
+
+async function fetchFromEvents(cleanUsername: string): Promise<GitHubCommitItem[]> {
+  try {
+    const res = await fetch(`https://api.github.com/users/${cleanUsername}/events/public`, {
+      headers: { Accept: 'application/vnd.github.v3+json' }
+    });
+
+    if (!res.ok) return getFallbackCommits(cleanUsername);
+    const events = await res.json();
+    if (!Array.isArray(events)) return getFallbackCommits(cleanUsername);
+
+    const items: GitHubCommitItem[] = [];
+    for (const ev of events) {
+      if (ev.type === 'PushEvent' && ev.payload) {
+        const repoName = ev.repo?.name || 'repository';
+        const sha = ev.payload.head || Math.random().toString(36).substring(2, 9);
+        const shortSha = sha.substring(0, 7);
+        const msg = `Pushed updates to ${ev.payload.ref || 'branch'} (${repoName})`;
+        const detected = extractSkills(msg, repoName);
+
+        items.push({
+          id: sha,
+          sha,
+          shortSha,
+          repoName,
+          message: msg,
+          date: ev.created_at || new Date().toISOString(),
+          url: `https://github.com/${repoName}/commit/${sha}`,
+          detectedSkills: detected.length > 0 ? detected : ['Git', 'Codebase']
+        });
       }
     }
 
-    if (items.length === 0) {
-      return getFallbackCommits(cleanUsername);
-    }
-
-    return items.slice(0, 10);
+    if (items.length > 0) return items.slice(0, 10);
+    return getFallbackCommits(cleanUsername);
   } catch {
     return getFallbackCommits(cleanUsername);
   }
