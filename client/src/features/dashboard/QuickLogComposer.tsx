@@ -1,18 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Project, LogEntry, ProofLink } from '../../types';
-import { Send, X, FolderPlus, Link as LinkIcon, Lock, Image as ImageIcon, Plus, Info } from 'lucide-react';
+import { Send, X, FolderPlus, Link as LinkIcon, Lock, Image as ImageIcon, Plus, Info, GitBranch } from 'lucide-react';
 import { POPULAR_TECH_SUGGESTIONS } from '../../utils/techSuggestions';
+import type { GitHubCommitItem } from '../../services/githubService';
 
 interface QuickLogComposerProps {
   projects: Project[];
   onAddLog: (log: LogEntry) => void;
   onOpenCreateProject?: () => void;
+  onOpenGitHubSync?: () => void;
+  importedCommit?: GitHubCommitItem | null;
 }
 
 export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
   projects,
   onAddLog,
-  onOpenCreateProject
+  onOpenCreateProject,
+  onOpenGitHubSync,
+  importedCommit
 }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -63,6 +68,24 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
   const [isStealth, setIsStealth] = useState(false);
   const [showNdaInfo, setShowNdaInfo] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (importedCommit) {
+      const cleanTitle = importedCommit.message.split('\n')[0].replace(/^(feat|fix|refactor|chore|perf|test|docs|style|ci|build)(\([^)]+\))?:\s*/i, '');
+      setTitle(cleanTitle);
+      setContent(importedCommit.message);
+      if (importedCommit.detectedSkills && importedCommit.detectedSkills.length > 0) {
+        setSkills(importedCommit.detectedSkills);
+      }
+      setProofLinks([
+        {
+          id: '1',
+          url: importedCommit.url,
+          label: `Commit: ${importedCommit.shortSha} (${importedCommit.repoName.split('/')[1] || importedCommit.repoName})`
+        }
+      ]);
+    }
+  }, [importedCommit]);
 
   const handleAddSkill = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
@@ -258,6 +281,32 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
               >
                 <FolderPlus size={13} />
                 <span>+ Proyek</span>
+              </button>
+            )}
+
+            {onOpenGitHubSync && (
+              <button
+                type="button"
+                onClick={onOpenGitHubSync}
+                title="Tarik commit dari GitHub"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(36, 41, 46, 0.08), rgba(15, 23, 42, 0.08))',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-sm)',
+                  padding: '6px 10px',
+                  color: 'var(--text-primary)',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
+                }}
+              >
+                <GitBranch size={13} color="var(--accent-primary)" />
+                <span>⚡ Tarik dari GitHub</span>
               </button>
             )}
           </div>

@@ -10,6 +10,8 @@ import { EditProfileModal } from './components/modals/EditProfileModal';
 import { SettingsModal } from './components/modals/SettingsModal';
 import { AiDigestModal } from './components/modals/AiDigestModal';
 import { SharePortfolioModal } from './components/modals/SharePortfolioModal';
+import { GitHubSyncModal } from './components/modals/GitHubSyncModal';
+import type { GitHubCommitItem } from './services/githubService';
 import { parseCurrentRoute, navigateTo } from './utils/router';
 
 const STORAGE_KEY_THEME = 'logfolio_theme_v1';
@@ -67,6 +69,8 @@ export function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isAiDigestOpen, setIsAiDigestOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isGitHubSyncOpen, setIsGitHubSyncOpen] = useState(false);
+  const [importedCommit, setImportedCommit] = useState<GitHubCommitItem | null>(null);
 
   const handleTabChange = (tab: 'public_preview' | 'dashboard_composer') => {
     setActiveTab(tab);
@@ -81,6 +85,10 @@ export function App() {
     if (window.confirm('Keluar dari sesi profil aktif dan beralih ke Mode Tamu?')) {
       setActiveTab('public_preview');
     }
+  };
+
+  const handleSelectGitHubCommit = (commit: GitHubCommitItem) => {
+    setImportedCommit(commit);
   };
 
   return (
@@ -102,6 +110,8 @@ export function App() {
           onAddLog={handleAddLog}
           onDeleteLog={handleDeleteLog}
           onOpenCreateProject={() => setIsCreateProjectOpen(true)}
+          onOpenGitHubSync={() => setIsGitHubSyncOpen(true)}
+          importedCommit={importedCommit}
         />
       ) : (
         <PublicPortfolioPage
@@ -184,6 +194,13 @@ export function App() {
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
         profile={profile}
+      />
+
+      <GitHubSyncModal
+        isOpen={isGitHubSyncOpen}
+        onClose={() => setIsGitHubSyncOpen(false)}
+        defaultUsername={profile.socialLinks?.github || 'Firli-stack'}
+        onSelectCommit={handleSelectGitHubCommit}
       />
     </div>
   );
