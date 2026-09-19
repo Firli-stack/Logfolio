@@ -102,4 +102,41 @@ export const api = {
       return null;
     }
   },
+
+  // 5. Perbarui Profil Pengguna
+  async updateProfile(username: string, payload: {
+    fullName?: string;
+    headline?: string;
+    bio?: string;
+    avatarUrl?: string;
+    timezone?: string;
+    socialLinks?: Record<string, string>;
+  }): Promise<boolean> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/profile/${username}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return true;
+    } catch (err) {
+      console.error('API updateProfile failed:', err);
+      return false;
+    }
+  },
+
+  // 6. Hapus Log Tertentu
+  async deleteLog(logId: string): Promise<boolean> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/logs/${logId}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return true;
+    } catch (err) {
+      console.error('API deleteLog failed:', err);
+      return false;
+    }
+  },
 };

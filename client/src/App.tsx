@@ -195,8 +195,25 @@ export function App() {
     });
   };
 
-  const handleDeleteLog = (logId: string) => {
+  const handleDeleteLog = async (logId: string) => {
+    // Optimistic delete
     setLogs(logs.filter(l => l.id !== logId));
+    // Sync to backend database
+    await api.deleteLog(logId);
+  };
+
+  const handleSaveProfile = async (updatedProfile: typeof profile) => {
+    // Optimistic update
+    setProfile(updatedProfile);
+    // Sync to backend database
+    await api.updateProfile(updatedProfile.username, {
+      fullName: updatedProfile.fullName,
+      headline: updatedProfile.headline,
+      bio: updatedProfile.bio,
+      avatarUrl: updatedProfile.avatarUrl,
+      timezone: updatedProfile.timezone,
+      socialLinks: updatedProfile.socialLinks,
+    });
   };
 
   const handleAddKudos = async (logId: string) => {
@@ -475,7 +492,7 @@ export function App() {
         isOpen={isEditProfileOpen}
         onClose={() => setIsEditProfileOpen(false)}
         profile={profile}
-        onSaveProfile={(updatedProfile) => setProfile(updatedProfile)}
+        onSaveProfile={handleSaveProfile}
       />
 
       {/* Settings & Data Reset Modal */}

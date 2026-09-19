@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { z } from 'zod';
 import prisma from '../utils/prisma.js';
 
 // GET /api/v1/profile/:username - Get public portfolio profile
@@ -100,6 +101,67 @@ export const getProfileByUsername = async (req: Request, res: Response) => {
     return res.status(200).json({ data: formattedProfile });
   } catch (error) {
     console.error('Error fetching profile:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const updateProfileSchema = z.object({
+  fullName: z.string().min(2).max(80).optional(),
+  headline: z.string().max(120).optional(),
+  bio: z.string().max(500).optional(),
+  avatarUrl: z.string().url().optional().or(z.literal('')),
+  timezone: z.string().optional(),
+  socialLinks: z.record(z.string()).optional(),
+  isPublic: z.boolean().optional(),
+});
+
+// PUT /api/v1/profile/:username - Update profile data
+export const updateProfile = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.params;
+    const parseResult = updateProfileSchema.safeParse(req.body);
+
+    if (!parseResult.success) {
+      return res.status(400).json({ error: 'Validation Error', details: parseResult.error.errors });
+    }
+
+    const { fullName, headline, bio, avatarUrl, timezone, socialLinks, isPublic } = parseResult.data;
+
+    const existing = await prisma.profile.findUnique({
+      where: { username },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+
+    const updated = await prisma.profile.update({
+      where: { username },
+      data: {
+        ...(fullName !== undefined && { fullName }),
+        ...(headline !== undefined && { headline }),
+        ...(bio !== undefined && { bio }),
+        ...(avatarUrl !== undefined && { avatarUrl: avatarUrl || null }),
+        ...(timezone !== undefined && { timezone }),
+        ...(socialLinks !== undefined && { socialLinks }),
+        ...(isPublic !== undefined && { isPublic }),
+      },
+    });
+
+    return res.status(200).json({
+      message: 'Profile updated successfully',
+      data: {
+        username: updated.username,
+        fullName: updated.fullName,
+        headline: updated.headline,
+        bio: updated.bio,
+        avatarUrl: updated.avatarUrl,
+        timezone: updated.timezone,
+        socialLinks: updated.socialLinks,
+      },
+    });
+  } catch (error) {
+    console.error('Error updating profile:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
