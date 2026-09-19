@@ -26,8 +26,6 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const suggestionBoxRef = useRef<HTMLDivElement | null>(null);
-
-  // Filter recommendations based on user input
   const query = techInput.trim().toLowerCase().replace(/^#/, '');
   const suggestions = query
     ? POPULAR_TECH_SUGGESTIONS.filter(
@@ -116,7 +114,6 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
 
     onCreateProject(newProject);
     onClose();
-    // Reset form
     setTitle('');
     setDescription('');
     setIsStealthNda(false);
@@ -152,7 +149,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
+        {}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
@@ -196,7 +193,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* Judul Proyek */}
+          {}
           <div>
             <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '6px' }}>
               Nama Wadah Proyek *
@@ -220,7 +217,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
             />
           </div>
 
-          {/* Deskripsi & Dampak */}
+          {}
           <div>
             <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '6px' }}>
               Deskripsi Singkat & Target Dampak *
@@ -246,7 +243,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
             />
           </div>
 
-          {/* NDA / Stealth Toggle */}
+          {}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -286,7 +283,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
             </button>
           </div>
 
-          {/* Tech Stack */}
+          {}
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -360,7 +357,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                   </button>
                 )}
 
-                {/* Suggestions Dropdown Popup */}
+                {}
                 {showSuggestions && suggestions.length > 0 && (
                   <div
                     style={{
@@ -413,7 +410,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
             </div>
           </div>
 
-          {/* Links (Optional) */}
+          {}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             <div>
               <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
@@ -456,7 +453,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
             <button
               type="button"

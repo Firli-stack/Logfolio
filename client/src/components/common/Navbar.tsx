@@ -23,8 +23,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown on outside click
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -41,9 +39,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="app-header no-print">
-      {/* Top row: Brand & User Controls */}
+      {}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: '8px' }} className="app-header-top">
-        {/* Brand Logo */}
+        {}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{
             width: '32px',
@@ -63,7 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </span>
         </div>
 
-        {/* Right Section: AI Digest Button, Streak & User Profile Dropdown */}
+        {}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           {onOpenAiDigest && (
             <button
@@ -90,7 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          {/* Streak Indicator */}
+          {}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Flame size={15} color="var(--accent-emerald)" />
             <span style={{ fontSize: '0.8rem', color: 'var(--accent-emerald)', fontWeight: 600 }}>
@@ -98,7 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </span>
           </div>
 
-          {/* User Profile Dropdown Menu */}
+          {}
           <div style={{ position: 'relative' }} ref={dropdownRef}>
             <button
               type="button"
@@ -135,7 +133,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <ChevronDown size={14} color="var(--text-muted)" style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
             </button>
 
-            {/* Dropdown Popup Panel */}
+            {}
             {isDropdownOpen && (
               <div
                 style={{
@@ -155,7 +153,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   overflow: 'hidden'
                 }}
               >
-                {/* User Info Header */}
+                {}
                 <div style={{ padding: '8px 10px', borderBottom: '1px solid var(--border-subtle)', marginBottom: '4px' }}>
                   <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {profile.fullName}
@@ -165,7 +163,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                 </div>
 
-                {/* Option 1: Edit Profile */}
+                {}
                 <button
                   type="button"
                   onClick={() => {
@@ -195,7 +193,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span>Edit Profil</span>
                 </button>
 
-                {/* Option 2: Settings */}
+                {}
                 <button
                   type="button"
                   onClick={() => {
@@ -225,10 +223,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span>Pengaturan</span>
                 </button>
 
-                {/* Divider */}
+                {}
                 <div style={{ height: '1px', background: 'var(--border-subtle)', margin: '4px 0' }} />
 
-                {/* Option 3: Log Out */}
+                {}
                 <button
                   type="button"
                   onClick={() => {
@@ -263,7 +261,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* View Toggle Tabs */}
+      {}
       <div className="header-nav-toggle" style={{ display: 'flex', background: '#F1F5F9', padding: '4px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)', width: '100%' }}>
         <button
           onClick={() => onTabChange('public_preview')}

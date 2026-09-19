@@ -165,7 +165,6 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
 
     const primaryProof = validLinks[0]?.url;
 
-    // Pisahkan baris detail
     const parsedDetails = content
       .split('\n')
       .map(line => line.replace(/^[•\-\*▸\d\.]+\s*/, '').trim())

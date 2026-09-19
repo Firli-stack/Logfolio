@@ -7,7 +7,6 @@ interface RhythmProps {
 }
 
 export const EngineeringRhythm: React.FC<RhythmProps> = ({ logs }) => {
-  // Weekly cadence data (ringkas dan informatif)
   const weeks = [
     { label: 'W1', count: 12 },
     { label: 'W2', count: 18 },
@@ -42,7 +41,7 @@ export const EngineeringRhythm: React.FC<RhythmProps> = ({ logs }) => {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px', alignItems: 'center' }}>
-        {/* Simple Bar Chart */}
+        {}
         <div>
           <div style={{
             display: 'flex',
@@ -77,7 +76,7 @@ export const EngineeringRhythm: React.FC<RhythmProps> = ({ logs }) => {
           </div>
         </div>
 
-        {/* Domain Distribution Progress Bars */}
+        {}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {domainBreakdown.map((item) => (
             <div key={item.name}>

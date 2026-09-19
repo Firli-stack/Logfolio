@@ -90,7 +90,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* MODAL HEADER: Bersih, Mewah, & Tegas */}
+        {}
         <div style={{
           padding: '16px 20px',
           borderBottom: '1px solid var(--border-subtle)',
@@ -148,7 +148,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
           </button>
         </div>
 
-        {/* PARAMETERS / CONTROLS STRIP */}
+        {}
         <div style={{
           padding: '10px 20px',
           background: 'var(--bg-surface-elevated)',
@@ -159,7 +159,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
           flexWrap: 'wrap',
           gap: '10px',
         }}>
-          {/* Timeframe Selector */}
+          {}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Calendar size={14} color="var(--text-muted)" />
             <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
@@ -220,7 +220,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
             </div>
           </div>
 
-          {/* Project Filter & Language Selector */}
+          {}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Briefcase size={14} color="var(--text-muted)" />
@@ -248,7 +248,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
               </select>
             </div>
 
-            {/* Language Switcher */}
+            {}
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Languages size={14} color="var(--text-muted)" />
               <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-base)', padding: '2px', borderRadius: 'var(--radius-sm)' }}>
@@ -291,7 +291,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
           </div>
         </div>
 
-        {/* 3 DISTINCT FUNCTION PILLS (Tab Navigasi dengan Badge Fitur Jelas) */}
+        {}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(3, 1fr)',
@@ -300,7 +300,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
           background: 'var(--bg-surface)',
           borderBottom: '1px solid var(--border-subtle)',
         }}>
-          {/* Fitur 1: Executive Pitch */}
+          {}
           <button
             type="button"
             onClick={() => setActiveTab('executive')}
@@ -329,7 +329,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
             </span>
           </button>
 
-          {/* Fitur 2: Technical Highlights */}
+          {}
           <button
             type="button"
             onClick={() => setActiveTab('technical')}
@@ -358,7 +358,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
             </span>
           </button>
 
-          {/* Fitur 3: LinkedIn Ready Post */}
+          {}
           <button
             type="button"
             onClick={() => setActiveTab('linkedin')}
@@ -388,13 +388,13 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
           </button>
         </div>
 
-        {/* TAB BODY (Isi Konten yang Padat, Tegas & Terformat Rapi) */}
+        {}
         <div style={{ padding: '18px 20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-          {/* TAB 1: EXECUTIVE PITCH */}
+          {}
           {activeTab === 'executive' && (
             <>
-              {/* Hasil Ringkasan Pitch dengan Tombol Salin Jelas */}
+              {}
               <div style={{
                 borderRadius: 'var(--radius-md)',
                 background: 'var(--bg-surface-elevated)',
@@ -444,7 +444,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
                 </div>
               </div>
 
-              {/* Verified Metrics Counter */}
+              {}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, 1fr)',
@@ -493,7 +493,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
                 </div>
               </div>
 
-              {/* Skills Frequency Badges */}
+              {}
               <div>
                 <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                   {isEn ? 'Top Proven Skills in this Period:' : 'Keahlian yang Paling Banyak Dibuktikan:'}
@@ -520,7 +520,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
             </>
           )}
 
-          {/* TAB 2: TECHNICAL HIGHLIGHTS */}
+          {}
           {activeTab === 'technical' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -612,7 +612,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
             </div>
           )}
 
-          {/* TAB 3: LINKEDIN / SOCIAL POST */}
+          {}
           {activeTab === 'linkedin' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -664,7 +664,7 @@ export const AiDigestModal: React.FC<AiDigestModalProps> = ({
 
         </div>
 
-        {/* MODAL FOOTER */}
+        {}
         <div style={{
           padding: '12px 20px',
           borderTop: '1px solid var(--border-subtle)',

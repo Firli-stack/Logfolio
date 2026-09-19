@@ -5,7 +5,6 @@ interface HeatmapProps {
 }
 
 export const ActivityHeatmap: React.FC<HeatmapProps> = ({ logs }) => {
-  // Generate last 24 weeks (approx 168 days)
   const days: { dateStr: string; count: number }[] = [];
   const logCountsByDate: Record<string, number> = {};
 
@@ -18,8 +17,6 @@ export const ActivityHeatmap: React.FC<HeatmapProps> = ({ logs }) => {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
     const dateStr = d.toISOString().split('T')[0];
-    
-    // Some random consistency simulation for past days, but exact for user logs
     const hasLog = logCountsByDate[dateStr] !== undefined;
     const count = hasLog ? logCountsByDate[dateStr] : ((i % 3 === 0 || i % 7 === 0 || i % 5 === 0) ? (i % 2 === 0 ? 2 : 1) : 0);
     days.push({ dateStr, count });

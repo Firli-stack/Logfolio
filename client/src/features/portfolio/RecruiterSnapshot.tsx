@@ -45,14 +45,14 @@ export const RecruiterSnapshot: React.FC<RecruiterSnapshotProps> = ({ profile, p
         )}
       </div>
 
-      {/* 3 Metrics Cards */}
+      {}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
         gap: '16px',
         marginBottom: '20px'
       }}>
-        {/* Card 1: Streak Consistency */}
+        {}
         <div className="glass-panel" style={{ padding: '20px', borderLeft: '3px solid var(--accent-emerald)' }}>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
             Konsistensi Pembuktian
@@ -65,7 +65,7 @@ export const RecruiterSnapshot: React.FC<RecruiterSnapshotProps> = ({ profile, p
           </div>
         </div>
 
-        {/* Card 2: Top Skills */}
+        {}
         <div className="glass-panel" style={{ padding: '20px', borderLeft: '3px solid var(--accent-primary)' }}>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
             Keahlian Paling Aktif Digunakan
@@ -79,7 +79,7 @@ export const RecruiterSnapshot: React.FC<RecruiterSnapshotProps> = ({ profile, p
           </div>
         </div>
 
-        {/* Card 3: Key Highlights */}
+        {}
         <div className="glass-panel" style={{ padding: '20px', borderLeft: '3px solid var(--accent-amber)' }}>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
             Pencapaian Teruji
@@ -92,7 +92,7 @@ export const RecruiterSnapshot: React.FC<RecruiterSnapshotProps> = ({ profile, p
         </div>
       </div>
 
-      {/* Projects Showcase Cards */}
+      {}
       <h3 style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         Wadah Proyek Aktif (Workstreams)
       </h3>

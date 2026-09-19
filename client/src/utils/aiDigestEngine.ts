@@ -28,8 +28,6 @@ export function generateAiDigest(
 ): DigestResult {
   const isEn = options.lang === 'en';
   const now = new Date();
-
-  // Filter logs berdasarkan rentang waktu dan proyek
   let filtered = [...logs];
 
   if (options.projectId && options.projectId !== 'all') {
@@ -43,13 +41,9 @@ export function generateAiDigest(
     const cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     filtered = filtered.filter(l => new Date(l.createdAt) >= cutoff);
   }
-
-  // Fallback jika kosong agar ada ringkasan yang muncul
   if (filtered.length === 0 && logs.length > 0) {
     filtered = logs.slice(0, 10);
   }
-
-  // Hitung frekuensi skills
   const skillMap: Record<string, number> = {};
   filtered.forEach(log => {
     log.skills.forEach(s => {
@@ -64,8 +58,6 @@ export function generateAiDigest(
     .map(([skill, count]) => ({ skill, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 6);
-
-  // Key highlights
   const impactKeywords = [
     'optimasi', 'optimize', 'latency', 'refactor', 'benchmark', 'scale', 
     'pangkas', 'reduce', 'fix', 'bug', 'deploy', 'pipeline', 'architecture',
@@ -98,8 +90,6 @@ export function generateAiDigest(
   let timeframeLabel = isEn ? 'All Time' : 'Seluruh Waktu';
   if (options.timeframe === '7days') timeframeLabel = isEn ? 'Last 7 Days (Weekly Sprint)' : 'Sprint 7 Hari Terakhir';
   if (options.timeframe === '30days') timeframeLabel = isEn ? 'Last 30 Days (Monthly Momentum)' : '30 Hari Terakhir';
-
-  // Executive Pitch bilingual
   let executivePitch = '';
   if (isEn) {
     executivePitch = projectName
@@ -110,8 +100,6 @@ export function generateAiDigest(
       ? `Fokus intensif pada proyek ${projectName}: Menyelesaikan ${filtered.length} micro-milestones dengan konsentrasi utama pada ${topSkillsList}. Terbukti meningkatkan stabilitas, efisiensi arsitektur, dan delivery fitur.`
       : `Selama periode ${timeframeLabel}, ${profile.fullName} menyelesaikan ${filtered.length} log pembuktian kompetensi teknis dengan keahlian aktif pada ${topSkillsList}. Fokus kuat pada pemecahan masalah nyata, optimasi latensi, serta penulisan kode teruji.`;
   }
-
-  // Key achievements points bilingual
   const keyAchievements = technicalHighlights.map((th, idx) => {
     return `${idx + 1}. ${th.title} (${th.skills.length > 0 ? th.skills.join(', ') : 'Tech Stack'})`;
   });
@@ -121,8 +109,6 @@ export function generateAiDigest(
       ? 'Consistently maintained resilient system architecture and code health.' 
       : 'Membangun dan memelihara fondasi arsitektur sistem secara konsisten.');
   }
-
-  // Social / LinkedIn post draft bilingual
   const hashtags = skillsFrequency.map(s => `#${s.skill.replace(/[^a-zA-Z0-9]/g, '')}`).join(' ');
   const socialPostDraft = isEn
     ? `🚀 Engineering Update: Here's what I shipped recently!

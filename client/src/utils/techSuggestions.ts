@@ -1,5 +1,4 @@
 export const POPULAR_TECH_SUGGESTIONS: string[] = [
-  // Languages
   'Python',
   'TypeScript',
   'JavaScript',
@@ -16,8 +15,6 @@ export const POPULAR_TECH_SUGGESTIONS: string[] = [
   'Dart',
   'HTML',
   'CSS',
-  
-  // Frontend & Mobile
   'React',
   'Next.js',
   'Vue',
@@ -29,8 +26,6 @@ export const POPULAR_TECH_SUGGESTIONS: string[] = [
   'Vite',
   'Redux',
   'Zustand',
-  
-  // Backend & APIs
   'Node.js',
   'Express',
   'FastAPI',
@@ -42,8 +37,6 @@ export const POPULAR_TECH_SUGGESTIONS: string[] = [
   'REST API',
   'gRPC',
   'Microservices',
-  
-  // Databases & Caching
   'PostgreSQL',
   'MySQL',
   'SQLite',
@@ -53,8 +46,6 @@ export const POPULAR_TECH_SUGGESTIONS: string[] = [
   'Prisma',
   'Supabase',
   'Firebase',
-  
-  // DevOps & Cloud
   'Docker',
   'Kubernetes',
   'AWS',
@@ -67,8 +58,6 @@ export const POPULAR_TECH_SUGGESTIONS: string[] = [
   'Linux',
   'Kafka',
   'RabbitMQ',
-  
-  // AI & Data
   'PyTorch',
   'TensorFlow',
   'Pandas',
@@ -78,8 +67,6 @@ export const POPULAR_TECH_SUGGESTIONS: string[] = [
   'Data Pipeline',
   'Machine Learning',
   'Scikit-learn',
-
-  // Testing & Tooling
   'Jest',
   'Playwright',
   'Cypress',

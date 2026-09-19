@@ -21,7 +21,7 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, onFilterByP
         </div>
       </div>
 
-      {/* Grid Proyek Sederhana & Bersih */}
+      {}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -42,7 +42,7 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, onFilterByP
               }}
             >
               <div>
-                {/* Header Tag */}
+                {}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                   <span style={{
                     fontSize: '0.72rem',
@@ -72,7 +72,7 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, onFilterByP
                   {proj.description}
                 </p>
 
-                {/* Tech Chips Ringkas */}
+                {}
                 {proj.technologies && proj.technologies.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '14px' }}>
                     {proj.technologies.map(t => (
@@ -84,7 +84,7 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, onFilterByP
                 )}
               </div>
 
-              {/* Action Links */}
+              {}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',

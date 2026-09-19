@@ -14,7 +14,6 @@ export function usePortfolioData() {
       const saved = localStorage.getItem(STORAGE_KEY_PROFILE);
       if (saved) return JSON.parse(saved);
     } catch {
-      // ignore
     }
     return INITIAL_PROFILE;
   });
@@ -24,7 +23,6 @@ export function usePortfolioData() {
       const saved = localStorage.getItem(STORAGE_KEY_PROJECTS);
       if (saved) return JSON.parse(saved);
     } catch {
-      // ignore
     }
     return INITIAL_PROJECTS;
   });
@@ -34,7 +32,6 @@ export function usePortfolioData() {
       const saved = localStorage.getItem(STORAGE_KEY_LOGS);
       if (saved) return JSON.parse(saved);
     } catch {
-      // ignore
     }
     return INITIAL_LOGS;
   });
@@ -79,7 +76,6 @@ export function usePortfolioData() {
       localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(logs));
       localStorage.setItem(STORAGE_KEY_PROJECTS, JSON.stringify(projects));
     } catch {
-      // ignore
     }
   }, [profile, logs, projects]);
 

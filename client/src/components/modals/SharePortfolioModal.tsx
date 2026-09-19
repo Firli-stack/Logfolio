@@ -11,8 +11,6 @@ import {
   ExternalLink,
   ShieldCheck
 } from 'lucide-react';
-
-// Custom SVG Icons for authentic branding
 const LinkedInIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="#0A66C2" style={{ display: 'block' }}>
     <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76c-.95 0-1.72-.77-1.72-1.72s.77-1.72 1.72-1.72 1.72.77 1.72 1.72-.77 1.72-1.72 1.72m1.4 9.74v-8.37H5.06v8.37h2.8z" />
@@ -38,8 +36,6 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const [showQr, setShowQr] = useState(false);
-
-  // Prevent background scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
       const originalBodyOverflow = document.body.style.overflow;
@@ -81,8 +77,6 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
     const url = `https://api.whatsapp.com/send?text=${text}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
-
-  // Google Chart API / QR Server fallback for instant clean QR rendering
   const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(publicUrl)}&margin=8`;
 
   return (
@@ -121,7 +115,7 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
           color: 'var(--text-primary)'
         }}
       >
-        {/* Header */}
+        {}
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -183,10 +177,10 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
           </button>
         </div>
 
-        {/* Content Body */}
+        {}
         <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
-          {/* Status Badge */}
+          {}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -216,7 +210,7 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
             </div>
           </div>
 
-          {/* Shareable Link Input Box */}
+          {}
           <div>
             <label style={{
               display: 'block',
@@ -292,7 +286,7 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
             </div>
           </div>
 
-          {/* Quick Share Action Buttons */}
+          {}
           <div>
             <label style={{
               display: 'block',
@@ -310,7 +304,7 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
               gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
               gap: '10px'
             }}>
-              {/* LinkedIn Share */}
+              {}
               <button
                 type="button"
                 onClick={handleShareLinkedIn}
@@ -342,7 +336,7 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
                 <span>LinkedIn</span>
               </button>
 
-              {/* WhatsApp Share */}
+              {}
               <button
                 type="button"
                 onClick={handleShareWhatsApp}
@@ -374,7 +368,7 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
                 <span>WhatsApp</span>
               </button>
 
-              {/* Twitter / X Share */}
+              {}
               <button
                 type="button"
                 onClick={handleShareTwitter}
@@ -408,7 +402,7 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
             </div>
           </div>
 
-          {/* QR Code Toggle Section for In-Person / Mobile Interview */}
+          {}
           <div style={{
             borderTop: '1px solid var(--border-subtle)',
             paddingTop: '16px'
@@ -479,7 +473,7 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
 
         </div>
 
-        {/* Footer */}
+        {}
         <div style={{
           padding: '14px 24px',
           background: 'var(--bg-surface-elevated)',

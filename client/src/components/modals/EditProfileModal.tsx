@@ -26,7 +26,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [linkedin, setLinkedin] = useState(profile.socialLinks.linkedin || '');
   const [twitter, setTwitter] = useState(profile.socialLinks.twitter || '');
 
-  // Keep state synchronized with profile prop
   useEffect(() => {
     if (isOpen) {
       setFullName(profile.fullName);
@@ -40,7 +39,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
       setLinkedin(profile.socialLinks.linkedin || '');
       setTwitter(profile.socialLinks.twitter || '');
 
-      // Prevent background scrolling
       const originalBodyOverflow = document.body.style.overflow;
       const originalHtmlOverflow = document.documentElement.style.overflow;
       const originalTouchAction = document.body.style.touchAction;
@@ -63,7 +61,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Convert file to local preview Data URL
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') {
@@ -200,7 +197,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               src={avatarUrl}
               alt="Preview Avatar"
               onError={(e) => {
-                // Fallback if URL is invalid
                 (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80';
               }}
               style={{

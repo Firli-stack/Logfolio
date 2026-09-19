@@ -21,8 +21,6 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
   }, [initialSelectedProject]);
 
   const allSkills = Array.from(new Set(logs.flatMap(l => l.skills)));
-
-  // Filter logs berdasarkan pencarian teks, proyek, dan tag skill
   const filteredLogs = logs.filter(log => {
     const matchProj = selectedProject === 'all' || log.projectId === selectedProject;
     const matchSkill = selectedSkill === 'all' || log.skills.includes(selectedSkill);
@@ -49,7 +47,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
 
   return (
     <div style={{ marginBottom: '32px' }}>
-      {/* Header & Filter Controls */}
+      {}
       <div style={{
         background: 'var(--bg-surface)',
         padding: '16px 20px',
@@ -102,9 +100,9 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
           )}
         </div>
 
-        {/* Search Bar & Dropdown Controls */}
+        {}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', marginBottom: '12px' }}>
-          {/* Instant Search Bar */}
+          {}
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
             <Search size={14} style={{ position: 'absolute', left: '10px', color: 'var(--text-muted)', pointerEvents: 'none' }} />
             <input
@@ -142,7 +140,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
             )}
           </div>
 
-          {/* Project Filter */}
+          {}
           <select
             value={selectedProject}
             onChange={(e) => setSelectedProject(e.target.value)}
@@ -162,7 +160,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
             ))}
           </select>
 
-          {/* Skill Filter */}
+          {}
           <select
             value={selectedSkill}
             onChange={(e) => setSelectedSkill(e.target.value)}
@@ -183,7 +181,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
           </select>
         </div>
 
-        {/* Quick Clickable Skill Pills */}
+        {}
         {allSkills.length > 0 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', paddingTop: '6px', borderTop: '1px solid var(--border-subtle)' }}>
             <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
@@ -232,7 +230,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
         )}
       </div>
 
-      {/* Empty State jika tidak ada hasil filter */}
+      {}
       {filteredLogs.length === 0 && (
         <div className="glass-panel" style={{ padding: '36px 20px', textAlign: 'center', background: 'var(--bg-surface)' }}>
           <div style={{
@@ -273,7 +271,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
         </div>
       )}
 
-      {/* Daftar Catatan Bersih & Terbaca */}
+      {}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {filteredLogs.map(log => (
           <div
@@ -284,7 +282,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
               background: 'var(--bg-surface)'
             }}
           >
-            {/* Header: Tanggal & Nama Proyek */}
+            {}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem' }}>
                 <span style={{ color: 'var(--text-muted)' }}>{log.logDate}</span>
@@ -317,7 +315,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
                 )}
               </div>
 
-              {/* Tombol Apresiasi Ringkas */}
+              {}
               <button
                 type="button"
                 onClick={() => onAddKudos(log.id)}
@@ -340,7 +338,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
               </button>
             </div>
 
-            {/* Judul Catatan Jelas (Tanpa simbol aneh) */}
+            {}
             <h4 style={{
               fontSize: '0.98rem',
               fontWeight: 700,
@@ -351,7 +349,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
               {log.title || log.content}
             </h4>
 
-            {/* Poin-Poin Solusi Ringkas */}
+            {}
             {log.details && log.details.length > 0 && (
               <ul style={{
                 margin: '6px 0 10px 18px',
@@ -368,7 +366,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
               </ul>
             )}
 
-            {/* Foto / Screenshot Lampiran (Jika Ada) */}
+            {}
             {log.imageUrls && log.imageUrls.length > 0 && (
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', margin: '8px 0 10px 0' }}>
                 {log.imageUrls.map((imgSrc, imgIdx) => (
@@ -397,7 +395,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
               </div>
             )}
 
-            {/* Footer: Tags & Bukti Kerja */}
+            {}
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -433,7 +431,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
                 })}
               </div>
 
-              {/* Tautan Bukti */}
+              {}
               {((log.proofLinks && log.proofLinks.length > 0) || log.proofUrl) && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                   {log.proofLinks && log.proofLinks.length > 0 ? (

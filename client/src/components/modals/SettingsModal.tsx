@@ -87,7 +87,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
+        {}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
@@ -132,7 +132,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
         </div>
 
-        {/* Theme & Language Configuration */}
+        {}
         <div style={{
           padding: '14px',
           borderRadius: 'var(--radius-md)',
@@ -142,7 +142,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           flexDirection: 'column',
           gap: '14px'
         }}>
-          {/* Theme Selector */}
+          {}
           <div>
             <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Sun size={14} color="var(--accent-amber)" />
@@ -197,7 +197,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          {/* Language Selector */}
+          {}
           <div>
             <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Languages size={14} color="var(--accent-cyan)" />
@@ -251,7 +251,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
         </div>
 
-        {/* Status Info */}
+        {}
         <div style={{
           padding: '12px',
           borderRadius: 'var(--radius-md)',
@@ -281,7 +281,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
         </div>
 
-        {/* Reset Section */}
+        {}
         <div style={{
           padding: '12px',
           borderRadius: 'var(--radius-md)',
@@ -330,7 +330,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
         </div>
 
-        {/* Footer */}
+        {}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
           <button
             type="button"

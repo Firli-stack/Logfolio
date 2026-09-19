@@ -21,7 +21,7 @@ export const BentoHero: React.FC<BentoHeroProps> = ({
   return (
     <div className="glass-panel" style={{ padding: '28px', marginBottom: '28px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
-        {/* Left: Avatar & Identity */}
+        {}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '18px', flexWrap: 'wrap', flex: '1 1 360px' }}>
           <img
             src={profile.avatarUrl}
@@ -70,7 +70,7 @@ export const BentoHero: React.FC<BentoHeroProps> = ({
           </div>
         </div>
 
-        {/* Right: Action Buttons */}
+        {}
         <div className="no-print" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
           {onOpenAiDigest && (
             <button
@@ -166,12 +166,12 @@ export const BentoHero: React.FC<BentoHeroProps> = ({
         </div>
       </div>
 
-      {/* Ringkasan Singkat (Manusiawi) */}
+      {}
       <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6', marginTop: '18px', maxWidth: '720px' }}>
         {profile.bio}
       </p>
 
-      {/* Poin Keahlian Utama (Kata Kunci Ringkas Saja) */}
+      {}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '16px' }}>
         <span style={{
           display: 'inline-flex',

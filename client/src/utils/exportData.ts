@@ -1,9 +1,6 @@
 import type { UserProfile, Project, LogEntry } from '../mockData';
 
-/**
- * Format Markdown Super Rapi & Hangat (Human-Friendly)
- * Cocok langsung untuk GitHub Profile README, Notion, maupun portfolio docs.
- */
+
 export function exportToMarkdown(
   profile: UserProfile,
   projects: Project[],
@@ -12,13 +9,9 @@ export function exportToMarkdown(
   let md = `# ${profile.fullName}\n\n`;
   md += `**${profile.headline}**\n\n`;
   md += `Lokasi: ${profile.location} | Zona Waktu: ${profile.timezone} | Keaktifan: ${profile.streakDays} Hari\n\n`;
-
-  // Tentang Saya
   if (profile.bio) {
     md += `## Tentang\n\n${profile.bio}\n\n`;
   }
-
-  // Socials / Kontak
   const contactLinks: string[] = [];
   if (profile.socialLinks.website) contactLinks.push(`[Website](${profile.socialLinks.website})`);
   if (profile.socialLinks.github) contactLinks.push(`[GitHub](${profile.socialLinks.github})`);
@@ -26,16 +19,12 @@ export function exportToMarkdown(
   if (contactLinks.length > 0) {
     md += `Kontak: ${contactLinks.join(' · ')}\n\n`;
   }
-
-  // Top Skills
   if (profile.topSkills && profile.topSkills.length > 0) {
     md += `## Keahlian Utama\n\n`;
     md += profile.topSkills.map(s => `\`${s.skill}\``).join(' · ') + `\n\n`;
   }
 
   md += `---\n\n`;
-
-  // Projects
   md += `## Proyek\n\n`;
   projects.forEach((p, idx) => {
     const ndaLabel = p.isStealthNda ? '*(NDA Protected)*' : '';
@@ -55,8 +44,6 @@ export function exportToMarkdown(
   });
 
   md += `---\n\n`;
-
-  // Engineering Logs
   md += `## Catatan Pengerjaan\n\n`;
   logs.forEach(log => {
     const title = log.title || log.content;
@@ -93,9 +80,7 @@ export function exportToMarkdown(
   downloadFile(md, `${profile.username}-portfolio.md`, 'text/markdown;charset=utf-8;');
 }
 
-/**
- * Ekspor ke JSON Murni
- */
+
 export function exportToJson(
   profile: UserProfile,
   projects: Project[],
@@ -119,9 +104,7 @@ export function exportToJson(
 export type CvTemplateStyle = 'classic_ats' | 'modern_clean';
 export type CvLanguage = 'id' | 'en';
 
-/**
- * Ekspor Resume HTML Bersih & Elegan (Layout CV Standar A4 Manusiawi)
- */
+
 export function exportToPdfPrint(
   profile: UserProfile,
   projects: Project[],
@@ -136,8 +119,6 @@ export function exportToPdfPrint(
   }
 
   const isEn = lang === 'en';
-
-  // Multi-language translation dictionary for labels
   const t = {
     summary: isEn ? 'Professional Summary' : 'Ringkasan Profesional',
     skills: isEn ? 'Technical Skills' : 'Keahlian Teknis',
@@ -153,8 +134,6 @@ export function exportToPdfPrint(
     verifiedLogs: isEn ? 'Verified Logs' : 'Catatan Rekayasa',
     entries: isEn ? 'Entries' : 'Entri'
   };
-
-  // Translated dynamic profile content
   const displayHeadline = isEn 
     ? (profile.headline.includes('Backend') ? 'Senior Distributed Systems & Backend Engineer' : profile.headline)
     : profile.headline;
@@ -164,8 +143,6 @@ export function exportToPdfPrint(
     : (profile.bio || 'Fokus pada arsitektur backend, database tuning, dan layanan berkinerja tinggi. Berpengalaman menangani sistem transaksi dan otomasi cloud.');
 
   const displayLocation = isEn ? 'Jakarta, Indonesia' : profile.location;
-
-  // Translated Projects dictionary
   const getTranslatedProject = (p: Project) => {
     if (!isEn) {
       return {
@@ -181,8 +158,6 @@ export function exportToPdfPrint(
         ].filter(Boolean)
       };
     }
-
-    // English translations
     if (p.id === 'p1' || p.title.toLowerCase().includes('payment')) {
       return {
         title: 'Core Payment Engine & Gateway',
@@ -234,8 +209,6 @@ export function exportToPdfPrint(
       ].filter(Boolean)
     };
   };
-
-  // Translated Logs dictionary
   const getTranslatedLogs = () => {
     if (!isEn) {
       return logs.slice(0, 4).map(l => ({
@@ -297,8 +270,6 @@ export function exportToPdfPrint(
   };
 
   const translatedLogs = getTranslatedLogs();
-
-  // Clean contact items for CV header matching the reference
   const cleanContactItems: string[] = [];
   cleanContactItems.push(displayLocation);
   cleanContactItems.push('alexpratama@dev.io');
@@ -311,14 +282,10 @@ export function exportToPdfPrint(
     const displayGh = profile.socialLinks.github.replace(/^https?:\/\/(www\.)?/, '');
     cleanContactItems.push(`<a href="${profile.socialLinks.github}" target="_blank">${displayGh}</a>`);
   }
-
-  // Section titles matching user reference standard exactly
   const secEdu = isEn ? 'EDUCATION BACKGROUND' : 'RIWAYAT PENDIDIKAN';
   const secProj = isEn ? 'PROJECT' : 'PROYEK';
   const secLeadership = isEn ? 'LEADERSHIP & ORGANIZATION EXPERIENCE' : 'PENGALAMAN ORGANISASI & KEPEMIMPINAN';
   const secSkills = isEn ? 'SKILLS & LANGUAGES' : 'KEAHLIAN & BAHASA';
-
-  // Group skills logically for the bottom skills section matching reference categories
   const programmingSkills = 'Go, Python, TypeScript, JavaScript, PHP, SQL';
   const backendSkills = 'FastAPI, Laravel, PostgreSQL, Redis, RESTful API';
   const frontendSkills = 'React, Vite, Next.js, HTML5, CSS3, Blade';
@@ -326,8 +293,6 @@ export function exportToPdfPrint(
   const toolsSkills = 'Docker, Kubernetes, Git, GitHub, Postman, Linux';
   const apiSecuritySkills = 'REST API, JWT, OAuth 2.0, Microservices';
   const languagesSpoken = isEn ? 'Indonesian (Native), English (Professional Working)' : 'Indonesia (Penutur Asli), Inggris (Kerja Profesional)';
-
-  // Template 1: Classic ATS Standard (Exact mirror of reference PDF)
   const classicAtsHtml = `
 <!DOCTYPE html>
 <html lang="${isEn ? 'en' : 'id'}">
@@ -360,7 +325,7 @@ export function exportToPdfPrint(
       text-align: center;
     }
     
-    /* Header Section: Centered Name in Deep Blue, Summary, and Contact Line */
+    
     .header-name {
       font-size: 19pt;
       font-weight: bold;
@@ -383,7 +348,7 @@ export function exportToPdfPrint(
       line-height: 1.45;
     }
 
-    /* Section Headings with Deep Blue Underline Rule */
+    
     .section-heading {
       font-size: 10pt;
       font-weight: bold;
@@ -396,7 +361,7 @@ export function exportToPdfPrint(
       margin-bottom: 8px;
     }
 
-    /* Items Layout (Project, Education, Leadership) */
+    
     .item-block {
       margin-bottom: 10px;
       page-break-inside: avoid;
@@ -434,7 +399,7 @@ export function exportToPdfPrint(
       text-align: right;
     }
     
-    /* Bullet Points */
+    
     .bullet-list {
       list-style-type: disc;
       padding-left: 20px;
@@ -458,7 +423,7 @@ export function exportToPdfPrint(
       font-weight: bold;
     }
 
-    /* Skills Table / Rows */
+    
     .skills-section {
       font-size: 9.2pt;
       line-height: 1.55;
@@ -568,8 +533,6 @@ export function exportToPdfPrint(
 </body>
 </html>
   `;
-
-  // Template 2: Modern Clean 1-Kolom (Sans-Serif Elegan)
   const modernCleanHtml = `
 <!DOCTYPE html>
 <html lang="${isEn ? 'en' : 'id'}">
@@ -780,9 +743,7 @@ export function exportToPdfPrint(
   printWindow.document.close();
 }
 
-/**
- * Helper download file
- */
+
 function downloadFile(content: string, filename: string, mimeType: string): void {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);

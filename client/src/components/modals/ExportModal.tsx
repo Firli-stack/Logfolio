@@ -22,8 +22,6 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   const [downloadedFormat, setDownloadedFormat] = useState<'md' | 'json' | 'pdf' | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<CvTemplateStyle>('classic_ats');
   const [selectedLang, setSelectedLang] = useState<CvLanguage>('id');
-
-  // Prevent background scroll when modal is active
   useEffect(() => {
     if (isOpen) {
       const originalBodyOverflow = document.body.style.overflow;
@@ -101,7 +99,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
+        {}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flex: 1 }}>
             <div style={{
@@ -149,7 +147,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           </button>
         </div>
 
-        {/* Notifikasi Sukses */}
+        {}
         {downloadedFormat && (
           <div style={{
             background: 'rgba(16, 185, 129, 0.1)',
@@ -173,9 +171,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           </div>
         )}
 
-        {/* Options List */}
+        {}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '14px' }}>
-          {/* Option 1: PDF Resume Resmi (A4 Clean) */}
+          {}
           <div
             style={{
               border: '1.5px solid var(--accent-primary)',
@@ -187,7 +185,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               background: 'rgba(79, 70, 229, 0.03)'
             }}
           >
-            {/* Top row: Icon + Title + Rekomendasi badge */}
+            {}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{
                 width: '30px',
@@ -217,10 +215,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               </div>
             </div>
 
-            {/* Template Selector & Language Switcher */}
+            {}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '8px', borderTop: '1px solid rgba(79, 70, 229, 0.12)' }}>
               
-              {/* Bahasa Resume */}
+              {}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                   <Languages size={12} />
@@ -264,7 +262,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 </div>
               </div>
 
-              {/* Template Options */}
+              {}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '6px' }}>
                 <label
                   style={{
@@ -317,7 +315,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 </label>
               </div>
 
-              {/* Tombol Cetak diposisikan DI BAWAH pilihan konfigurasi */}
+              {}
               <button
                 type="button"
                 onClick={() => handleExportPdf(selectedTemplate, selectedLang)}
@@ -345,7 +343,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </div>
           </div>
 
-          {/* Option 2: Markdown (.md) */}
+          {}
           <div
             style={{
               border: '1px solid var(--border-subtle)',
@@ -408,7 +406,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </button>
           </div>
 
-          {/* Option 3: JSON Backup (.json) */}
+          {}
           <div
             style={{
               border: '1px solid var(--border-subtle)',
@@ -471,7 +469,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </button>
           </div>
 
-          {/* Option 4: Shareable Web Link (/p/:username) */}
+          {}
           <div
             style={{
               border: '1px solid var(--border-subtle)',
@@ -539,7 +537,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           </div>
         </div>
 
-        {/* Footer Guarantee */}
+        {}
         <div style={{
           display: 'flex',
           alignItems: 'center',

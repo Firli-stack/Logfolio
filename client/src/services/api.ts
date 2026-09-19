@@ -19,7 +19,6 @@ export interface ProfileResponse {
 }
 
 export const api = {
-  // 1. Ambil Profil Publik Lengkap
   async getProfile(username: string): Promise<ProfileResponse | null> {
     try {
       const res = await fetch(`${API_BASE_URL}/profile/${username}`);
@@ -30,12 +29,9 @@ export const api = {
       const json = await res.json();
       return json.data;
     } catch {
-      // Backend server sedang offline / belum dijalankan: fallback otomatis ke local state/mockData
       return null;
     }
   },
-
-  // 2. Tambah Log Baru
   async createLog(payload: {
     username: string;
     projectId?: string | null;
@@ -61,8 +57,6 @@ export const api = {
       return null;
     }
   },
-
-  // 3. Beri Kudos
   async addKudos(logId: string): Promise<number | null> {
     try {
       const res = await fetch(`${API_BASE_URL}/logs/${logId}/kudos`, {
@@ -76,8 +70,6 @@ export const api = {
       return null;
     }
   },
-
-  // 4. Buat Proyek Baru
   async createProject(payload: {
     username: string;
     title: string;
@@ -102,8 +94,6 @@ export const api = {
       return null;
     }
   },
-
-  // 5. Perbarui Profil Pengguna
   async updateProfile(username: string, payload: {
     fullName?: string;
     headline?: string;
@@ -125,8 +115,6 @@ export const api = {
       return false;
     }
   },
-
-  // 6. Hapus Log Tertentu
   async deleteLog(logId: string): Promise<boolean> {
     try {
       const res = await fetch(`${API_BASE_URL}/logs/${logId}`, {
