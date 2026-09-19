@@ -33,7 +33,6 @@ export const PublicPortfolioPage: React.FC<PublicPortfolioPageProps> = ({
 
   return (
     <main>
-      {/* TIER 1: Modern Bento Grid Hero & Identity */}
       <BentoHero
         profile={profile}
         onContactClick={onContactClick}
@@ -42,7 +41,6 @@ export const PublicPortfolioPage: React.FC<PublicPortfolioPageProps> = ({
         onShareClick={onShareClick}
       />
 
-      {/* AI Showcase Feature Banner */}
       <div 
         className="glass-panel no-print" 
         style={{
@@ -122,7 +120,6 @@ export const PublicPortfolioPage: React.FC<PublicPortfolioPageProps> = ({
         </button>
       </div>
 
-      {/* Navigation Filter Pills */}
       <div className="no-print" style={{
         display: 'flex',
         alignItems: 'center',
@@ -185,14 +182,12 @@ export const PublicPortfolioPage: React.FC<PublicPortfolioPageProps> = ({
         </button>
       </div>
 
-      {/* TIER 1.5: Recruiter Executive Snapshot & AI Highlights */}
       <RecruiterSnapshot
         profile={profile}
         projects={projects}
         onOpenAiDigest={onOpenAiDigest}
       />
 
-      {/* Section 1: Workstreams & Case Studies */}
       {(publicViewMode === 'all' || publicViewMode === 'case_studies') && (
         <ProjectShowcase
           projects={projects}
@@ -205,12 +200,10 @@ export const PublicPortfolioPage: React.FC<PublicPortfolioPageProps> = ({
         />
       )}
 
-      {/* Section 2: Engineering Rhythm & Momentum */}
       {(publicViewMode === 'all' || publicViewMode === 'logs') && (
         <EngineeringRhythm logs={logs} />
       )}
 
-      {/* Section 3: Engineering Logbook Stream */}
       {(publicViewMode === 'all' || publicViewMode === 'logs') && (
         <div id="log-timeline-section">
           <LogTimeline

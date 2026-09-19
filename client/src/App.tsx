@@ -38,7 +38,6 @@ export function App() {
     return r.route === 'dashboard' ? 'dashboard_composer' : 'public_preview';
   });
 
-  // Sync route saat browser URL berubah (Back / Forward button)
   useEffect(() => {
     const handlePopState = () => {
       const r = parseCurrentRoute();
@@ -49,7 +48,6 @@ export function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Data & Mutasi via Custom Hook
   const {
     profile,
     projects,
@@ -62,7 +60,6 @@ export function App() {
     handleResetData,
   } = usePortfolioData();
 
-  // Modals Visibility State
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
@@ -88,7 +85,6 @@ export function App() {
 
   return (
     <div className="app-container">
-      {/* Top Navbar */}
       <Navbar
         profile={profile}
         activeTab={activeTab}
@@ -99,7 +95,6 @@ export function App() {
         onLogout={handleLogout}
       />
 
-      {/* Pages View */}
       {activeTab === 'dashboard_composer' ? (
         <DashboardPage
           projects={projects}
@@ -121,7 +116,6 @@ export function App() {
         />
       )}
 
-      {/* Footer Branding & Copyright */}
       <footer className="no-print" style={{
         marginTop: '60px',
         paddingTop: '20px',
@@ -140,7 +134,6 @@ export function App() {
         </div>
       </footer>
 
-      {/* Global Modals */}
       <ContactModal
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}

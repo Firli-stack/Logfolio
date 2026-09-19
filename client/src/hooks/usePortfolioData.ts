@@ -14,7 +14,7 @@ export function usePortfolioData() {
       const saved = localStorage.getItem(STORAGE_KEY_PROFILE);
       if (saved) return JSON.parse(saved);
     } catch {
-      // Fallback
+      // ignore
     }
     return INITIAL_PROFILE;
   });
@@ -24,7 +24,7 @@ export function usePortfolioData() {
       const saved = localStorage.getItem(STORAGE_KEY_PROJECTS);
       if (saved) return JSON.parse(saved);
     } catch {
-      // Fallback
+      // ignore
     }
     return INITIAL_PROJECTS;
   });
@@ -34,12 +34,11 @@ export function usePortfolioData() {
       const saved = localStorage.getItem(STORAGE_KEY_LOGS);
       if (saved) return JSON.parse(saved);
     } catch {
-      // Fallback
+      // ignore
     }
     return INITIAL_LOGS;
   });
 
-  // Fetch data profil dari API saat mount
   useEffect(() => {
     const fetchApiData = async () => {
       const r = parseCurrentRoute();
@@ -74,14 +73,13 @@ export function usePortfolioData() {
     fetchApiData();
   }, []);
 
-  // Sync to LocalStorage
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(profile));
       localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(logs));
       localStorage.setItem(STORAGE_KEY_PROJECTS, JSON.stringify(projects));
     } catch {
-      // LocalStorage fallback
+      // ignore
     }
   }, [profile, logs, projects]);
 
