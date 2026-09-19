@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { UserProfile } from '../types';
+import type { UserProfile } from '../../types';
 import { X, Settings, RotateCcw, Shield, Check, Sun, Moon, Languages } from 'lucide-react';
 
 interface SettingsModalProps {

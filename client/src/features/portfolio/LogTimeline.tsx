@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { LogEntry, Project } from '../mockData';
+import type { LogEntry, Project } from '../../types';
 import { ThumbsUp, ExternalLink, CheckCheck, Lock, Search, X, Filter } from 'lucide-react';
 
 interface LogTimelineProps {

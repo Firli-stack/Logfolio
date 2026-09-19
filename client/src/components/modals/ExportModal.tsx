@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import type { UserProfile, Project, LogEntry } from '../mockData';
-import { exportToMarkdown, exportToJson, exportToPdfPrint } from '../utils/exportData';
-import type { CvTemplateStyle, CvLanguage } from '../utils/exportData';
+import type { UserProfile, Project, LogEntry } from '../../types';
+import { exportToMarkdown, exportToJson, exportToPdfPrint } from '../../utils/exportData';
+import type { CvTemplateStyle, CvLanguage } from '../../utils/exportData';
 import { X, Download, FileText, Code2, CheckCircle2, ShieldCheck, Printer, Languages, Link2, Copy } from 'lucide-react';
 
 interface ExportModalProps {

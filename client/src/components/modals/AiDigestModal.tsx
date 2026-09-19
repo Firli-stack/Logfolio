@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import type { LogEntry, Project, UserProfile } from '../types';
-import { generateAiDigest, type DigestResult } from '../utils/aiDigestEngine';
+import type { LogEntry, Project, UserProfile } from '../../types';
+import { generateAiDigest, type DigestResult } from '../../utils/aiDigestEngine';
 import { 
   Sparkles, 
   X, 

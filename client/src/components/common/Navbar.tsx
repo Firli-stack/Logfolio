@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import type { UserProfile } from '../types';
+import type { UserProfile } from '../../types';
 import { Code2, Flame, Globe, PenSquare, ChevronDown, User, Settings, LogOut, Sparkles } from 'lucide-react';
 
 interface NavbarProps {

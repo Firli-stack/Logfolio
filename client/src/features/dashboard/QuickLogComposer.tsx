@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import type { Project, LogEntry, ProofLink } from '../mockData';
+import type { Project, LogEntry, ProofLink } from '../../types';
 import { Send, X, FolderPlus, Link as LinkIcon, Lock, Image as ImageIcon, Plus, Info } from 'lucide-react';
-import { POPULAR_TECH_SUGGESTIONS } from '../utils/techSuggestions';
+import { POPULAR_TECH_SUGGESTIONS } from '../../utils/techSuggestions';
 
 interface QuickLogComposerProps {
   projects: Project[];

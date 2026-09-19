@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { UserProfile } from '../types';
+import type { UserProfile } from '../../types';
 import { 
   X, 
   Copy, 

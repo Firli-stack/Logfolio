@@ -1,5 +1,5 @@
 import React from 'react';
-import type { UserProfile, Project } from '../mockData';
+import type { UserProfile, Project } from '../../types';
 
 import { Sparkles } from 'lucide-react';
 

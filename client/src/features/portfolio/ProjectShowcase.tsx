@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Project } from '../mockData';
+import type { Project } from '../../types';
 import { ExternalLink, GitBranch, Lock } from 'lucide-react';
 
 interface ShowcaseProps {

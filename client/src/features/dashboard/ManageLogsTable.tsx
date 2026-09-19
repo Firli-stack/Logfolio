@@ -1,5 +1,5 @@
 import React from 'react';
-import type { LogEntry } from '../mockData';
+import type { LogEntry } from '../../types';
 import { Trash2, Lock } from 'lucide-react';
 
 interface ManageLogsProps {

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import type { Project } from '../mockData';
+import type { Project } from '../../types';
 import { X, FolderGit2, Shield, Globe, Plus } from 'lucide-react';
-import { POPULAR_TECH_SUGGESTIONS } from '../utils/techSuggestions';
+import { POPULAR_TECH_SUGGESTIONS } from '../../utils/techSuggestions';
 
 interface CreateProjectModalProps {
   isOpen: boolean;

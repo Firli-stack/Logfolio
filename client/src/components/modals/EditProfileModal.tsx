@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { UserProfile } from '../mockData';
+import type { UserProfile } from '../../types';
 import { X, UserCheck, Upload, Globe, MapPin, Sparkles, Link2 } from 'lucide-react';
 
 interface EditProfileModalProps {

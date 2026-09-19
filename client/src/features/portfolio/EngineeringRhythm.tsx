@@ -1,5 +1,5 @@
 import React from 'react';
-import type { LogEntry } from '../mockData';
+import type { LogEntry } from '../../types';
 import { BarChart3 } from 'lucide-react';
 
 interface RhythmProps {

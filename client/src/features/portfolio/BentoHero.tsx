@@ -1,5 +1,5 @@
 import React from 'react';
-import type { UserProfile } from '../types';
+import type { UserProfile } from '../../types';
 import { MapPin, Mail, Download, CheckCircle2, Sparkles, Share2 } from 'lucide-react';
 
 interface BentoHeroProps {
