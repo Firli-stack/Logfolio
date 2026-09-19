@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { UserProfile, Project, LogEntry } from '../mockData';
 import { exportToMarkdown, exportToJson, exportToPdfPrint } from '../utils/exportData';
 import type { CvTemplateStyle, CvLanguage } from '../utils/exportData';
-import { X, Download, FileText, Code2, CheckCircle2, ShieldCheck, Printer, Languages } from 'lucide-react';
+import { X, Download, FileText, Code2, CheckCircle2, ShieldCheck, Printer, Languages, Link2, Copy } from 'lucide-react';
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -468,6 +468,73 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             >
               <Download size={12} />
               <span>Unduh .json</span>
+            </button>
+          </div>
+
+          {/* Option 4: Shareable Web Link (/p/:username) */}
+          <div
+            style={{
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-md)',
+              padding: '10px 12px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '8px',
+              background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(2, 132, 199, 0.04))'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 auto', minWidth: '180px' }}>
+              <div style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: 'var(--radius-sm)',
+                background: 'rgba(79, 70, 229, 0.1)',
+                color: 'var(--accent-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <Link2 size={14} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Tautan Publik Live (/p/{profile.username})
+                </h4>
+                <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.25 }}>
+                  Bagikan tautan portofolio interaktif yang bisa diakses rekruter.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                const publicUrl = `${window.location.origin}/p/${profile.username}`;
+                navigator.clipboard.writeText(publicUrl);
+                alert(`Tautan portofolio publik berhasil disalin ke clipboard:\n${publicUrl}`);
+              }}
+              style={{
+                padding: '6px 12px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--accent-primary)',
+                color: '#FFFFFF',
+                border: 'none',
+                fontWeight: 600,
+                fontSize: '0.74rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '5px',
+                flex: '1 1 auto',
+                minWidth: '100px'
+              }}
+            >
+              <Copy size={12} />
+              <span>Salin Link</span>
             </button>
           </div>
         </div>

@@ -17,6 +17,7 @@ import { RecruiterSnapshot } from './components/RecruiterSnapshot';
 import { Navbar } from './components/Navbar';
 import { api } from './services/api';
 import { Sparkles, ArrowRight } from 'lucide-react';
+import { parseCurrentRoute, navigateTo } from './utils/router';
 
 const STORAGE_KEY_PROFILE = 'logfolio_profile_v1';
 const STORAGE_KEY_LOGS = 'logfolio_entries_v1';
@@ -42,10 +43,33 @@ export function App() {
     localStorage.setItem(STORAGE_KEY_LANG, appLang);
   }, [appLang]);
 
+  const [activeTab, setActiveTab] = useState<'public_preview' | 'dashboard_composer'>(() => {
+    const r = parseCurrentRoute();
+    return r.route === 'dashboard' ? 'dashboard_composer' : 'public_preview';
+  });
+
+  // Sync route saat browser URL berubah (Back / Forward button)
+  useEffect(() => {
+    const handlePopState = () => {
+      const r = parseCurrentRoute();
+      if (r.route === 'dashboard') {
+        setActiveTab('dashboard_composer');
+      } else {
+        setActiveTab('public_preview');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   // Fetch dari API saat load (fallback ke localStorage/mockData bila offline)
   useEffect(() => {
     const fetchApiData = async () => {
-      const data = await api.getProfile('alexdev');
+      const r = parseCurrentRoute();
+      const targetUser = r.username || 'alexdev';
+
+      const data = await api.getProfile(targetUser);
       if (data) {
         setProfile({
           username: data.username,
@@ -106,7 +130,6 @@ export function App() {
     }
     return INITIAL_LOGS;
   });
-  const [activeTab, setActiveTab] = useState<'public_preview' | 'dashboard_composer'>('public_preview');
   const [publicViewMode, setPublicViewMode] = useState<'all' | 'case_studies' | 'logs'>('all');
   const [timelineProjectFilter, setTimelineProjectFilter] = useState<string>('all');
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -223,16 +246,32 @@ export function App() {
     await api.addKudos(logId);
   };
 
+  const handleTabChange = (tab: 'public_preview' | 'dashboard_composer') => {
+    setActiveTab(tab);
+    if (tab === 'dashboard_composer') {
+      navigateTo('/dashboard');
+    } else {
+      navigateTo(`/p/${profile.username}`);
+    }
+  };
+
+  const handleShareLink = () => {
+    const publicUrl = `${window.location.origin}/p/${profile.username}`;
+    navigator.clipboard.writeText(publicUrl);
+    alert(`Tautan portofolio publik Anda berhasil disalin!\n${publicUrl}`);
+  };
+
   return (
     <div className="app-container">
       {/* Top App Bar / Switcher & Profile Dropdown */}
       <Navbar
         profile={profile}
         activeTab={activeTab}
-        onTabChange={(tab) => setActiveTab(tab)}
+        onTabChange={handleTabChange}
         onOpenEditProfile={() => setIsEditProfileOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenAiDigest={() => setIsAiDigestOpen(true)}
+        onShareLink={handleShareLink}
         onLogout={handleLogout}
       />
 
@@ -258,6 +297,7 @@ export function App() {
             onContactClick={() => setIsContactOpen(true)}
             onExportClick={() => setIsExportOpen(true)}
             onOpenAiDigest={() => setIsAiDigestOpen(true)}
+            onShareClick={handleShareLink}
           />
 
           {/* AI Showcase Feature Banner: Jelas, Menarik, dan Mudah Dipahami */}

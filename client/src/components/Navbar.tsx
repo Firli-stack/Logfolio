@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { UserProfile } from '../types';
-import { Code2, Flame, Globe, PenSquare, ChevronDown, User, Settings, LogOut, Sparkles } from 'lucide-react';
+import { Code2, Flame, Globe, PenSquare, ChevronDown, User, Settings, LogOut, Sparkles, Share2 } from 'lucide-react';
 
 interface NavbarProps {
   profile: UserProfile;
@@ -9,6 +9,7 @@ interface NavbarProps {
   onOpenEditProfile: () => void;
   onOpenSettings: () => void;
   onOpenAiDigest?: () => void;
+  onShareLink?: () => void;
   onLogout: () => void;
 }
 
@@ -19,6 +20,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenEditProfile,
   onOpenSettings,
   onOpenAiDigest,
+  onShareLink,
   onLogout
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -87,6 +89,31 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Sparkles size={14} color="var(--accent-primary)" />
               <span>AI Digest</span>
+            </button>
+          )}
+
+          {onShareLink && (
+            <button
+              type="button"
+              onClick={onShareLink}
+              style={{
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-full)',
+                padding: '5px 10px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Salin Tautan Portofolio Publik (/p/:username)"
+            >
+              <Share2 size={13} />
+              <span>Bagikan</span>
             </button>
           )}
 

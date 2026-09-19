@@ -1,6 +1,6 @@
 import React from 'react';
-import type { UserProfile } from '../mockData';
-import { MapPin, Mail, Download, CheckCircle2, Sparkles } from 'lucide-react';
+import type { UserProfile } from '../types';
+import { MapPin, Mail, Download, CheckCircle2, Sparkles, Share2 } from 'lucide-react';
 
 interface BentoHeroProps {
   profile: UserProfile;
@@ -8,13 +8,15 @@ interface BentoHeroProps {
   onPrintClick?: () => void;
   onExportClick?: () => void;
   onOpenAiDigest?: () => void;
+  onShareClick?: () => void;
 }
 
 export const BentoHero: React.FC<BentoHeroProps> = ({
   profile,
   onContactClick,
   onExportClick,
-  onOpenAiDigest
+  onOpenAiDigest,
+  onShareClick
 }) => {
   return (
     <div className="glass-panel" style={{ padding: '28px', marginBottom: '28px' }}>
@@ -134,6 +136,30 @@ export const BentoHero: React.FC<BentoHeroProps> = ({
             >
               <Download size={14} />
               Ekspor
+            </button>
+          )}
+
+          {onShareClick && (
+            <button
+              type="button"
+              onClick={onShareClick}
+              style={{
+                background: 'var(--bg-surface-elevated)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-subtle)',
+                padding: '9px 14px',
+                borderRadius: 'var(--radius-md)',
+                fontWeight: 600,
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+              title="Salin Tautan Portofolio Publik (/p/:username)"
+            >
+              <Share2 size={14} />
+              Bagikan
             </button>
           )}
         </div>
