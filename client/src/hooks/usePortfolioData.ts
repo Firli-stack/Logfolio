@@ -39,7 +39,7 @@ export function usePortfolioData() {
   useEffect(() => {
     const fetchApiData = async () => {
       const r = parseCurrentRoute();
-      const targetUser = r.username || 'alexdev';
+      const targetUser = r.username || 'Firli-stack';
 
       const data = await api.getProfile(targetUser);
       if (data) {

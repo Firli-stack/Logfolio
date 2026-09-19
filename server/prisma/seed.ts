@@ -3,57 +3,56 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding database...');
+  console.log('🌱 Seeding database with real profile Firli-stack...');
 
-  // 1. Seed Profile (Upsert)
+  // 1. Seed Real Profile Firli Hanifurahman
   const profile = await prisma.profile.upsert({
-    where: { username: 'alexdev' },
+    where: { username: 'Firli-stack' },
     update: {
-      fullName: 'Alex Pratama',
-      headline: 'Backend & Systems Engineer',
-      bio: 'Fokus pada arsitektur backend, database tuning, dan layanan berkinerja tinggi. Berpengalaman menangani sistem transaksi dan otomasi cloud.',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+      fullName: 'Firli Hanifurahman',
+      headline: 'Full-Stack & Systems Developer',
+      bio: 'Computer Science Student at Politeknik Negeri Batam | Full-Stack & IoT Developer. Mengembangkan sistem backend terukur, aplikasi modern, dan integrasi cloud.',
+      avatarUrl: 'https://avatars.githubusercontent.com/u/201748538?v=4',
       timezone: 'Asia/Jakarta',
       socialLinks: {
-        github: 'https://github.com',
+        github: 'https://github.com/Firli-stack',
         linkedin: 'https://linkedin.com',
-        website: 'https://alexpratama.dev',
+        website: 'https://github.com/Firli-stack/Logfolio',
       },
       streakFreezeCount: 2,
     },
     create: {
-      username: 'alexdev',
-      fullName: 'Alex Pratama',
-      headline: 'Backend & Systems Engineer',
-      bio: 'Fokus pada arsitektur backend, database tuning, dan layanan berkinerja tinggi. Berpengalaman menangani sistem transaksi dan otomasi cloud.',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+      username: 'Firli-stack',
+      fullName: 'Firli Hanifurahman',
+      headline: 'Full-Stack & Systems Developer',
+      bio: 'Computer Science Student at Politeknik Negeri Batam | Full-Stack & IoT Developer. Mengembangkan sistem backend terukur, aplikasi modern, dan integrasi cloud.',
+      avatarUrl: 'https://avatars.githubusercontent.com/u/201748538?v=4',
       timezone: 'Asia/Jakarta',
       socialLinks: {
-        github: 'https://github.com',
+        github: 'https://github.com/Firli-stack',
         linkedin: 'https://linkedin.com',
-        website: 'https://alexpratama.dev',
+        website: 'https://github.com/Firli-stack/Logfolio',
       },
       streakFreezeCount: 2,
     },
   });
 
-  // Bersihkan data lama milik alexdev agar seed bersifat idempoten (bisa dijalankan berkali-kali tanpa duplikasi)
   await prisma.log.deleteMany({ where: { userId: profile.id } });
   await prisma.project.deleteMany({ where: { userId: profile.id } });
 
-  // 2. Seed Skills (Lengkap sesuai mockData frontend)
+  // 2. Seed Skills
   const skillNames = [
-    'PostgreSQL',
-    'Go',
     'TypeScript',
-    'Docker',
     'React',
-    'Kubernetes',
-    'WebP',
-    'Kafka',
-    'Redis',
-    'Database',
-    'Backend'
+    'PostgreSQL',
+    'Docker',
+    'Git',
+    'Node.js',
+    'Next.js',
+    'Go',
+    'Performance',
+    'Security',
+    'Database'
   ];
   const skillMap: Record<string, string> = {};
 
@@ -69,13 +68,15 @@ async function main() {
     skillMap[name] = skill.id;
   }
 
-  // 3. Seed Projects (Lengkap dengan technologies)
+  // 3. Seed Real Projects
   const p1 = await prisma.project.create({
     data: {
       userId: profile.id,
-      title: 'Payment Gateway Core',
-      description: 'Sistem pemrosesan pembayaran multi-bank dengan proteksi transaksi ganda dan enkripsi data.',
-      isStealthNda: true,
+      title: 'Logfolio Core Engine',
+      description: 'Engineering proof-of-work portfolio generator dengan real-time commit sync dan AI digest.',
+      isStealthNda: false,
+      repoUrl: 'https://github.com/Firli-stack/Logfolio',
+      liveUrl: 'http://localhost:5173',
       status: 'in_progress',
       isFeatured: true,
     },
@@ -84,11 +85,10 @@ async function main() {
   const p2 = await prisma.project.create({
     data: {
       userId: profile.id,
-      title: 'Logfolio Portfolio',
-      description: 'Aplikasi portofolio berbasis riwayat kerja harian dan verifikasi link pengerjaan.',
+      title: 'BTC Store Platform',
+      description: 'Toko dan sistem transaksi Bitcoin berbasis e-commerce modern.',
       isStealthNda: false,
-      repoUrl: 'https://github.com/alexdev/logfolio',
-      liveUrl: 'https://logfolio.dev',
+      repoUrl: 'https://github.com/Firli-stack/btc-store',
       status: 'in_progress',
       isFeatured: true,
     },
@@ -97,25 +97,24 @@ async function main() {
   const p3 = await prisma.project.create({
     data: {
       userId: profile.id,
-      title: 'Kubernetes Autoscaler',
-      description: 'Layanan penyesuaian kapasitas server otomatis berbasis antrean beban data.',
+      title: 'FinalBridge Microservice',
+      description: 'Sistem penghubung layanan bridge data dan API gateway terintegrasi.',
       isStealthNda: false,
-      repoUrl: 'https://github.com/alexdev/k8s-autoscale',
+      repoUrl: 'https://github.com/Firli-stack/finalbridge',
       status: 'completed',
     },
   });
 
-  // 4. Seed 4 Logs Realistis (Berurutan per hari)
   const now = Date.now();
   const dayMs = 24 * 60 * 60 * 1000;
 
-  // Log 1: Optimasi Query (Hari Ini)
+  // Log 1: Real GitHub Sync
   const log1 = await prisma.log.create({
     data: {
       userId: profile.id,
       projectId: p1.id,
-      content: 'Optimasi query laporan transaksi harian. Composite index menurunkan latensi dari 450ms ke 35ms.',
-      proofUrl: 'https://github.com/enterprise/gateway/pull/182',
+      content: 'Implementasi integrasi GitHub API untuk mengambil riwayat commit real-time menjadi log terverifikasi.',
+      proofUrl: 'https://github.com/Firli-stack/Logfolio/commit/522b806',
       isProofVerified: true,
       isFeatured: true,
       kudosCount: 16,
@@ -124,82 +123,60 @@ async function main() {
   });
   await prisma.logSkill.createMany({
     data: [
-      { logId: log1.id, skillId: skillMap['PostgreSQL'] },
-      { logId: log1.id, skillId: skillMap['Database'] },
+      { logId: log1.id, skillId: skillMap['TypeScript'] },
+      { logId: log1.id, skillId: skillMap['Git'] },
+      { logId: log1.id, skillId: skillMap['React'] },
     ],
   });
 
-  // Log 2: Kompresi Gambar WebP (Kemarin)
+  // Log 2: Modular Architecture
   const log2 = await prisma.log.create({
     data: {
       userId: profile.id,
-      projectId: p2.id,
-      content: 'Kompresi gambar screenshot bukti kerja di sisi browser sebelum diunggah menjadi WebP < 150KB.',
-      proofUrl: 'https://github.com/alexdev/logfolio/commit/8a2f4c',
+      projectId: p1.id,
+      content: 'Refactoring arsitektur frontend menjadi pages, custom hooks, dan modular modal domains.',
+      proofUrl: 'https://github.com/Firli-stack/Logfolio/commit/5f0f7e8',
       isProofVerified: true,
       isFeatured: true,
-      kudosCount: 9,
-      logDate: new Date(now - 1 * dayMs),
+      kudosCount: 12,
+      logDate: new Date(now - dayMs),
     },
   });
   await prisma.logSkill.createMany({
     data: [
       { logId: log2.id, skillId: skillMap['TypeScript'] },
-      { logId: log2.id, skillId: skillMap['WebP'] },
+      { logId: log2.id, skillId: skillMap['React'] },
     ],
   });
 
-  // Log 3: Pengecilan Container (2 Hari Lalu)
+  // Log 3: Share Portfolio Modal
   const log3 = await prisma.log.create({
     data: {
       userId: profile.id,
-      projectId: p3.id,
-      content: 'Pengecilan ukuran container service dari 1.2GB menjadi 24MB dengan multi-stage build binary Go.',
-      proofUrl: 'https://hub.docker.com/r/alexdev/mesh',
-      isProofVerified: true,
-      isFeatured: true,
-      kudosCount: 12,
-      logDate: new Date(now - 2 * dayMs),
-    },
-  });
-  await prisma.logSkill.createMany({
-    data: [
-      { logId: log3.id, skillId: skillMap['Docker'] },
-      { logId: log3.id, skillId: skillMap['Go'] },
-    ],
-  });
-
-  // Log 4: Pencegahan Transaksi Ganda (3 Hari Lalu)
-  const log4 = await prisma.log.create({
-    data: {
-      userId: profile.id,
       projectId: p1.id,
-      content: 'Implementasi kunci unik idempotency transaksi perbankan dengan Redis untuk cegah penarikan ganda.',
-      proofUrl: 'https://github.com/enterprise/gateway/commit/3ef91',
+      content: 'Penerapan SharePortfolioModal interaktif dengan shortcut LinkedIn, WhatsApp, dan QR code scanner.',
+      proofUrl: 'https://github.com/Firli-stack/Logfolio/commit/5fd81ca',
       isProofVerified: true,
       isFeatured: false,
-      kudosCount: 7,
-      logDate: new Date(now - 3 * dayMs),
+      kudosCount: 9,
+      logDate: new Date(now - dayMs * 2),
     },
   });
   await prisma.logSkill.createMany({
     data: [
-      { logId: log4.id, skillId: skillMap['Redis'] },
-      { logId: log4.id, skillId: skillMap['Backend'] },
+      { logId: log3.id, skillId: skillMap['React'] },
+      { logId: log3.id, skillId: skillMap['TypeScript'] },
     ],
   });
 
-  console.log('✅ Seed completed successfully with full mock data alignment!');
+  console.log('✅ Real profile Firli-stack seeded successfully!');
 }
 
-void (async () => {
-  try {
-    await main();
-  } catch (error) {
-    console.error('❌ Error executing seed:', error);
+main()
+  .catch((e) => {
+    console.error('❌ Error seeding database:', e);
     process.exit(1);
-  } finally {
+  })
+  .finally(async () => {
     await prisma.$disconnect();
-  }
-})();
-
+  });

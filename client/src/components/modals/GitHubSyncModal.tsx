@@ -9,7 +9,7 @@ import {
   Check,
   Tag
 } from 'lucide-react';
-import { fetchGitHubCommits, type GitHubCommitItem } from '../../services/githubService';
+import { fetchGitHubCommits, extractGitHubUsername, type GitHubCommitItem } from '../../services/githubService';
 
 interface GitHubSyncModalProps {
   isOpen: boolean;
@@ -24,14 +24,15 @@ export const GitHubSyncModal: React.FC<GitHubSyncModalProps> = ({
   defaultUsername,
   onSelectCommit
 }) => {
-  const [username, setUsername] = useState(defaultUsername || 'Firli-stack');
+  const resolvedUser = extractGitHubUsername(defaultUsername) || 'Firli-stack';
+  const [username, setUsername] = useState(resolvedUser);
   const [commits, setCommits] = useState<GitHubCommitItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [importedId, setImportedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      const u = defaultUsername || 'Firli-stack';
+      const u = extractGitHubUsername(defaultUsername) || 'Firli-stack';
       setUsername(u);
       loadCommits(u);
     }

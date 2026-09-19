@@ -2,59 +2,60 @@ import type { UserProfile, Project, LogEntry, ProofLink } from './types';
 export type { UserProfile, Project, LogEntry, ProofLink };
 
 export const INITIAL_PROFILE: UserProfile = {
-  username: "alexdev",
-  fullName: "Alex Pratama",
-  headline: "Backend & Systems Engineer",
-  bio: "Fokus pada arsitektur backend, database tuning, dan layanan berkinerja tinggi. Berpengalaman menangani sistem transaksi dan otomasi cloud.",
-  location: "Jakarta, Indonesia",
-  avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+  username: "Firli-stack",
+  fullName: "Firli Hanifurahman",
+  headline: "Full-Stack & Systems Developer",
+  bio: "Computer Science Student at Politeknik Negeri Batam | Full-Stack & IoT Developer. Mengembangkan sistem backend terukur, aplikasi modern, dan integrasi cloud.",
+  location: "Batam, Indonesia",
+  avatarUrl: "https://avatars.githubusercontent.com/u/201748538?v=4",
   timezone: "WIB",
   socialLinks: {
-    github: "https://github.com",
+    github: "https://github.com/Firli-stack",
     linkedin: "https://linkedin.com",
-    website: "https://alexpratama.dev"
+    website: "https://github.com/Firli-stack/Logfolio"
   },
-  streakDays: 48,
-  totalLogs: 124,
+  streakDays: 14,
+  totalLogs: 28,
   streakFreezeLeft: 2,
   topSkills: [
-    { skill: "PostgreSQL", count: 42 },
-    { skill: "Go", count: 35 },
-    { skill: "TypeScript", count: 28 },
-    { skill: "Docker", count: 19 }
+    { skill: "TypeScript", count: 18 },
+    { skill: "React", count: 15 },
+    { skill: "PostgreSQL", count: 12 },
+    { skill: "Docker", count: 10 }
   ]
 };
 
 export const INITIAL_PROJECTS: Project[] = [
   {
     id: "p1",
-    title: "Payment Gateway Core",
-    description: "Sistem pemrosesan pembayaran multi-bank dengan proteksi transaksi ganda dan enkripsi data.",
-    isStealthNda: true,
-    technologies: ["Go", "PostgreSQL", "Redis"],
+    title: "Logfolio Core Engine",
+    description: "Engineering proof-of-work portfolio generator dengan real-time commit sync dan AI digest.",
+    isStealthNda: false,
+    technologies: ["TypeScript", "React", "PostgreSQL", "Docker"],
+    repoUrl: "https://github.com/Firli-stack/Logfolio",
+    liveUrl: "http://localhost:5173",
     status: "in_progress",
-    logCount: 38
+    logCount: 16
   },
   {
     id: "p2",
-    title: "Logfolio Portfolio",
-    description: "Aplikasi portofolio berbasis riwayat kerja harian dan verifikasi link pengerjaan.",
+    title: "BTC Store Platform",
+    description: "Toko dan sistem transaksi Bitcoin berbasis e-commerce modern.",
     isStealthNda: false,
-    technologies: ["TypeScript", "React", "Vite"],
-    repoUrl: "https://github.com/alexdev/logfolio",
-    liveUrl: "https://logfolio.dev",
+    technologies: ["TypeScript", "Next.js", "Node.js"],
+    repoUrl: "https://github.com/Firli-stack/btc-store",
     status: "in_progress",
-    logCount: 26
+    logCount: 8
   },
   {
     id: "p3",
-    title: "Kubernetes Autoscaler",
-    description: "Layanan penyesuaian kapasitas server otomatis berbasis antrean beban data.",
+    title: "FinalBridge Microservice",
+    description: "Sistem penghubung layanan bridge data dan API gateway terintegrasi.",
     isStealthNda: false,
-    technologies: ["Go", "Kubernetes", "Kafka"],
-    repoUrl: "https://github.com/alexdev/k8s-autoscale",
+    technologies: ["Go", "Docker", "PostgreSQL"],
+    repoUrl: "https://github.com/Firli-stack/finalbridge",
     status: "completed",
-    logCount: 17
+    logCount: 4
   }
 ];
 
@@ -62,85 +63,64 @@ export const INITIAL_LOGS: LogEntry[] = [
   {
     id: "log-1",
     projectId: "p1",
-    projectName: "Payment Gateway Core",
-    isStealthNda: true,
-    title: "Optimasi Query Database Transaksi",
-    content: "Optimasi query laporan transaksi harian.",
+    projectName: "Logfolio Core Engine",
+    isStealthNda: false,
+    title: "Sinkronisasi Commit GitHub Otomatis",
+    content: "Implementasi integrasi GitHub API untuk mengambil riwayat commit real-time menjadi log.",
     details: [
-      "Menambahkan composite index pada tabel pembayaran.",
-      "Latensi response turun dari 450ms menjadi 35ms pada pengujian beban tinggi."
+      "Mengambil commit repositori publik dari GitHub API.",
+      "Ekstraksi hash SHA, pesan commit, dan deteksi skill otomatis."
     ],
-    skills: ["PostgreSQL", "Database"],
-    proofUrl: "https://github.com/enterprise/gateway/pull/182",
+    skills: ["TypeScript", "React", "Git"],
+    proofUrl: "https://github.com/Firli-stack/Logfolio/commit/522b806",
     proofType: "github",
     isProofVerified: true,
     isFeatured: true,
     isBackfill: false,
-    kudosCount: 16,
-    logDate: "16 Sep 2026",
-    createdAt: "2026-09-16T14:30:00Z"
+    kudosCount: 12,
+    logDate: "20 Sep 2026",
+    createdAt: "2026-09-20T05:30:00Z"
   },
   {
     id: "log-2",
-    projectId: "p2",
-    projectName: "Logfolio Portfolio",
+    projectId: "p1",
+    projectName: "Logfolio Core Engine",
     isStealthNda: false,
-    title: "Kompresi Gambar Otomatis di Browser",
-    content: "Kompresi gambar screenshot bukti kerja sebelum diunggah.",
+    title: "Modularisasi Arsitektur Feature-Driven",
+    content: "Refactoring arsitektur frontend menjadi pages, custom hooks, dan modal domains.",
     details: [
-      "Konversi otomatis ke format WebP di sisi browser.",
-      "Mengurangi ukuran file rata-rata dari 2MB menjadi di bawah 150KB."
+      "Membuat usePortfolioData hook untuk memisahkan API dan state UI.",
+      "Mengisolasi halaman PublicPortfolioPage dan DashboardPage."
     ],
-    skills: ["TypeScript", "WebP"],
-    proofUrl: "https://github.com/alexdev/logfolio/commit/8a2f4c",
+    skills: ["TypeScript", "React"],
+    proofUrl: "https://github.com/Firli-stack/Logfolio/commit/5f0f7e8",
     proofType: "github",
     isProofVerified: true,
     isFeatured: true,
     isBackfill: false,
     kudosCount: 9,
-    logDate: "15 Sep 2026",
-    createdAt: "2026-09-15T18:15:00Z"
+    logDate: "19 Sep 2026",
+    createdAt: "2026-09-19T22:20:00Z"
   },
   {
     id: "log-3",
-    projectId: "p3",
-    projectName: "Kubernetes Autoscaler",
+    projectId: "p1",
+    projectName: "Logfolio Core Engine",
     isStealthNda: false,
-    title: "Pengecilan Ukuran Container Service",
-    content: "Penerapan multi-stage build untuk container aplikasi.",
+    title: "Modal Berbagi Portofolio Publik & QR Code",
+    content: "Penerapan SharePortfolioModal interaktif dengan shortcut LinkedIn, WhatsApp, dan QR scanner.",
     details: [
-      "Mengganti base image dengan scratch dan binary Go minimal.",
-      "Ukuran image berhasil dipangkas dari 1.2GB menjadi 24MB."
+      "Menghapus tombol ambigu pada Navbar.",
+      "Menyediakan 1-klik copy URL publik /p/:username."
     ],
-    skills: ["Docker", "Go"],
-    proofUrl: "https://hub.docker.com/r/alexdev/mesh",
-    proofType: "live",
+    skills: ["React", "TypeScript"],
+    proofUrl: "https://github.com/Firli-stack/Logfolio/commit/5fd81ca",
+    proofType: "github",
     isProofVerified: true,
     isFeatured: true,
     isBackfill: false,
-    kudosCount: 12,
-    logDate: "14 Sep 2026",
-    createdAt: "2026-09-14T11:20:00Z"
-  },
-  {
-    id: "log-4",
-    projectId: "p1",
-    projectName: "Payment Gateway Core",
-    isStealthNda: true,
-    title: "Pencegahan Transaksi Ganda (Idempotency)",
-    content: "Implementasi kunci id unik pada transaksi perbankan.",
-    details: [
-      "Penyimpanan kunci transaksi sementara di Redis.",
-      "Mencegah penarikan dana berulang saat jaringan pengguna terputus."
-    ],
-    skills: ["Redis", "Backend"],
-    proofUrl: "https://github.com/enterprise/gateway/commit/3ef91",
-    proofType: "github",
-    isProofVerified: true,
-    isFeatured: false,
-    isBackfill: false,
-    kudosCount: 7,
-    logDate: "13 Sep 2026",
-    createdAt: "2026-09-13T16:00:00Z"
+    kudosCount: 15,
+    logDate: "19 Sep 2026",
+    createdAt: "2026-09-19T21:15:00Z"
   }
 ];
