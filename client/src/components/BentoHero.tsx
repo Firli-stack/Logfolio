@@ -144,22 +144,23 @@ export const BentoHero: React.FC<BentoHeroProps> = ({
               type="button"
               onClick={onShareClick}
               style={{
-                background: 'var(--bg-surface-elevated)',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border-subtle)',
+                background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(2, 132, 199, 0.08) 100%)',
+                color: 'var(--accent-primary)',
+                border: '1px solid rgba(79, 70, 229, 0.3)',
                 padding: '9px 14px',
                 borderRadius: 'var(--radius-md)',
-                fontWeight: 600,
+                fontWeight: 700,
                 fontSize: '0.82rem',
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px'
+                gap: '6px',
+                transition: 'all 0.15s ease'
               }}
-              title="Salin Tautan Portofolio Publik (/p/:username)"
+              title="Buka opsi berbagi portofolio (Link Publik, LinkedIn, WA, QR Code)"
             >
-              <Share2 size={14} />
-              Bagikan
+              <Share2 size={14} color="var(--accent-primary)" strokeWidth={2.2} />
+              <span>Bagikan Portofolio</span>
             </button>
           )}
         </div>

@@ -13,6 +13,7 @@ import { ExportModal } from './components/ExportModal';
 import { EditProfileModal } from './components/EditProfileModal';
 import { SettingsModal } from './components/SettingsModal';
 import { AiDigestModal } from './components/AiDigestModal';
+import { SharePortfolioModal } from './components/SharePortfolioModal';
 import { RecruiterSnapshot } from './components/RecruiterSnapshot';
 import { Navbar } from './components/Navbar';
 import { api } from './services/api';
@@ -138,6 +139,7 @@ export function App() {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isAiDigestOpen, setIsAiDigestOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const handleResetData = () => {
     localStorage.removeItem(STORAGE_KEY_PROFILE);
@@ -256,9 +258,7 @@ export function App() {
   };
 
   const handleShareLink = () => {
-    const publicUrl = `${window.location.origin}/p/${profile.username}`;
-    navigator.clipboard.writeText(publicUrl);
-    alert(`Tautan portofolio publik Anda berhasil disalin!\n${publicUrl}`);
+    setIsShareModalOpen(true);
   };
 
   return (
@@ -271,7 +271,6 @@ export function App() {
         onOpenEditProfile={() => setIsEditProfileOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenAiDigest={() => setIsAiDigestOpen(true)}
-        onShareLink={handleShareLink}
         onLogout={handleLogout}
       />
 
@@ -554,6 +553,13 @@ export function App() {
         profile={profile}
         logs={logs}
         projects={projects}
+      />
+
+      {/* Share Portfolio Modal */}
+      <SharePortfolioModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        profile={profile}
       />
     </div>
   );
