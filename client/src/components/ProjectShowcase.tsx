@@ -38,7 +38,7 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({ projects, onFilterByP
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                background: '#FFFFFF'
+                background: 'var(--bg-surface)'
               }}
             >
               <div>

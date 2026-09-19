@@ -28,7 +28,7 @@ export const EngineeringRhythm: React.FC<RhythmProps> = ({ logs }) => {
   ];
 
   return (
-    <div className="glass-panel" style={{ padding: '20px 24px', marginBottom: '28px', background: '#FFFFFF' }}>
+    <div className="glass-panel" style={{ padding: '20px 24px', marginBottom: '28px', background: 'var(--bg-surface)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div>
           <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>

@@ -51,7 +51,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
     <div style={{ marginBottom: '32px' }}>
       {/* Header & Filter Controls */}
       <div style={{
-        background: '#FFFFFF',
+        background: 'var(--bg-surface)',
         padding: '16px 20px',
         borderRadius: 'var(--radius-lg)',
         border: '1px solid var(--border-subtle)',
@@ -234,7 +234,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
 
       {/* Empty State jika tidak ada hasil filter */}
       {filteredLogs.length === 0 && (
-        <div className="glass-panel" style={{ padding: '36px 20px', textAlign: 'center', background: '#FFFFFF' }}>
+        <div className="glass-panel" style={{ padding: '36px 20px', textAlign: 'center', background: 'var(--bg-surface)' }}>
           <div style={{
             width: '44px',
             height: '44px',
@@ -281,7 +281,7 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
             className="glass-panel"
             style={{
               padding: '16px 20px',
-              background: '#FFFFFF'
+              background: 'var(--bg-surface)'
             }}
           >
             {/* Header: Tanggal & Nama Proyek */}

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { UserProfile } from '../types';
-import { Code2, Flame, Globe, PenSquare, ChevronDown, User, Settings, LogOut } from 'lucide-react';
+import { Code2, Flame, Globe, PenSquare, ChevronDown, User, Settings, LogOut, Sparkles } from 'lucide-react';
 
 interface NavbarProps {
   profile: UserProfile;
@@ -8,6 +8,7 @@ interface NavbarProps {
   onTabChange: (tab: 'public_preview' | 'dashboard_composer') => void;
   onOpenEditProfile: () => void;
   onOpenSettings: () => void;
+  onOpenAiDigest?: () => void;
   onLogout: () => void;
 }
 
@@ -17,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTabChange,
   onOpenEditProfile,
   onOpenSettings,
+  onOpenAiDigest,
   onLogout
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -61,8 +63,33 @@ export const Navbar: React.FC<NavbarProps> = ({
           </span>
         </div>
 
-        {/* Right Section: Streak & User Profile Dropdown */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Right Section: AI Digest Button, Streak & User Profile Dropdown */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {onOpenAiDigest && (
+            <button
+              type="button"
+              onClick={onOpenAiDigest}
+              style={{
+                background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(2, 132, 199, 0.1))',
+                border: '1px solid rgba(79, 70, 229, 0.25)',
+                borderRadius: 'var(--radius-full)',
+                padding: '5px 12px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                color: 'var(--accent-primary)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Buat AI Executive Digest & LinkedIn Post"
+            >
+              <Sparkles size={14} color="var(--accent-primary)" />
+              <span>AI Digest</span>
+            </button>
+          )}
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Flame size={15} color="var(--accent-emerald)" />
             <span style={{ fontSize: '0.8rem', color: 'var(--accent-emerald)', fontWeight: 600 }}>
@@ -76,7 +103,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="button"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               style={{
-                background: isDropdownOpen ? 'var(--bg-surface-elevated)' : '#FFFFFF',
+                background: isDropdownOpen ? 'var(--bg-surface-elevated)' : 'var(--bg-surface)',
                 border: '1px solid var(--border-subtle)',
                 borderRadius: 'var(--radius-full)',
                 padding: '3px 8px 3px 4px',
@@ -115,7 +142,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   top: 'calc(100% + 8px)',
                   right: 0,
                   width: '220px',
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: 'var(--bg-surface)',
                   borderRadius: '12px',
                   padding: '6px',
                   boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.08)',

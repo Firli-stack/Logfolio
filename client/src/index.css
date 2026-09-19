@@ -76,9 +76,16 @@
   border-color: #334155 !important;
 }
 
-[data-theme='dark'] .glass-panel {
-  background: rgba(30, 41, 59, 0.90) !important;
+[data-theme='dark'] .glass-panel,
+[data-theme='dark'] [style*='background: #FFFFFF'],
+[data-theme='dark'] [style*='background:#FFFFFF'],
+[data-theme='dark'] [style*='background: rgb(255, 255, 255)'],
+[data-theme='dark'] [style*='backgroundColor: #FFFFFF'],
+[data-theme='dark'] [style*='backgroundColor:#FFFFFF'],
+[data-theme='dark'] .composer-panel {
+  background: var(--bg-surface) !important;
   border-color: #334155 !important;
+  color: var(--text-primary) !important;
 }
 
 [data-theme='dark'] input,
@@ -87,6 +94,30 @@
   background: #0F172A !important;
   color: #F8FAFC !important;
   border-color: #334155 !important;
+}
+
+[data-theme='dark'] .skill-badge {
+  background: #334155 !important;
+  border-color: #475569 !important;
+  color: #F8FAFC !important;
+}
+
+[data-theme='dark'] .status-stealth {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  color: #94A3B8 !important;
+}
+
+[data-theme='dark'] .status-verified {
+  background: rgba(2, 132, 199, 0.15) !important;
+  border-color: rgba(2, 132, 199, 0.3) !important;
+  color: #38BDF8 !important;
+}
+
+[data-theme='dark'] .status-featured {
+  background: rgba(217, 119, 6, 0.15) !important;
+  border-color: rgba(217, 119, 6, 0.3) !important;
+  color: #FBBF24 !important;
 }
 
 *, *::before, *::after {

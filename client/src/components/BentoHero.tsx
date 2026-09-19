@@ -1,18 +1,20 @@
 import React from 'react';
 import type { UserProfile } from '../mockData';
-import { MapPin, Mail, Download, CheckCircle2 } from 'lucide-react';
+import { MapPin, Mail, Download, CheckCircle2, Sparkles } from 'lucide-react';
 
 interface BentoHeroProps {
   profile: UserProfile;
   onContactClick: () => void;
   onPrintClick?: () => void;
   onExportClick?: () => void;
+  onOpenAiDigest?: () => void;
 }
 
 export const BentoHero: React.FC<BentoHeroProps> = ({
   profile,
   onContactClick,
-  onExportClick
+  onExportClick,
+  onOpenAiDigest
 }) => {
   return (
     <div className="glass-panel" style={{ padding: '28px', marginBottom: '28px' }}>
@@ -30,7 +32,7 @@ export const BentoHero: React.FC<BentoHeroProps> = ({
               height: '72px',
               borderRadius: '16px',
               objectFit: 'cover',
-              border: '2px solid #FFFFFF',
+              border: '2px solid var(--border-medium)',
               boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
               flexShrink: 0
             }}
@@ -68,6 +70,29 @@ export const BentoHero: React.FC<BentoHeroProps> = ({
 
         {/* Right: Action Buttons */}
         <div className="no-print" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+          {onOpenAiDigest && (
+            <button
+              type="button"
+              onClick={onOpenAiDigest}
+              style={{
+                background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(2, 132, 199, 0.12))',
+                color: 'var(--accent-primary)',
+                border: '1px solid rgba(79, 70, 229, 0.3)',
+                padding: '9px 14px',
+                borderRadius: 'var(--radius-md)',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <Sparkles size={14} color="var(--accent-primary)" />
+              AI Digest
+            </button>
+          )}
+
           <button
             type="button"
             onClick={onContactClick}

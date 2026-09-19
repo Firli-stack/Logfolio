@@ -1,19 +1,48 @@
 import React from 'react';
 import type { UserProfile, Project } from '../mockData';
 
+import { Sparkles } from 'lucide-react';
+
 interface RecruiterSnapshotProps {
   profile: UserProfile;
   projects: Project[];
+  onOpenAiDigest?: () => void;
 }
 
-export const RecruiterSnapshot: React.FC<RecruiterSnapshotProps> = ({ profile, projects }) => {
+export const RecruiterSnapshot: React.FC<RecruiterSnapshotProps> = ({ profile, projects, onOpenAiDigest }) => {
   return (
     <div style={{ marginBottom: '36px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
-        <span style={{ fontSize: '1.2rem' }}>⚡</span>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 700, letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>
-          Recruiter Executive Snapshot (Screening 10-Detik)
-        </h2>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '1.2rem' }}>⚡</span>
+          <h2 style={{ fontSize: '1.05rem', fontWeight: 700, letterSpacing: '-0.01em', color: 'var(--text-primary)', margin: 0 }}>
+            Recruiter Executive Snapshot (Screening 10-Detik)
+          </h2>
+        </div>
+
+        {onOpenAiDigest && (
+          <button
+            type="button"
+            onClick={onOpenAiDigest}
+            className="no-print"
+            style={{
+              background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(2, 132, 199, 0.08))',
+              border: '1px solid rgba(79, 70, 229, 0.25)',
+              borderRadius: 'var(--radius-md)',
+              padding: '6px 12px',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              color: 'var(--accent-primary)',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <Sparkles size={13} />
+            Generate AI Digest
+          </button>
+        )}
       </div>
 
       {/* 3 Metrics Cards */}
