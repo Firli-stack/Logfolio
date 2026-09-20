@@ -79,7 +79,7 @@ export const register = async (req: Request, res: Response) => {
     const passwordHash = await bcrypt.hash(password, salt);
 
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
     const newProfile = await prisma.profile.create({
       data: {
@@ -283,7 +283,7 @@ export const resendOtp = async (req: Request, res: Response) => {
     }
 
     const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    const newExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    const newExpiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
     await prisma.profile.update({
       where: { id: user.id },

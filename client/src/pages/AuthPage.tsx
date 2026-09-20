@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Lock, ArrowRight, Loader2, AlertCircle, CheckCircle2, Code2, ArrowLeft, ShieldCheck, Zap } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Lock, ArrowRight, Loader2, AlertCircle, CheckCircle2, Code2, ArrowLeft, ShieldCheck, Zap, Timer } from 'lucide-react';
 import { api } from '../services/api';
 import { navigateTo } from '../utils/router';
 
@@ -29,6 +29,21 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [otpCode, setOtpCode] = useState('');
   const [previewOtp, setPreviewOtp] = useState<string | null>(null);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [otpSecondsLeft, setOtpSecondsLeft] = useState(300);
+
+  useEffect(() => {
+    if (!isOtpStep) return;
+    const interval = setInterval(() => {
+      setOtpSecondsLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isOtpStep]);
 
   const handleReset = () => {
     setErrorMsg(null);
@@ -36,6 +51,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     setPassword('');
     setIsOtpStep(false);
     setOtpCode('');
+    setOtpSecondsLeft(300);
   };
 
   const switchMode = (newMode: 'login' | 'register') => {
@@ -87,6 +103,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         if (res.data.previewOtp) {
           setPreviewOtp(res.data.previewOtp);
         }
+        setOtpSecondsLeft(300);
         setIsOtpStep(true);
         setSuccessMsg('Pendaftaran awal berhasil! Masukkan kode OTP 6-digit untuk mengaktifkan akun.');
       } else if (res.data.profile) {
@@ -133,6 +150,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       if (res.data?.previewOtp) {
         setPreviewOtp(res.data.previewOtp);
       }
+      setOtpSecondsLeft(300);
       setSuccessMsg('Kode OTP baru telah dikirimkan!');
       setResendCooldown(60);
       const timer = setInterval(() => {
@@ -462,9 +480,26 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
-                    Masukkan 6 Digit Kode OTP
-                  </label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                      Masukkan 6 Digit Kode OTP
+                    </label>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      color: otpSecondsLeft > 60 ? 'var(--accent-primary)' : otpSecondsLeft > 0 ? '#F59E0B' : '#EF4444',
+                    }}>
+                      <Timer size={13} />
+                      <span>
+                        {otpSecondsLeft > 0
+                          ? `${Math.floor(otpSecondsLeft / 60).toString().padStart(2, '0')}:${(otpSecondsLeft % 60).toString().padStart(2, '0')} tersisa`
+                          : 'Kedaluwarsa'}
+                      </span>
+                    </div>
+                  </div>
                   <input
                     type="text"
                     required
@@ -473,11 +508,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     placeholder="Contoh: 123456"
                     value={otpCode}
                     onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))}
+                    disabled={otpSecondsLeft === 0}
                     style={{
                       width: '100%',
                       padding: '14px',
                       borderRadius: 'var(--radius-md)',
-                      border: '2px solid var(--border-medium)',
+                      border: otpSecondsLeft === 0 ? '2px solid rgba(239, 68, 68, 0.4)' : '2px solid var(--border-medium)',
                       background: 'var(--bg-surface)',
                       color: 'var(--text-primary)',
                       fontSize: '1.4rem',
@@ -488,25 +524,38 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       boxSizing: 'border-box',
                     }}
                   />
+                  {otpSecondsLeft === 0 && (
+                    <div style={{
+                      marginTop: '8px',
+                      fontSize: '0.76rem',
+                      color: '#EF4444',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}>
+                      <AlertCircle size={14} />
+                      <span>Kode telah kedaluwarsa (5 menit). Silakan klik <b>Kirim Ulang OTP</b> di bawah.</span>
+                    </div>
+                  )}
                 </div>
 
                 <button
                   type="submit"
-                  disabled={isSubmitting || otpCode.length !== 6}
+                  disabled={isSubmitting || otpCode.length !== 6 || otpSecondsLeft === 0}
                   style={{
                     padding: '12px 20px',
                     borderRadius: 'var(--radius-md)',
-                    background: otpCode.length === 6 ? 'var(--accent-primary)' : 'var(--bg-surface-elevated)',
-                    color: otpCode.length === 6 ? '#FFFFFF' : 'var(--text-muted)',
+                    background: otpCode.length === 6 && otpSecondsLeft > 0 ? 'var(--accent-primary)' : 'var(--bg-surface-elevated)',
+                    color: otpCode.length === 6 && otpSecondsLeft > 0 ? '#FFFFFF' : 'var(--text-muted)',
                     border: 'none',
                     fontWeight: 700,
                     fontSize: '0.88rem',
-                    cursor: otpCode.length === 6 ? 'pointer' : 'not-allowed',
+                    cursor: otpCode.length === 6 && otpSecondsLeft > 0 ? 'pointer' : 'not-allowed',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '8px',
-                    boxShadow: otpCode.length === 6 ? '0 4px 12px rgba(79, 70, 229, 0.28)' : 'none',
+                    boxShadow: otpCode.length === 6 && otpSecondsLeft > 0 ? '0 4px 12px rgba(79, 70, 229, 0.28)' : 'none',
                     transition: 'all 0.15s ease',
                   }}
                 >
