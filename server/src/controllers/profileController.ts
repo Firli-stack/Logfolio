@@ -195,19 +195,54 @@ export const getAllPublicProfiles = async (_req: Request, res: Response) => {
             projects: true,
           },
         },
+        logs: {
+          orderBy: { logDate: 'desc' },
+          take: 2,
+          select: {
+            content: true,
+            isProofVerified: true,
+            skills: {
+              select: {
+                skill: {
+                  select: { name: true },
+                },
+              },
+            },
+          },
+        },
+        projects: {
+          where: { isFeatured: true },
+          take: 2,
+          select: {
+            title: true,
+          },
+        },
       },
     });
 
-    const data = profiles.map(p => ({
-      username: p.username,
-      fullName: p.fullName,
-      headline: p.headline,
-      bio: p.bio,
-      avatarUrl: p.avatarUrl,
-      timezone: p.timezone,
-      totalLogs: p._count.logs,
-      totalProjects: p._count.projects,
-    }));
+    const data = profiles.map((p) => {
+      const allSkillsSet = new Set<string>();
+      p.logs.forEach((log) => {
+        log.skills.forEach((s) => allSkillsSet.add(s.skill.name));
+      });
+
+      const highlights = p.logs.map((l) => l.content);
+      const featuredProjects = p.projects.map((pr) => pr.title);
+
+      return {
+        username: p.username,
+        fullName: p.fullName,
+        headline: p.headline,
+        bio: p.bio,
+        avatarUrl: p.avatarUrl,
+        timezone: p.timezone,
+        totalLogs: p._count.logs,
+        totalProjects: p._count.projects,
+        topSkills: Array.from(allSkillsSet).slice(0, 4),
+        highlights: highlights.slice(0, 2),
+        featuredProjects,
+      };
+    });
 
     return res.status(200).json({ data });
   } catch (error) {

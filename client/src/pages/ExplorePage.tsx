@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Users, ArrowRight, BookOpen, Layers, Sparkles } from 'lucide-react';
+import { Search, Users, ArrowRight, BookOpen, Layers, Sparkles, CheckCircle2 } from 'lucide-react';
 import { api, type ExploreProfileItem } from '../services/api';
 
 interface ExplorePageProps {
@@ -174,7 +174,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onSelectUser }) => {
                 <p style={{
                   fontSize: '0.82rem',
                   color: 'var(--text-secondary)',
-                  margin: '0 0 12px 0',
+                  margin: '0 0 10px 0',
                   lineHeight: '1.4',
                   display: '-webkit-box',
                   WebkitLineClamp: 2,
@@ -183,6 +183,52 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onSelectUser }) => {
                 }}>
                   {item.headline || item.bio || 'Software Engineer di Logfolio'}
                 </p>
+
+                {item.topSkills && item.topSkills.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }}>
+                    {item.topSkills.map((sk) => (
+                      <span
+                        key={sk}
+                        style={{
+                          fontSize: '0.68rem',
+                          fontWeight: 600,
+                          padding: '2px 7px',
+                          borderRadius: 'var(--radius-sm)',
+                          background: 'var(--bg-surface-elevated)',
+                          border: '1px solid var(--border-subtle)',
+                          color: 'var(--text-secondary)',
+                        }}
+                      >
+                        {sk}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {item.highlights && item.highlights.length > 0 && (
+                  <div style={{
+                    marginBottom: '12px',
+                    padding: '8px 10px',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'rgba(79, 70, 229, 0.04)',
+                    border: '1px solid rgba(79, 70, 229, 0.12)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px',
+                  }}>
+                    <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Pencapaian & Progres Terkini:
+                    </span>
+                    {item.highlights.map((hl, hIdx) => (
+                      <div key={hIdx} style={{ display: 'flex', alignItems: 'flex-start', gap: '5px', fontSize: '0.74rem', color: 'var(--text-primary)', lineHeight: 1.35 }}>
+                        <CheckCircle2 size={11} color="var(--accent-emerald)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                        <span style={{ display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                          {hl}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 <div style={{
                   display: 'flex',

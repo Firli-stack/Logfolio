@@ -11,6 +11,9 @@ export interface ExploreProfileItem {
   timezone?: string;
   totalLogs: number;
   totalProjects: number;
+  topSkills?: string[];
+  highlights?: string[];
+  featuredProjects?: string[];
 }
 
 export interface ProfileResponse {
