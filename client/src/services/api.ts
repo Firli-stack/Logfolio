@@ -18,7 +18,110 @@ export interface ProfileResponse {
   logs: LogEntry[];
 }
 
+export interface AuthResponse {
+  token: string;
+  profile: {
+    id: string;
+    username: string;
+    email?: string;
+    fullName: string;
+    avatarUrl?: string;
+  };
+}
+
+export const TOKEN_STORAGE_KEY = 'logfolio_auth_token_v1';
+
 export const api = {
+  async register(payload: {
+    username: string;
+    email: string;
+    password: string;
+    fullName: string;
+  }): Promise<{ success: boolean; data?: AuthResponse; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (!res.ok) return { success: false, error: json.error || 'Registrasi gagal' };
+      if (json.data?.token) {
+        localStorage.setItem(TOKEN_STORAGE_KEY, json.data.token);
+      }
+      return { success: true, data: json.data };
+    } catch {
+      return { success: false, error: 'Koneksi server gagal' };
+    }
+  },
+
+  async login(payload: {
+    loginIdentifier: string;
+    password: string;
+  }): Promise<{ success: boolean; data?: AuthResponse; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (!res.ok) return { success: false, error: json.error || 'Login gagal' };
+      if (json.data?.token) {
+        localStorage.setItem(TOKEN_STORAGE_KEY, json.data.token);
+      }
+      return { success: true, data: json.data };
+    } catch {
+      return { success: false, error: 'Koneksi server gagal' };
+    }
+  },
+
+  async oauthMockLogin(payload: {
+    provider: 'google' | 'github';
+    email: string;
+    fullName: string;
+    username: string;
+    avatarUrl?: string;
+  }): Promise<{ success: boolean; data?: AuthResponse; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/oauth`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (!res.ok) return { success: false, error: json.error || 'Login OAuth gagal' };
+      if (json.data?.token) {
+        localStorage.setItem(TOKEN_STORAGE_KEY, json.data.token);
+      }
+      return { success: true, data: json.data };
+    } catch {
+      return { success: false, error: 'Koneksi server gagal' };
+    }
+  },
+
+  async getCurrentUser(): Promise<AuthResponse['profile'] | null> {
+    try {
+      const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+      if (!token) return null;
+      const res = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        localStorage.removeItem(TOKEN_STORAGE_KEY);
+        return null;
+      }
+      const json = await res.json();
+      return json.data;
+    } catch {
+      return null;
+    }
+  },
+
+  logout(): void {
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+  },
+
   async getProfile(username: string): Promise<ProfileResponse | null> {
     try {
       const res = await fetch(`${API_BASE_URL}/profile/${username}`);

@@ -1,15 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { UserProfile } from '../../types';
-import { Code2, Flame, Globe, PenSquare, ChevronDown, User, Settings, LogOut, Sparkles, Mail } from 'lucide-react';
+import { Code2, Flame, Globe, PenSquare, ChevronDown, User, Settings, LogOut, Sparkles, Mail, LogIn } from 'lucide-react';
 
 interface NavbarProps {
   profile: UserProfile;
   activeTab: 'public_preview' | 'dashboard_composer' | 'inbox';
   unreadMessagesCount?: number;
+  isAuthenticated?: boolean;
   onTabChange: (tab: 'public_preview' | 'dashboard_composer' | 'inbox') => void;
   onOpenEditProfile: () => void;
   onOpenSettings: () => void;
   onOpenAiDigest?: () => void;
+  onOpenAuth?: () => void;
   onLogout: () => void;
 }
 
@@ -17,10 +19,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   profile,
   activeTab,
   unreadMessagesCount = 0,
+  isAuthenticated = false,
   onTabChange,
   onOpenEditProfile,
   onOpenSettings,
   onOpenAiDigest,
+  onOpenAuth,
   onLogout
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -99,41 +103,65 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {}
-          <div style={{ position: 'relative' }} ref={dropdownRef}>
+          {!isAuthenticated && onOpenAuth ? (
             <button
               type="button"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              onClick={onOpenAuth}
               style={{
-                background: isDropdownOpen ? 'var(--bg-surface-elevated)' : 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
+                background: 'var(--accent-primary)',
+                color: '#FFFFFF',
+                border: 'none',
                 borderRadius: 'var(--radius-full)',
-                padding: '3px 8px 3px 4px',
+                padding: '6px 14px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '6px',
                 cursor: 'pointer',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                boxShadow: '0 2px 6px rgba(79, 70, 229, 0.25)',
                 transition: 'all 0.15s ease',
-                boxShadow: 'var(--shadow-subtle)'
               }}
             >
-              <img
-                src={profile.avatarUrl}
-                alt={profile.fullName}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80';
-                }}
-                style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '50%',
-                  objectFit: 'cover'
-                }}
-              />
-              <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {profile.fullName.split(' ')[0]}
-              </span>
-              <ChevronDown size={14} color="var(--text-muted)" style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
+              <LogIn size={14} />
+              <span>Masuk / Daftar</span>
             </button>
+          ) : (
+            <div style={{ position: 'relative' }} ref={dropdownRef}>
+              <button
+                type="button"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                style={{
+                  background: isDropdownOpen ? 'var(--bg-surface-elevated)' : 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-full)',
+                  padding: '3px 8px 3px 4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  boxShadow: 'var(--shadow-subtle)'
+                }}
+              >
+                <img
+                  src={profile.avatarUrl}
+                  alt={profile.fullName}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80';
+                  }}
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    objectFit: 'cover'
+                  }}
+                />
+                <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {profile.fullName.split(' ')[0]}
+                </span>
+                <ChevronDown size={14} color="var(--text-muted)" style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
+              </button>
 
             {}
             {isDropdownOpen && (
@@ -259,7 +287,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
             )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 

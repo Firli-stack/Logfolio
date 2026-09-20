@@ -47,7 +47,7 @@ export const getProfileByUsername = async (req: Request, res: Response) => {
     const streakResult = calculateTimezoneAwareStreak(
       logDates,
       profile.timezone || 'Asia/Jakarta',
-      profile.streakFreezeCount
+      profile.streakFreezeCount ?? 2
     );
 
     const skillCounts: Record<string, number> = {};

@@ -13,6 +13,8 @@ import { AiDigestModal } from './components/modals/AiDigestModal';
 import { SharePortfolioModal } from './components/modals/SharePortfolioModal';
 import { GitHubSyncModal } from './components/modals/GitHubSyncModal';
 import { ReportModal } from './components/modals/ReportModal';
+import { AuthModal } from './components/modals/AuthModal';
+import { api } from './services/api';
 import type { GitHubCommitItem } from './services/githubService';
 import { parseCurrentRoute, navigateTo } from './utils/router';
 
@@ -145,8 +147,31 @@ export function App() {
     }
   };
 
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ username: string; fullName: string; avatarUrl?: string } | null>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const profileData = await api.getCurrentUser();
+      if (profileData) {
+        setCurrentUser(profileData);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  const handleAuthSuccess = (userProfile: { username: string; fullName: string; avatarUrl?: string }) => {
+    setCurrentUser(userProfile);
+    if (userProfile.username && userProfile.username !== profile.username) {
+      navigateTo(`/p/${userProfile.username}`);
+      window.location.reload();
+    }
+  };
+
   const handleLogout = () => {
     if (window.confirm('Keluar dari sesi profil aktif dan beralih ke Mode Tamu?')) {
+      api.logout();
+      setCurrentUser(null);
       setActiveTab('public_preview');
     }
   };
@@ -161,10 +186,12 @@ export function App() {
         profile={profile}
         activeTab={activeTab}
         unreadMessagesCount={recruiterMessages.length}
+        isAuthenticated={!!currentUser}
         onTabChange={handleTabChange}
         onOpenEditProfile={() => setIsEditProfileOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenAiDigest={() => setIsAiDigestOpen(true)}
+        onOpenAuth={() => setIsAuthOpen(true)}
         onLogout={handleLogout}
       />
 
@@ -297,6 +324,12 @@ export function App() {
         onClose={() => setIsGitHubSyncOpen(false)}
         defaultUsername={profile.socialLinks?.github || 'Firli-stack'}
         onSelectCommit={handleSelectGitHubCommit}
+      />
+
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
       />
     </div>
   );

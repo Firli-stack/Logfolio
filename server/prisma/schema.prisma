@@ -10,6 +10,9 @@ generator client {
 model Profile {
   id                String    @id @default(uuid())
   username          String    @unique
+  email             String?   @unique
+  passwordHash      String?   @map("password_hash")
+  authProvider      String?   @default("credentials") @map("auth_provider") // credentials, github, google
   fullName          String    @map("full_name")
   headline          String?
   bio               String?
@@ -17,7 +20,7 @@ model Profile {
   timezone          String    @default("Asia/Jakarta")
   socialLinks       Json?     @default("{}") @map("social_links")
   isPublic          Boolean   @default(true) @map("is_public")
-  streakFreezeCount Int       @default(2) @map("streak_freeze_count")
+  streakFreezeCount Int?      @default(2) @map("streak_freeze_count")
   lastActiveDate    DateTime? @map("last_active_date") @db.Date
   createdAt         DateTime  @default(now()) @map("created_at")
   updatedAt         DateTime  @updatedAt @map("updated_at")
