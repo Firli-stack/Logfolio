@@ -81,13 +81,13 @@ Aplikasi siap diakses di [http://localhost:5173](http://localhost:5173)!
 
 Konfigurasi backend berada di `server/.env` atau `docker-compose.yml`:
 
-| Variabel | Deskripsi | Default Value |
-| :--- | :--- | :--- |
-| `PORT` | Port server Express | `5000` |
-| `NODE_ENV` | Lingkungan runtime (`development` / `production`) | `production` |
-| `DATABASE_URL` | URL koneksi PostgreSQL Prisma | `postgresql://postgres:password123@postgres:5432/logfolio?schema=public` |
-| `CLIENT_URL` | Domain frontend yang diizinkan CORS | `http://localhost:5173` |
-| `JWT_SECRET` | Kunci rahasia hashing token autentikasi | `***REDACTED***` |
+| Variabel | Deskripsi |
+| :--- | :--- |
+| `PORT` | Port server Express |
+| `NODE_ENV` | Lingkungan runtime (`development` / `production`) |
+| `DATABASE_URL` | URL koneksi PostgreSQL Prisma |
+| `CLIENT_URL` | Domain frontend yang diizinkan CORS |
+| `JWT_SECRET` | Kunci rahasia hashing token autentikasi |
 
 ---
 
