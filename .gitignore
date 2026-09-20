@@ -12,6 +12,9 @@ dist/
 dist-ssr/
 *.local
 
+# AI Agent Config (local only, do not push to GitHub)
+AGENTS.md
+
 # Environment & IDE
 .env
 .env*.local

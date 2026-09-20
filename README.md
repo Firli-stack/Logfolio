@@ -18,8 +18,7 @@
 [🏛️ Arsitektur](#-arsitektur-sistem) •
 [🚀 Mulai Cepat](#-panduan-instalasi--menjalankan) •
 [⚙️ Konfigurasi](#-konfigurasi-environment-env) •
-[📚 Dokumentasi](#-dokumentasi-proyek) •
-[💎 Aturan Kode](#-standar-pengkodean-agentsmd)
+[📚 Dokumentasi](#-dokumentasi-proyek)
 
 </div>
 
@@ -54,6 +53,7 @@ graph TD
 - **Frontend Client**: [http://localhost:5173](http://localhost:5173) (Container: `logfolio_client`)
 - **Backend Server**: [http://localhost:5000](http://localhost:5000) (Container: `logfolio_server`)
 - **PostgreSQL Database**: `localhost:5432` (Container: `logfolio_postgres`)
+- **Prisma Studio**: [http://localhost:5555](http://localhost:5555) (Container: `logfolio_studio`)
 
 ---
 
@@ -98,18 +98,9 @@ Konfigurasi backend berada di `server/.env` atau `docker-compose.yml`:
 
 | Dokumen | Lokasi | Cakupan Konten |
 | :--- | :--- | :--- |
-| **Aturan Agent & Kode** | [`AGENTS.md`](AGENTS.md) | Standardisasi AI, panduan sinkronisasi Docker, dan strict clean code |
 | **Spesifikasi PRD & SRS** | [`docs/PRD_SRS_Portfolio_Generator_v2.md`](docs/PRD_SRS_Portfolio_Generator_v2.md) | Spesifikasi kebutuhan fungsional (FR) & non-fungsional (NFR) lengkap |
 | **Sistem Desain & UI/UX** | [`docs/DESIGN_SYSTEM_SPEC.md`](docs/DESIGN_SYSTEM_SPEC.md) | Token warna WCAG AAA, glassmorphism, tipografi, dan print stylesheet |
 | **Panduan Frontend** | [`client/README.md`](client/README.md) | Arsitektur komponen modular, state management, dan styling |
 | **Panduan Backend API** | [`server/README.md`](server/README.md) | Daftar endpoint REST `/api/v1`, skema validasi Zod, dan Prisma ORM |
 
 ---
-
-## 💎 Standar Pengkodean (`AGENTS.md`)
-
-Seluruh kontributor dan agen AI wajib mematuhi panduan baku di [`AGENTS.md`](AGENTS.md):
-1. **Strict Clean Code (Tanpa Komentar Teks Hijau)**: Kode harus *self-explanatory* tanpa baris komentar `// ...` atau `/* ... */`.
-2. **ESM Import Path**: Backend Express wajib menyertakan ekstensi `.js` pada setiap import lokal file `.ts`.
-3. **Strict Type Safety**: Larangan penggunaan implicit `any`; seluruh kontrak API dan props komponen bertipe eksplisit.
-4. **Vanilla CSS Glassmorphism**: Memaksimalkan CSS variables tema tanpa ketergantungan utility framework seperti Tailwind.
