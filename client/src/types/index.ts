@@ -57,3 +57,11 @@ export interface UserProfile {
   streakFreezeLeft: number;
   topSkills: { skill: string; count: number }[];
 }
+
+export interface RecruiterMessage {
+  id: string;
+  recruiterName: string;
+  recruiterEmail: string;
+  message: string;
+  createdAt: string;
+}

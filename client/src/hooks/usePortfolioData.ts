@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { LogEntry, Project, UserProfile } from '../types';
+import type { LogEntry, Project, UserProfile, RecruiterMessage } from '../types';
 import { INITIAL_PROFILE, INITIAL_PROJECTS, INITIAL_LOGS } from '../mockData';
 import { api } from '../services/api';
 import { parseCurrentRoute } from '../utils/router';
@@ -36,6 +36,8 @@ export function usePortfolioData() {
     return INITIAL_LOGS;
   });
 
+  const [recruiterMessages, setRecruiterMessages] = useState<RecruiterMessage[]>([]);
+
   useEffect(() => {
     const fetchApiData = async () => {
       const r = parseCurrentRoute();
@@ -64,6 +66,9 @@ export function usePortfolioData() {
         if (data.logs && data.logs.length > 0) {
           setLogs(data.logs);
         }
+
+        const msgs = await api.getContactMessages(targetUser);
+        setRecruiterMessages(msgs);
       }
     };
 
@@ -151,6 +156,7 @@ export function usePortfolioData() {
     setProjects,
     logs,
     setLogs,
+    recruiterMessages,
     handleAddLog,
     handleCreateProject,
     handleDeleteLog,

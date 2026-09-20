@@ -54,6 +54,7 @@ export function App() {
     profile,
     projects,
     logs,
+    recruiterMessages,
     handleAddLog,
     handleCreateProject,
     handleDeleteLog,
@@ -105,8 +106,10 @@ export function App() {
 
       {activeTab === 'dashboard_composer' ? (
         <DashboardPage
+          candidateUsername={profile.username}
           projects={projects}
           logs={logs}
+          recruiterMessages={recruiterMessages}
           onAddLog={handleAddLog}
           onDeleteLog={handleDeleteLog}
           onOpenCreateProject={() => setIsCreateProjectOpen(true)}
@@ -148,6 +151,7 @@ export function App() {
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
         candidateName={profile.fullName}
+        candidateUsername={profile.username}
       />
 
       <CreateProjectModal

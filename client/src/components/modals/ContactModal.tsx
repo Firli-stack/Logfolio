@@ -1,28 +1,57 @@
 import React, { useState } from 'react';
-import { Send, X, CheckCircle2 } from 'lucide-react';
+import { Send, X, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { api } from '../../services/api';
 
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
   candidateName: string;
+  candidateUsername: string;
 }
 
-export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, candidateName }) => {
+export const ContactModal: React.FC<ContactModalProps> = ({
+  isOpen,
+  onClose,
+  candidateName,
+  candidateUsername,
+}) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !message) return;
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      onClose();
-    }, 1800);
+    if (!name || !email || !message || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    const result = await api.sendContactMessage({
+      targetUsername: candidateUsername,
+      recruiterName: name,
+      recruiterEmail: email,
+      message,
+    });
+
+    setIsSubmitting(false);
+
+    if (result.success) {
+      setSubmitted(true);
+      setName('');
+      setEmail('');
+      setMessage('');
+      setTimeout(() => {
+        setSubmitted(false);
+        onClose();
+      }, 2000);
+    } else {
+      setErrorMessage(result.error || 'Gagal mengirim pesan relay.');
+    }
   };
 
   return (
@@ -136,17 +165,35 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, can
               />
             </div>
 
+            {errorMessage && (
+              <div style={{
+                padding: '10px 14px',
+                borderRadius: 'var(--radius-md)',
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                color: '#ef4444',
+                fontSize: '0.82rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}>
+                <AlertCircle size={16} style={{ flexShrink: 0 }} />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
             <button
               type="submit"
+              disabled={isSubmitting}
               style={{
-                background: 'var(--accent-primary)',
+                background: isSubmitting ? 'var(--text-muted)' : 'var(--accent-primary)',
                 color: '#fff',
                 border: 'none',
                 padding: '10px',
                 borderRadius: 'var(--radius-md)',
                 fontWeight: 600,
                 fontSize: '0.85rem',
-                cursor: 'pointer',
+                cursor: isSubmitting ? 'not-allowed' : 'pointer',
                 marginTop: '6px',
                 display: 'flex',
                 alignItems: 'center',
@@ -154,8 +201,17 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, can
                 gap: '8px'
               }}
             >
-              <span>Kirim Pesan Relay</span>
-              <Send size={14} />
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={15} className="spin" />
+                  <span>Meneruskan Pesan...</span>
+                </>
+              ) : (
+                <>
+                  <span>Kirim Pesan Relay</span>
+                  <Send size={14} />
+                </>
+              )}
             </button>
           </form>
         )}

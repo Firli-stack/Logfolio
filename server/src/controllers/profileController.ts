@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../utils/prisma.js';
 
-// GET /api/v1/profile/:username - Get public portfolio profile
 export const getProfileByUsername = async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
@@ -37,14 +36,12 @@ export const getProfileByUsername = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Profile not found' });
     }
 
-    // Hitung aggregasi statistik secara dinamis
     const totalLogs = profile.logs.length;
     const uniqueActiveDates = new Set(
       profile.logs.map((l) => l.logDate.toISOString().split('T')[0])
     );
     const totalActiveDays = uniqueActiveDates.size;
 
-    // Hitung top skills
     const skillCounts: Record<string, number> = {};
     profile.logs.forEach((log) => {
       log.skills.forEach((ls) => {
@@ -57,7 +54,6 @@ export const getProfileByUsername = async (req: Request, res: Response) => {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    // Transformasi ke format konsumsi frontend
     const formattedProfile = {
       username: profile.username,
       fullName: profile.fullName,
@@ -115,7 +111,6 @@ const updateProfileSchema = z.object({
   isPublic: z.boolean().optional(),
 });
 
-// PUT /api/v1/profile/:username - Update profile data
 export const updateProfile = async (req: Request, res: Response) => {
   try {
     const { username } = req.params;

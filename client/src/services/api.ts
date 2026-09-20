@@ -1,4 +1,4 @@
-import type { Project, LogEntry } from '../types';
+import type { Project, LogEntry, RecruiterMessage } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
 
@@ -125,6 +125,59 @@ export const api = {
     } catch (err) {
       console.error('API deleteLog failed:', err);
       return false;
+    }
+  },
+  async sendContactMessage(payload: {
+    targetUsername: string;
+    recruiterName: string;
+    recruiterEmail: string;
+    message: string;
+  }): Promise<{ success: boolean; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Gagal mengirim pesan relay.' };
+      }
+      return { success: true };
+    } catch {
+      return { success: false, error: 'Terjadi kesalahan koneksi server.' };
+    }
+  },
+  async reportProfile(payload: {
+    targetUsername: string;
+    reason: 'copyright' | 'spam' | 'nsfw' | 'other';
+    details?: string;
+    reporterEmail?: string;
+  }): Promise<{ success: boolean; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Gagal mengirim laporan.' };
+      }
+      return { success: true };
+    } catch {
+      return { success: false, error: 'Terjadi kesalahan koneksi server.' };
+    }
+  },
+  async getContactMessages(username: string): Promise<RecruiterMessage[]> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/profile/${username}/messages`);
+      if (!res.ok) return [];
+      const json = await res.json();
+      return json.data || [];
+    } catch (err) {
+      console.error('API getContactMessages failed:', err);
+      return [];
     }
   },
 };

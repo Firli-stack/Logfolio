@@ -13,7 +13,6 @@ const createProjectSchema = z.object({
   isFeatured: z.boolean().optional().default(false),
 });
 
-// POST /api/v1/projects - Create new project
 export const createProject = async (req: Request, res: Response) => {
   try {
     const parseResult = createProjectSchema.safeParse(req.body);

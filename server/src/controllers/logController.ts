@@ -14,7 +14,6 @@ const createLogSchema = z.object({
   logDate: z.string().optional(),
 });
 
-// POST /api/v1/logs - Create new micro-log
 export const createLog = async (req: Request, res: Response) => {
   try {
     const parseResult = createLogSchema.safeParse(req.body);
@@ -42,7 +41,6 @@ export const createLog = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Connect or create skills
     const skillIds: string[] = [];
     for (const skillName of skills) {
       const slug = skillName.toLowerCase().replace(/\s+/g, '-');
@@ -54,7 +52,6 @@ export const createLog = async (req: Request, res: Response) => {
       skillIds.push(skill.id);
     }
 
-    // Create log with relations
     const newLog = await prisma.log.create({
       data: {
         userId: user.id,
@@ -102,7 +99,6 @@ export const createLog = async (req: Request, res: Response) => {
   }
 };
 
-// PATCH /api/v1/logs/:id/kudos - Give kudos to a log
 export const addKudos = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -120,7 +116,6 @@ export const addKudos = async (req: Request, res: Response) => {
   }
 };
 
-// DELETE /api/v1/logs/:id - Delete a log entry
 export const deleteLog = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -133,7 +128,6 @@ export const deleteLog = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Log not found' });
     }
 
-    // Delete relation skills first then log
     await prisma.$transaction([
       prisma.logSkill.deleteMany({
         where: { logId: id },

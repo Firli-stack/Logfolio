@@ -25,6 +25,9 @@ model Profile {
   projects          Project[]
   logs              Log[]
 
+  contactMessages   ContactMessage[]
+  profileReports    ProfileReport[]
+
   @@map("profiles")
 }
 
@@ -86,4 +89,30 @@ model LogSkill {
 
   @@id([logId, skillId])
   @@map("log_skills")
+}
+
+model ContactMessage {
+  id             String   @id @default(uuid())
+  candidateId    String   @map("candidate_id")
+  recruiterName  String   @map("recruiter_name") @db.VarChar(100)
+  recruiterEmail String   @map("recruiter_email") @db.VarChar(150)
+  message        String   @db.Text
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  candidate      Profile  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@map("contact_messages")
+}
+
+model ProfileReport {
+  id             String   @id @default(uuid())
+  candidateId    String   @map("candidate_id")
+  reason         String   @db.VarChar(50) // copyright, spam, nsfw, other
+  details        String?  @db.Text
+  reporterEmail  String?  @map("reporter_email") @db.VarChar(150)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  candidate      Profile  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@map("profile_reports")
 }
