@@ -46,5 +46,20 @@ services:
     depends_on:
       - server
 
+  studio:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: logfolio_studio
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: "postgresql://postgres:password123@postgres:5432/logfolio?schema=public"
+    ports:
+      - "5555:5555"
+    command: npx prisma studio --port 5555 --hostname 0.0.0.0 --browser none
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres_data:
