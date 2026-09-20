@@ -71,9 +71,6 @@ cd Logfolio
 
 # 2. Jalankan seluruh container (postgres, server, client)
 docker compose up -d
-
-# 3. Masukkan data awal profil nyata (Firli-stack & Proyek ASA ERP)
-docker exec logfolio_server npx tsx prisma/seed.ts
 ```
 
 Aplikasi siap diakses di [http://localhost:5173](http://localhost:5173)!
