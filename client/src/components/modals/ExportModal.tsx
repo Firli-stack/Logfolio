@@ -207,26 +207,24 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    PDF Resume Resmi (Layout A4)
+                    Resume PDF (Layout A4)
                   </h4>
                   <span style={{ fontSize: '0.62rem', fontWeight: 700, background: 'var(--accent-primary)', color: '#fff', padding: '1px 5px', borderRadius: '4px' }}>
-                    Rekomendasi
+                    Siap Cetak
                   </span>
                 </div>
                 <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.25, marginTop: '1px' }}>
-                  Format dokumen cetak A4 siap simpan PDF sesuai standar industri.
+                  Dokumen resume terstruktur rapi untuk keperluan profesional.
                 </p>
               </div>
             </div>
 
-            {}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '8px', borderTop: '1px solid rgba(79, 70, 229, 0.12)' }}>
               
-              {}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                   <Languages size={12} />
-                  Bahasa CV:
+                  Bahasa:
                 </span>
                 <div style={{ display: 'flex', gap: '4px' }}>
                   <button
@@ -261,12 +259,11 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                       transition: 'all 0.15s ease'
                     }}
                   >
-                    English (International)
+                    English
                   </button>
                 </div>
               </div>
 
-              {}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '6px' }}>
                 <label
                   style={{
@@ -288,8 +285,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     onChange={() => setSelectedTemplate('classic_ats')}
                   />
                   <div>
-                    <b style={{ color: 'var(--text-primary)', display: 'block' }}>Harvard / ATS Standard</b>
-                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Format 1-kolom resmi referensi</span>
+                    <b style={{ color: 'var(--text-primary)', display: 'block' }}>Klasik Profesional</b>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Format 1-kolom bersih</span>
                   </div>
                 </label>
 
@@ -313,8 +310,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     onChange={() => setSelectedTemplate('modern_clean')}
                   />
                   <div>
-                    <b style={{ color: 'var(--text-primary)', display: 'block' }}>Modern Sans-Serif</b>
-                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Layout kontemporer</span>
+                    <b style={{ color: 'var(--text-primary)', display: 'block' }}>Modern Clean</b>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Tata letak minimalis</span>
                   </div>
                 </label>
               </div>
@@ -481,14 +478,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               border: '1px solid var(--border-subtle)',
               display: 'flex',
               flexDirection: 'column',
-              gap: '6px',
+              gap: '4px',
             }}>
               <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Briefcase size={14} color="var(--accent-emerald)" />
-                <span>Paket Berkas Rekruter Siap Unduh</span>
+                <span>Resume Siap Unduh</span>
               </div>
               <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.35, margin: 0 }}>
-                Berkas PDF di atas telah diformat khusus sesuai kebutuhan penilaian rekruter (ATS-friendly, ringkasan keahlian teknis, dan verifikasi tautan bukti hasil kerja).
+                File PDF memuat ringkasan keahlian, riwayat proyek, dan tautan bukti hasil kerja kandidat.
               </p>
             </div>
           )}
