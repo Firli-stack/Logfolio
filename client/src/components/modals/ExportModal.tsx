@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { UserProfile, Project, LogEntry } from '../../types';
 import { exportToMarkdown, exportToJson, exportToPdfPrint } from '../../utils/exportData';
 import type { CvTemplateStyle, CvLanguage } from '../../utils/exportData';
-import { X, Download, FileText, Code2, CheckCircle2, ShieldCheck, Printer, Languages, Link2, Copy } from 'lucide-react';
+import { X, Download, FileText, Code2, CheckCircle2, ShieldCheck, Printer, Languages, Link2, Copy, Briefcase } from 'lucide-react';
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -10,6 +10,7 @@ interface ExportModalProps {
   profile: UserProfile;
   projects: Project[];
   logs: LogEntry[];
+  isOwner?: boolean;
 }
 
 export const ExportModal: React.FC<ExportModalProps> = ({
@@ -17,7 +18,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   onClose,
   profile,
   projects,
-  logs
+  logs,
+  isOwner = false
 }) => {
   const [downloadedFormat, setDownloadedFormat] = useState<'md' | 'json' | 'pdf' | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<CvTemplateStyle>('classic_ats');
@@ -106,22 +108,24 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               width: '36px',
               height: '36px',
               borderRadius: 'var(--radius-md)',
-              background: 'rgba(79, 70, 229, 0.1)',
-              color: 'var(--accent-primary)',
+              background: isOwner ? 'rgba(79, 70, 229, 0.1)' : 'rgba(5, 150, 105, 0.1)',
+              color: isOwner ? 'var(--accent-primary)' : 'var(--accent-emerald)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
               marginTop: '1px'
             }}>
-              <Download size={18} />
+              {isOwner ? <Download size={18} /> : <Briefcase size={18} />}
             </div>
             <div style={{ minWidth: 0, flex: 1 }}>
               <h2 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.25 }}>
-                Ekspor & Portabilitas Data
+                {isOwner ? 'Ekspor & Portabilitas Data' : `Unduh Berkas Profil @${profile.username}`}
               </h2>
               <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '2px', lineHeight: 1.35 }}>
-                Unduh seluruh riwayat portofolio & bukti kerja tanpa terkunci (*Zero Lock-in*).
+                {isOwner
+                  ? 'Unduh seluruh riwayat portofolio & bukti kerja Anda tanpa terkunci (Zero Lock-in).'
+                  : `Simpan resume resmi atau ringkasan portofolio ${profile.fullName} untuk arsip evaluasi kerja & rekrutmen.`}
               </p>
             </div>
           </div>
@@ -550,7 +554,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           color: 'var(--text-muted)'
         }}>
           <ShieldCheck size={14} color="var(--accent-emerald)" style={{ flexShrink: 0 }} />
-          <span><b>Data Ownership Guarantee</b>: Data Anda 100% milik Anda dan tidak pernah dikunci.</span>
+          <span>
+            {isOwner ? (
+              <><b>Data Ownership Guarantee</b>: Seluruh data Anda 100% milik Anda tanpa dependensi platform (*Zero Lock-in*).</>
+            ) : (
+              <><b>Verified Candidate Dossier</b>: Seluruh riwayat proyek & bukti kerja telah diverifikasi keabsahannya.</>
+            )}
+          </span>
         </div>
       </div>
     </div>

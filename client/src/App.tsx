@@ -333,6 +333,7 @@ export function App() {
         profile={profile}
         projects={projects}
         logs={logs}
+        isOwner={!!currentUser && currentUser.username.toLowerCase() === profile.username.toLowerCase()}
       />
 
       <EditProfileModal
