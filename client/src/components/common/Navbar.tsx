@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { UserProfile } from '../../types';
-import { Code2, Flame, Globe, PenSquare, ChevronDown, User, Settings, LogOut, Sparkles } from 'lucide-react';
+import { Code2, Flame, Globe, PenSquare, ChevronDown, User, Settings, LogOut, Sparkles, Mail } from 'lucide-react';
 
 interface NavbarProps {
   profile: UserProfile;
-  activeTab: 'public_preview' | 'dashboard_composer';
-  onTabChange: (tab: 'public_preview' | 'dashboard_composer') => void;
+  activeTab: 'public_preview' | 'dashboard_composer' | 'inbox';
+  unreadMessagesCount?: number;
+  onTabChange: (tab: 'public_preview' | 'dashboard_composer' | 'inbox') => void;
   onOpenEditProfile: () => void;
   onOpenSettings: () => void;
   onOpenAiDigest?: () => void;
@@ -15,6 +16,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   profile,
   activeTab,
+  unreadMessagesCount = 0,
   onTabChange,
   onOpenEditProfile,
   onOpenSettings,
@@ -306,6 +308,42 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <PenSquare size={14} />
           <span>Quick-Log</span>
+        </button>
+        <button
+          onClick={() => onTabChange('inbox')}
+          style={{
+            flex: 1,
+            padding: '6px 12px',
+            borderRadius: 'var(--radius-full)',
+            border: 'none',
+            fontSize: '0.78rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            background: activeTab === 'inbox' ? 'var(--accent-primary)' : 'transparent',
+            color: activeTab === 'inbox' ? '#fff' : 'var(--text-secondary)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          <Mail size={14} />
+          <span>Inbox</span>
+          {unreadMessagesCount > 0 && (
+            <span style={{
+              background: activeTab === 'inbox' ? '#FFFFFF' : 'var(--accent-primary)',
+              color: activeTab === 'inbox' ? 'var(--accent-primary)' : '#FFFFFF',
+              borderRadius: 'var(--radius-full)',
+              fontSize: '0.68rem',
+              fontWeight: 800,
+              padding: '1px 6px',
+              marginLeft: '2px',
+              lineHeight: 1.2,
+            }}>
+              {unreadMessagesCount}
+            </span>
+          )}
         </button>
       </div>
     </header>

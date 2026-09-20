@@ -3,6 +3,7 @@ import { usePortfolioData } from './hooks/usePortfolioData';
 import { Navbar } from './components/common/Navbar';
 import { PublicPortfolioPage } from './pages/PublicPortfolioPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { InboxPage } from './pages/InboxPage';
 import { ContactModal } from './components/modals/ContactModal';
 import { CreateProjectModal } from './components/modals/CreateProjectModal';
 import { ExportModal } from './components/modals/ExportModal';
@@ -36,15 +37,23 @@ export function App() {
     localStorage.setItem(STORAGE_KEY_LANG, appLang);
   }, [appLang]);
 
-  const [activeTab, setActiveTab] = useState<'public_preview' | 'dashboard_composer'>(() => {
+  const [activeTab, setActiveTab] = useState<'public_preview' | 'dashboard_composer' | 'inbox'>(() => {
     const r = parseCurrentRoute();
-    return r.route === 'dashboard' ? 'dashboard_composer' : 'public_preview';
+    if (r.route === 'dashboard') return 'dashboard_composer';
+    if (r.route === 'inbox') return 'inbox';
+    return 'public_preview';
   });
 
   useEffect(() => {
     const handlePopState = () => {
       const r = parseCurrentRoute();
-      setActiveTab(r.route === 'dashboard' ? 'dashboard_composer' : 'public_preview');
+      if (r.route === 'dashboard') {
+        setActiveTab('dashboard_composer');
+      } else if (r.route === 'inbox') {
+        setActiveTab('inbox');
+      } else {
+        setActiveTab('public_preview');
+      }
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -67,6 +76,8 @@ export function App() {
   useEffect(() => {
     if (activeTab === 'dashboard_composer') {
       document.title = `Dashboard Quick-Log — @${profile.username} | Logfolio`;
+    } else if (activeTab === 'inbox') {
+      document.title = `Inbox Pesan Rekruter (${recruiterMessages.length}) — @${profile.username} | Logfolio`;
     } else {
       document.title = `${profile.fullName} — ${profile.headline || 'Developer Portfolio'} | Logfolio`;
     }
@@ -78,7 +89,7 @@ export function App() {
         `${profile.fullName} (@${profile.username}) — ${profile.bio || profile.headline}. Portofolio berbasis bukti kerja terverifikasi.`
       );
     }
-  }, [profile.fullName, profile.username, profile.headline, profile.bio, activeTab]);
+  }, [profile.fullName, profile.username, profile.headline, profile.bio, activeTab, recruiterMessages.length]);
 
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
@@ -91,10 +102,12 @@ export function App() {
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [importedCommit, setImportedCommit] = useState<GitHubCommitItem | null>(null);
 
-  const handleTabChange = (tab: 'public_preview' | 'dashboard_composer') => {
+  const handleTabChange = (tab: 'public_preview' | 'dashboard_composer' | 'inbox') => {
     setActiveTab(tab);
     if (tab === 'dashboard_composer') {
       navigateTo('/dashboard');
+    } else if (tab === 'inbox') {
+      navigateTo('/inbox');
     } else {
       navigateTo(`/p/${profile.username}`);
     }
@@ -115,6 +128,7 @@ export function App() {
       <Navbar
         profile={profile}
         activeTab={activeTab}
+        unreadMessagesCount={recruiterMessages.length}
         onTabChange={handleTabChange}
         onOpenEditProfile={() => setIsEditProfileOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
@@ -127,12 +141,16 @@ export function App() {
           candidateUsername={profile.username}
           projects={projects}
           logs={logs}
-          recruiterMessages={recruiterMessages}
           onAddLog={handleAddLog}
           onDeleteLog={handleDeleteLog}
           onOpenCreateProject={() => setIsCreateProjectOpen(true)}
           onOpenGitHubSync={() => setIsGitHubSyncOpen(true)}
           importedCommit={importedCommit}
+        />
+      ) : activeTab === 'inbox' ? (
+        <InboxPage
+          messages={recruiterMessages}
+          candidateUsername={profile.username}
         />
       ) : (
         <PublicPortfolioPage

@@ -1,5 +1,5 @@
 export interface RouteInfo {
-  route: 'public_profile' | 'dashboard' | 'home';
+  route: 'public_profile' | 'dashboard' | 'inbox' | 'home';
   username?: string;
 }
 
@@ -15,6 +15,11 @@ export function parseCurrentRoute(): RouteInfo {
   if (pathname.startsWith('/dashboard')) {
     return {
       route: 'dashboard',
+    };
+  }
+  if (pathname.startsWith('/inbox')) {
+    return {
+      route: 'inbox',
     };
   }
   return {
