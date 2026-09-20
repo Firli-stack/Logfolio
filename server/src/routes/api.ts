@@ -13,7 +13,9 @@ import {
   register,
   login,
   oauthMockLogin,
-  getCurrentUser
+  getCurrentUser,
+  verifyOtp,
+  resendOtp,
 } from '../controllers/authController.js';
 
 const router = Router();
@@ -35,6 +37,8 @@ const contactLimiter = rateLimit({
 });
 
 router.post('/auth/register', authLimiter, register);
+router.post('/auth/verify-otp', authLimiter, verifyOtp);
+router.post('/auth/resend-otp', authLimiter, resendOtp);
 router.post('/auth/login', authLimiter, login);
 router.post('/auth/oauth', authLimiter, oauthMockLogin);
 router.get('/auth/me', getCurrentUser);

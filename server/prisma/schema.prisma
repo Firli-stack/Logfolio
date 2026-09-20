@@ -12,7 +12,10 @@ model Profile {
   username          String    @unique
   email             String?   @unique
   passwordHash      String?   @map("password_hash")
-  authProvider      String?   @default("credentials") @map("auth_provider") // credentials, github, google
+  authProvider      String?   @default("credentials") @map("auth_provider")
+  isEmailVerified   Boolean   @default(false) @map("is_email_verified")
+  otpCode           String?   @map("otp_code")
+  otpExpiresAt      DateTime? @map("otp_expires_at")
   fullName          String    @map("full_name")
   headline          String?
   bio               String?

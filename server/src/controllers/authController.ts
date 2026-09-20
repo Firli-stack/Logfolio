@@ -31,6 +31,15 @@ const oauthMockSchema = z.object({
   avatarUrl: z.string().optional(),
 });
 
+const verifyOtpSchema = z.object({
+  email: z.string().trim().email(),
+  otp: z.string().trim().length(6, 'Kode OTP harus 6 digit angka'),
+});
+
+const resendOtpSchema = z.object({
+  email: z.string().trim().email(),
+});
+
 export const register = async (req: Request, res: Response) => {
   try {
     const parseResult = registerSchema.safeParse(req.body);
@@ -69,6 +78,9 @@ export const register = async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
     const newProfile = await prisma.profile.create({
       data: {
         username,
@@ -76,29 +88,21 @@ export const register = async (req: Request, res: Response) => {
         passwordHash,
         fullName,
         authProvider: 'credentials',
+        isEmailVerified: false,
+        otpCode: generatedOtp,
+        otpExpiresAt,
         headline: 'Full-Stack Software Engineer',
         bio: 'Membangun sistem dan mencatat progres harian di Logfolio.',
         avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
       },
     });
 
-    const token = jwt.sign(
-      { id: newProfile.id, username: newProfile.username, email: newProfile.email },
-      JWT_SECRET,
-      { expiresIn: '30d' }
-    );
-
     return res.status(201).json({
-      message: 'Registrasi berhasil',
+      message: 'Kode OTP konfirmasi telah dikirimkan ke email Anda.',
       data: {
-        token,
-        profile: {
-          id: newProfile.id,
-          username: newProfile.username,
-          email: newProfile.email,
-          fullName: newProfile.fullName,
-          avatarUrl: newProfile.avatarUrl,
-        },
+        requiresOtp: true,
+        email: newProfile.email,
+        previewOtp: generatedOtp,
       },
     });
   } catch (error) {
@@ -140,6 +144,14 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Username/Email atau Password tidak cocok' });
     }
 
+    if (user.authProvider === 'credentials' && user.isEmailVerified === false) {
+      return res.status(403).json({
+        error: 'Email Anda belum dikonfirmasi. Silakan masukkan kode OTP.',
+        requiresOtp: true,
+        email: user.email,
+      });
+    }
+
     const token = jwt.sign(
       { id: user.id, username: user.username, email: user.email },
       JWT_SECRET,
@@ -161,6 +173,134 @@ export const login = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error in login:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export const verifyOtp = async (req: Request, res: Response) => {
+  try {
+    const parseResult = verifyOtpSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      return res.status(400).json({ error: 'Validation Error', details: parseResult.error.errors });
+    }
+
+    const { email, otp } = parseResult.data;
+
+    const user = await prisma.profile.findFirst({
+      where: {
+        email: { equals: email, mode: 'insensitive' },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Pengguna dengan email tersebut tidak ditemukan' });
+    }
+
+    if (user.isEmailVerified) {
+      const token = jwt.sign(
+        { id: user.id, username: user.username, email: user.email },
+        JWT_SECRET,
+        { expiresIn: '30d' }
+      );
+      return res.status(200).json({
+        message: 'Email sudah terverifikasi sebelumnya.',
+        data: {
+          token,
+          profile: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            fullName: user.fullName,
+            avatarUrl: user.avatarUrl,
+          },
+        },
+      });
+    }
+
+    if (!user.otpCode || user.otpCode !== otp) {
+      return res.status(400).json({ error: 'Kode OTP salah. Cek kembali 6 digit kode Anda.' });
+    }
+
+    if (user.otpExpiresAt && user.otpExpiresAt < new Date()) {
+      return res.status(400).json({ error: 'Kode OTP telah kedaluwarsa. Silakan kirim ulang kode baru.' });
+    }
+
+    const verifiedUser = await prisma.profile.update({
+      where: { id: user.id },
+      data: {
+        isEmailVerified: true,
+        otpCode: null,
+        otpExpiresAt: null,
+      },
+    });
+
+    const token = jwt.sign(
+      { id: verifiedUser.id, username: verifiedUser.username, email: verifiedUser.email },
+      JWT_SECRET,
+      { expiresIn: '30d' }
+    );
+
+    return res.status(200).json({
+      message: 'Email berhasil diverifikasi! Akun Anda aktif sepenuhnya.',
+      data: {
+        token,
+        profile: {
+          id: verifiedUser.id,
+          username: verifiedUser.username,
+          email: verifiedUser.email,
+          fullName: verifiedUser.fullName,
+          avatarUrl: verifiedUser.avatarUrl,
+        },
+      },
+    });
+  } catch (error) {
+    console.error('Error in verifyOtp:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export const resendOtp = async (req: Request, res: Response) => {
+  try {
+    const parseResult = resendOtpSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      return res.status(400).json({ error: 'Validation Error', details: parseResult.error.errors });
+    }
+
+    const { email } = parseResult.data;
+
+    const user = await prisma.profile.findFirst({
+      where: {
+        email: { equals: email, mode: 'insensitive' },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Pengguna dengan email tersebut tidak ditemukan' });
+    }
+
+    if (user.isEmailVerified) {
+      return res.status(400).json({ error: 'Email ini sudah terverifikasi. Anda dapat langsung masuk.' });
+    }
+
+    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    const newExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await prisma.profile.update({
+      where: { id: user.id },
+      data: {
+        otpCode: newOtp,
+        otpExpiresAt: newExpiresAt,
+      },
+    });
+
+    return res.status(200).json({
+      message: 'Kode OTP baru berhasil dikirimkan.',
+      data: {
+        previewOtp: newOtp,
+      },
+    });
+  } catch (error) {
+    console.error('Error in resendOtp:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };

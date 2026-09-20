@@ -29,6 +29,14 @@ export interface AuthResponse {
   };
 }
 
+export interface RegisterResponse {
+  requiresOtp?: boolean;
+  email?: string;
+  previewOtp?: string;
+  token?: string;
+  profile?: AuthResponse['profile'];
+}
+
 export const TOKEN_STORAGE_KEY = 'logfolio_auth_token_v1';
 
 export const api = {
@@ -37,7 +45,7 @@ export const api = {
     email: string;
     password: string;
     fullName: string;
-  }): Promise<{ success: boolean; data?: AuthResponse; error?: string }> {
+  }): Promise<{ success: boolean; data?: RegisterResponse; message?: string; error?: string }> {
     try {
       const res = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
@@ -49,7 +57,45 @@ export const api = {
       if (json.data?.token) {
         localStorage.setItem(TOKEN_STORAGE_KEY, json.data.token);
       }
+      return { success: true, data: json.data, message: json.message };
+    } catch {
+      return { success: false, error: 'Koneksi server gagal' };
+    }
+  },
+
+  async verifyOtp(payload: {
+    email: string;
+    otp: string;
+  }): Promise<{ success: boolean; data?: AuthResponse; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (!res.ok) return { success: false, error: json.error || 'Verifikasi OTP gagal' };
+      if (json.data?.token) {
+        localStorage.setItem(TOKEN_STORAGE_KEY, json.data.token);
+      }
       return { success: true, data: json.data };
+    } catch {
+      return { success: false, error: 'Koneksi server gagal' };
+    }
+  },
+
+  async resendOtp(payload: {
+    email: string;
+  }): Promise<{ success: boolean; data?: { previewOtp?: string }; message?: string; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/resend-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (!res.ok) return { success: false, error: json.error || 'Gagal mengirim ulang kode OTP' };
+      return { success: true, data: json.data, message: json.message };
     } catch {
       return { success: false, error: 'Koneksi server gagal' };
     }

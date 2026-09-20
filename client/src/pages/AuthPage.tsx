@@ -24,10 +24,18 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  const [isOtpStep, setIsOtpStep] = useState(false);
+  const [otpEmail, setOtpEmail] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [previewOtp, setPreviewOtp] = useState<string | null>(null);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
   const handleReset = () => {
     setErrorMsg(null);
     setSuccessMsg(null);
     setPassword('');
+    setIsOtpStep(false);
+    setOtpCode('');
   };
 
   const switchMode = (newMode: 'login' | 'register') => {
@@ -50,7 +58,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         onAuthSuccess(res.data!.profile);
       }, 700);
     } else {
-      setErrorMsg(res.error || 'Login gagal. Cek kembali kredensial Anda.');
+      if ((res as any).requiresOtp && (res as any).email) {
+        setOtpEmail((res as any).email);
+        setIsOtpStep(true);
+        setErrorMsg('Email Anda belum dikonfirmasi. Masukkan kode OTP 6 digit yang telah dikirimkan.');
+      } else {
+        setErrorMsg(res.error || 'Login gagal. Cek kembali kredensial Anda.');
+      }
     }
   };
 
@@ -68,12 +82,70 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     setIsSubmitting(false);
 
     if (res.success && res.data) {
-      setSuccessMsg('Akun berhasil dibuat! Mengalihkan ke dashboard...');
-      setTimeout(() => {
-        onAuthSuccess(res.data!.profile);
-      }, 700);
+      if (res.data.requiresOtp && res.data.email) {
+        setOtpEmail(res.data.email);
+        if (res.data.previewOtp) {
+          setPreviewOtp(res.data.previewOtp);
+        }
+        setIsOtpStep(true);
+        setSuccessMsg('Pendaftaran awal berhasil! Masukkan kode OTP 6-digit untuk mengaktifkan akun.');
+      } else if (res.data.profile) {
+        setSuccessMsg('Akun berhasil dibuat! Mengalihkan ke dashboard...');
+        setTimeout(() => {
+          onAuthSuccess(res.data!.profile!);
+        }, 700);
+      }
     } else {
       setErrorMsg(res.error || 'Pendaftaran gagal. Silakan coba lagi.');
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+    setIsSubmitting(true);
+
+    const res = await api.verifyOtp({
+      email: otpEmail,
+      otp: otpCode.trim(),
+    });
+    setIsSubmitting(false);
+
+    if (res.success && res.data) {
+      setSuccessMsg('Konfirmasi OTP berhasil! Akun Anda telah aktif.');
+      setTimeout(() => {
+        onAuthSuccess(res.data!.profile);
+      }, 800);
+    } else {
+      setErrorMsg(res.error || 'Kode OTP salah atau telah kedaluwarsa.');
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resendCooldown > 0 || isSubmitting) return;
+    setErrorMsg(null);
+    setIsSubmitting(true);
+
+    const res = await api.resendOtp({ email: otpEmail });
+    setIsSubmitting(false);
+
+    if (res.success) {
+      if (res.data?.previewOtp) {
+        setPreviewOtp(res.data.previewOtp);
+      }
+      setSuccessMsg('Kode OTP baru telah dikirimkan!');
+      setResendCooldown(60);
+      const timer = setInterval(() => {
+        setResendCooldown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      setErrorMsg(res.error || 'Gagal mengirim ulang kode OTP.');
     }
   };
 
@@ -355,7 +427,131 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
             </div>
 
-            {mode === 'login' ? (
+            {isOtpStep ? (
+              <form onSubmit={handleVerifyOtp} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                <div style={{
+                  padding: '16px',
+                  borderRadius: 'var(--radius-lg)',
+                  background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(2, 132, 199, 0.08) 100%)',
+                  border: '1px solid rgba(79, 70, 229, 0.25)',
+                  textAlign: 'center',
+                }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600, marginBottom: '4px' }}>
+                    Konfirmasi Email Anda
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    Kode verifikasi 6 digit telah dikirim ke:
+                  </div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--accent-primary)', marginTop: '2px' }}>
+                    {otpEmail}
+                  </div>
+                  {previewOtp && (
+                    <div style={{
+                      marginTop: '10px',
+                      padding: '6px 12px',
+                      borderRadius: 'var(--radius-sm)',
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      border: '1px dashed rgba(16, 185, 129, 0.3)',
+                      color: 'var(--accent-emerald)',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                    }}>
+                      Demo OTP Otomatis: <b>{previewOtp}</b>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                    Masukkan 6 Digit Kode OTP
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    autoFocus
+                    placeholder="Contoh: 123456"
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))}
+                    style={{
+                      width: '100%',
+                      padding: '14px',
+                      borderRadius: 'var(--radius-md)',
+                      border: '2px solid var(--border-medium)',
+                      background: 'var(--bg-surface)',
+                      color: 'var(--text-primary)',
+                      fontSize: '1.4rem',
+                      fontWeight: 800,
+                      letterSpacing: '0.35em',
+                      textAlign: 'center',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting || otpCode.length !== 6}
+                  style={{
+                    padding: '12px 20px',
+                    borderRadius: 'var(--radius-md)',
+                    background: otpCode.length === 6 ? 'var(--accent-primary)' : 'var(--bg-surface-elevated)',
+                    color: otpCode.length === 6 ? '#FFFFFF' : 'var(--text-muted)',
+                    border: 'none',
+                    fontWeight: 700,
+                    fontSize: '0.88rem',
+                    cursor: otpCode.length === 6 ? 'pointer' : 'not-allowed',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    boxShadow: otpCode.length === 6 ? '0 4px 12px rgba(79, 70, 229, 0.28)' : 'none',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {isSubmitting ? <Loader2 size={17} className="spinner" /> : <ArrowRight size={17} />}
+                  <span>{isSubmitting ? 'Memverifikasi...' : 'Verifikasi OTP & Aktifkan Akun'}</span>
+                </button>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsOtpStep(false);
+                      setErrorMsg(null);
+                      setSuccessMsg(null);
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--text-secondary)',
+                      cursor: 'pointer',
+                      padding: 0,
+                      textDecoration: 'underline',
+                    }}
+                  >
+                    Ganti data pendaftaran
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={resendCooldown > 0 || isSubmitting}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: resendCooldown > 0 ? 'var(--text-muted)' : 'var(--accent-primary)',
+                      cursor: resendCooldown > 0 ? 'default' : 'pointer',
+                      fontWeight: 600,
+                      padding: 0,
+                    }}
+                  >
+                    {resendCooldown > 0 ? `Kirim ulang (${resendCooldown}s)` : 'Kirim Ulang OTP'}
+                  </button>
+                </div>
+              </form>
+            ) : mode === 'login' ? (
               <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
@@ -548,7 +744,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   }}
                 >
                   {isSubmitting ? <Loader2 size={17} className="spinner" /> : <ArrowRight size={17} />}
-                  <span>{isSubmitting ? 'Mendaftarkan...' : 'Buat Akun & Mulai Log'}</span>
+                  <span>{isSubmitting ? 'Mendaftarkan...' : 'Lanjut ke Konfirmasi OTP'}</span>
                 </button>
               </form>
             )}
