@@ -13,6 +13,7 @@ interface DashboardPageProps {
   streakDays?: number;
   onAddLog: (newLog: LogEntry) => void;
   onDeleteLog: (logId: string) => void;
+  onUpdateLog?: (logId: string, updates: { content?: string; proofUrl?: string; isFeatured?: boolean }) => void;
   onOpenCreateProject: () => void;
   onOpenGitHubSync?: () => void;
   importedCommit?: GitHubCommitItem | null;
@@ -24,6 +25,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   streakDays = 0,
   onAddLog,
   onDeleteLog,
+  onUpdateLog,
   onOpenCreateProject,
   onOpenGitHubSync,
   importedCommit
@@ -38,7 +40,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         onOpenGitHubSync={onOpenGitHubSync}
         importedCommit={importedCommit}
       />
-      <ManageLogsTable logs={logs} onDeleteLog={onDeleteLog} />
+      <ManageLogsTable logs={logs} onDeleteLog={onDeleteLog} onUpdateLog={onUpdateLog} />
       <EngineeringRhythm logs={logs} />
     </main>
   );

@@ -57,6 +57,26 @@ export const api = {
       return null;
     }
   },
+  async updateLog(logId: string, payload: {
+    content?: string;
+    proofUrl?: string;
+    skills?: string[];
+    isFeatured?: boolean;
+  }): Promise<LogEntry | null> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/logs/${logId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const json = await res.json();
+      return json.data;
+    } catch (err) {
+      console.error('API updateLog failed:', err);
+      return null;
+    }
+  },
   async addKudos(logId: string): Promise<number | null> {
     try {
       const res = await fetch(`${API_BASE_URL}/logs/${logId}/kudos`, {

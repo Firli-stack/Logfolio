@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { getProfileByUsername, updateProfile } from '../controllers/profileController.js';
-import { createLog, addKudos, deleteLog, verifyProofLink } from '../controllers/logController.js';
+import { createLog, addKudos, deleteLog, verifyProofLink, updateLog } from '../controllers/logController.js';
 import { createProject } from '../controllers/projectController.js';
 import { 
   sendContactMessage, 
@@ -26,6 +26,7 @@ router.get('/profile/:username/messages', getContactMessagesByUsername);
 router.patch('/contact/messages/:id/status', updateContactMessageStatus);
 
 router.post('/logs', createLog);
+router.put('/logs/:id', updateLog);
 router.post('/logs/verify-proof', verifyProofLink);
 router.patch('/logs/:id/kudos', addKudos);
 router.delete('/logs/:id', deleteLog);

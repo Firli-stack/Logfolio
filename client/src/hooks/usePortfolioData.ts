@@ -121,6 +121,16 @@ export function usePortfolioData() {
     await api.deleteLog(logId);
   };
 
+  const handleUpdateLog = async (
+    logId: string,
+    updates: { content?: string; proofUrl?: string; skills?: string[]; isFeatured?: boolean }
+  ) => {
+    setLogs((prev) =>
+      prev.map((l) => (l.id === logId ? { ...l, ...updates } : l))
+    );
+    await api.updateLog(logId, updates);
+  };
+
   const handleSaveProfile = async (updatedProfile: UserProfile) => {
     setProfile(updatedProfile);
     await api.updateProfile(updatedProfile.username, {
@@ -170,6 +180,7 @@ export function usePortfolioData() {
     handleAddLog,
     handleCreateProject,
     handleDeleteLog,
+    handleUpdateLog,
     handleSaveProfile,
     handleAddKudos,
     handleUpdateMessageStatus,

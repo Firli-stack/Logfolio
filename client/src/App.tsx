@@ -68,6 +68,7 @@ export function App() {
     handleAddLog,
     handleCreateProject,
     handleDeleteLog,
+    handleUpdateLog,
     handleSaveProfile,
     handleAddKudos,
     handleUpdateMessageStatus,
@@ -175,6 +176,7 @@ export function App() {
           streakDays={profile.streakDays}
           onAddLog={handleAddLog}
           onDeleteLog={handleDeleteLog}
+          onUpdateLog={handleUpdateLog}
           onOpenCreateProject={() => setIsCreateProjectOpen(true)}
           onOpenGitHubSync={() => setIsGitHubSyncOpen(true)}
           importedCommit={importedCommit}

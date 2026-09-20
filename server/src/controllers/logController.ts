@@ -175,3 +175,97 @@ export const deleteLog = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Failed to delete log' });
   }
 };
+
+const updateLogSchema = z.object({
+  content: z.string().min(3).max(300).optional(),
+  proofUrl: z.string().url().optional().or(z.literal('')),
+  skills: z.array(z.string()).min(1).max(5).optional(),
+  isFeatured: z.boolean().optional(),
+});
+
+export const updateLog = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const parseResult = updateLogSchema.safeParse(req.body);
+
+    if (!parseResult.success) {
+      return res.status(400).json({ error: 'Validation Error', details: parseResult.error.errors });
+    }
+
+    const { content, proofUrl, skills, isFeatured } = parseResult.data;
+
+    const existing = await prisma.log.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ error: 'Log not found' });
+    }
+
+    let isProofVerified = existing.isProofVerified;
+    if (proofUrl !== undefined) {
+      if (proofUrl) {
+        const verifyRes = await verifyUrlSafe(proofUrl);
+        isProofVerified = verifyRes.isValid;
+      } else {
+        isProofVerified = false;
+      }
+    }
+
+    let skillIds: string[] | undefined;
+    if (skills) {
+      skillIds = [];
+      for (const skillName of skills) {
+        const slug = skillName.toLowerCase().replace(/\s+/g, '-');
+        const skill = await prisma.skill.upsert({
+          where: { slug },
+          update: {},
+          create: { name: skillName, slug },
+        });
+        skillIds.push(skill.id);
+      }
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+      if (skillIds) {
+        await tx.logSkill.deleteMany({ where: { logId: id } });
+        await tx.logSkill.createMany({
+          data: skillIds.map((sId) => ({ logId: id, skillId: sId })),
+        });
+      }
+
+      return tx.log.update({
+        where: { id },
+        data: {
+          ...(content !== undefined && { content }),
+          ...(proofUrl !== undefined && { proofUrl: proofUrl || null }),
+          ...(isFeatured !== undefined && { isFeatured }),
+          isProofVerified,
+        },
+        include: {
+          project: true,
+          skills: {
+            include: {
+              skill: true,
+            },
+          },
+        },
+      });
+    });
+
+    return res.status(200).json({
+      message: 'Log updated successfully',
+      data: {
+        id: updated.id,
+        content: updated.content,
+        proofUrl: updated.proofUrl,
+        isProofVerified: updated.isProofVerified,
+        isFeatured: updated.isFeatured,
+        skills: updated.skills.map((s) => s.skill.name),
+      },
+    });
+  } catch (error) {
+    console.error('Error updating log:', error);
+    return res.status(500).json({ error: 'Failed to update log' });
+  }
+};
