@@ -25,29 +25,6 @@
 
 ---
 
-## 📸 Tampilan Antarmuka (Bento Showcase)
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ ⚡ BENTO HERO SECTION                                                       │
-│ ┌───────────────────────────────┐ ┌───────────────┐ ┌─────────────────────┐ │
-│ │ Profile, Bio & Live Repos     │ │ Active Streak │ │ Top Tech Breakdown  │ │
-│ │ Firli Hanifurahman            │ │ 🔥 6 Days     │ │ PHP · MySQL · TS    │ │
-│ └───────────────────────────────┘ └───────────────┘ └─────────────────────┘ │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ 💼 PROOF-OF-WORK WORKSTREAM (Termasuk Mode Rahasia NDA)                     │
-│ ┌──────────────────────────────────────┐ ┌────────────────────────────────┐ │
-│ │ ASA Internal ERP (299 Logs - NDA)    │ │ Logfolio Core Engine (Live)    │ │
-│ │ Microservice bridge & attendance sync│ │ Interactive portfolio generator│ │
-│ └──────────────────────────────────────┘ └────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ 📬 RECRUITER CONTACT RELAY & ATS EXPORT SUITE                               │
-│ [ Hubungi Kandidat (Masked Relay) ]  [ 📄 Download ATS Resume (A4 / PDF) ]   │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
 ## ✨ Fitur Unggulan
 
 | Modul Fitur | Deskripsi Fungsional | Status |
