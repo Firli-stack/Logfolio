@@ -4,20 +4,21 @@ export interface RouteInfo {
 }
 
 export function parseCurrentRoute(): RouteInfo {
-  const pathname = window.location.pathname.toLowerCase();
-  const profileMatch = pathname.match(/^\/p\/([^/]+)/);
+  const pathname = window.location.pathname;
+  const lowerPathname = pathname.toLowerCase();
+  const profileMatch = pathname.match(/^\/p\/([^/]+)/i);
   if (profileMatch && profileMatch[1]) {
     return {
       route: 'public_profile',
       username: profileMatch[1],
     };
   }
-  if (pathname.startsWith('/dashboard')) {
+  if (lowerPathname.startsWith('/dashboard')) {
     return {
       route: 'dashboard',
     };
   }
-  if (pathname.startsWith('/inbox')) {
+  if (lowerPathname.startsWith('/inbox')) {
     return {
       route: 'inbox',
     };

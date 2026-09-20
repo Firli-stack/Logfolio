@@ -23,8 +23,13 @@ export const createProject = async (req: Request, res: Response) => {
     const { username, title, description, repoUrl, liveUrl, isStealthNda, status, isFeatured } =
       parseResult.data;
 
-    const user = await prisma.profile.findUnique({
-      where: { username },
+    const user = await prisma.profile.findFirst({
+      where: {
+        username: {
+          equals: username,
+          mode: 'insensitive',
+        },
+      },
     });
 
     if (!user) {

@@ -7,8 +7,13 @@ export const getProfileByUsername = async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
 
-    const profile = await prisma.profile.findUnique({
-      where: { username },
+    const profile = await prisma.profile.findFirst({
+      where: {
+        username: {
+          equals: username,
+          mode: 'insensitive',
+        },
+      },
       include: {
         projects: {
           orderBy: { createdAt: 'desc' },
@@ -125,8 +130,13 @@ export const updateProfile = async (req: Request, res: Response) => {
 
     const { fullName, headline, bio, avatarUrl, timezone, socialLinks, isPublic } = parseResult.data;
 
-    const existing = await prisma.profile.findUnique({
-      where: { username },
+    const existing = await prisma.profile.findFirst({
+      where: {
+        username: {
+          equals: username,
+          mode: 'insensitive',
+        },
+      },
     });
 
     if (!existing) {
@@ -134,7 +144,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     }
 
     const updated = await prisma.profile.update({
-      where: { username },
+      where: { id: existing.id },
       data: {
         ...(fullName !== undefined && { fullName }),
         ...(headline !== undefined && { headline }),

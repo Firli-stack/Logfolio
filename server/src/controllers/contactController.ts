@@ -22,8 +22,13 @@ export const sendContactMessage = async (req: Request, res: Response) => {
 
     const { targetUsername, recruiterName, recruiterEmail, message } = parseResult.data;
 
-    const candidate = await prisma.profile.findUnique({
-      where: { username: targetUsername },
+    const candidate = await prisma.profile.findFirst({
+      where: {
+        username: {
+          equals: targetUsername,
+          mode: 'insensitive',
+        },
+      },
       select: { id: true, username: true, fullName: true },
     });
 
@@ -59,8 +64,13 @@ export const getContactMessagesByUsername = async (req: Request, res: Response) 
   try {
     const { username } = req.params;
 
-    const candidate = await prisma.profile.findUnique({
-      where: { username },
+    const candidate = await prisma.profile.findFirst({
+      where: {
+        username: {
+          equals: username,
+          mode: 'insensitive',
+        },
+      },
       select: { id: true },
     });
 
@@ -108,8 +118,13 @@ export const reportProfile = async (req: Request, res: Response) => {
 
     const { targetUsername, reason, details, reporterEmail } = parseResult.data;
 
-    const candidate = await prisma.profile.findUnique({
-      where: { username: targetUsername },
+    const candidate = await prisma.profile.findFirst({
+      where: {
+        username: {
+          equals: targetUsername,
+          mode: 'insensitive',
+        },
+      },
       select: { id: true },
     });
 

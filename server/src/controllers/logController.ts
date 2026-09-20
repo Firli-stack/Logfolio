@@ -34,8 +34,13 @@ export const createLog = async (req: Request, res: Response) => {
       logDate,
     } = parseResult.data;
 
-    const user = await prisma.profile.findUnique({
-      where: { username },
+    const user = await prisma.profile.findFirst({
+      where: {
+        username: {
+          equals: username,
+          mode: 'insensitive',
+        },
+      },
     });
 
     if (!user) {
