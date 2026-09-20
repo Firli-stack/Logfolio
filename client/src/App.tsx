@@ -83,13 +83,43 @@ export function App() {
     }
 
     const metaDesc = document.querySelector('meta[name="description"]');
+    const descriptionText = `${profile.fullName} (@${profile.username}) — ${profile.bio || profile.headline || 'Developer Portfolio'}. Portofolio berbasis bukti kerja terverifikasi.`;
     if (metaDesc) {
-      metaDesc.setAttribute(
-        'content',
-        `${profile.fullName} (@${profile.username}) — ${profile.bio || profile.headline}. Portofolio berbasis bukti kerja terverifikasi.`
-      );
+      metaDesc.setAttribute('content', descriptionText);
     }
-  }, [profile.fullName, profile.username, profile.headline, profile.bio, activeTab, recruiterMessages.length]);
+
+    let robotsMeta = document.querySelector('meta[name="robots"]');
+    if (!robotsMeta) {
+      robotsMeta = document.createElement('meta');
+      robotsMeta.setAttribute('name', 'robots');
+      document.head.appendChild(robotsMeta);
+    }
+
+    if (logs.length < 3) {
+      robotsMeta.setAttribute('content', 'noindex, nofollow');
+    } else {
+      robotsMeta.setAttribute('content', 'index, follow');
+    }
+
+    const setOrCreateMeta = (property: string, content: string) => {
+      let el = document.querySelector(`meta[property="${property}"]`);
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute('property', property);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', content);
+    };
+
+    const currentUrl = `${window.location.origin}/p/${profile.username}`;
+    setOrCreateMeta('og:title', `${profile.fullName} — ${profile.headline || 'Developer Portfolio'}`);
+    setOrCreateMeta('og:description', descriptionText);
+    setOrCreateMeta('og:url', currentUrl);
+    setOrCreateMeta('og:type', 'profile');
+    if (profile.avatarUrl) {
+      setOrCreateMeta('og:image', profile.avatarUrl);
+    }
+  }, [profile.fullName, profile.username, profile.headline, profile.bio, profile.avatarUrl, activeTab, recruiterMessages.length, logs.length]);
 
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);

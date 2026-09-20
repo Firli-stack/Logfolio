@@ -286,6 +286,59 @@ export const SharePortfolioModal: React.FC<SharePortfolioModalProps> = ({
             </div>
           </div>
 
+          <div style={{
+            background: 'var(--bg-surface-elevated)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-subtle)',
+            overflow: 'hidden',
+          }}>
+            <div style={{
+              padding: '8px 12px',
+              borderBottom: '1px solid var(--border-subtle)',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              color: 'var(--text-muted)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+              <span>Social Preview Card (OpenGraph)</span>
+              <span>logfolio.dev</span>
+            </div>
+            <div style={{ padding: '14px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <img
+                src={profile.avatarUrl}
+                alt={profile.fullName}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80';
+                }}
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '10px',
+                  objectFit: 'cover',
+                  flexShrink: 0,
+                  border: '1px solid var(--border-subtle)',
+                }}
+              />
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {profile.fullName} — {profile.headline || 'Developer Portfolio'}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '2px', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {profile.bio || 'Portofolio interaktif berbasis micro-journaling dan rekayasa sistem terverifikasi.'}
+                </div>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '6px', fontSize: '0.7rem', color: 'var(--accent-primary)', fontWeight: 600 }}>
+                  <span>{profile.streakDays} Hari Streak</span>
+                  <span>•</span>
+                  <span>{profile.totalLogs} Entri Log</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {}
           <div>
             <label style={{
