@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import type { UserProfile } from '../../types';
-import { X, Settings, RotateCcw, Shield, Check, Sun, Moon, Languages, Bell } from 'lucide-react';
+import { X, Settings, RotateCcw, Shield, Check, Sun, Moon, Languages, Bell, Palette } from 'lucide-react';
 import { getStreakNotificationState, requestStreakNotificationPermission } from '../../utils/notificationService';
+
+export type AccentColor = 'indigo' | 'emerald' | 'cyan' | 'amber' | 'rose';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -10,6 +12,8 @@ interface SettingsModalProps {
   onResetData: () => void;
   theme?: 'light' | 'dark';
   onThemeChange?: (theme: 'light' | 'dark') => void;
+  accentColor?: AccentColor;
+  onAccentColorChange?: (accent: AccentColor) => void;
   appLang?: 'id' | 'en';
   onLangChange?: (lang: 'id' | 'en') => void;
 }
@@ -21,6 +25,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onResetData,
   theme = 'light',
   onThemeChange,
+  accentColor = 'indigo',
+  onAccentColorChange,
   appLang = 'id',
   onLangChange
 }) => {
@@ -196,6 +202,58 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <Moon size={13} />
                 <span>{isEn ? 'Dark Theme' : 'Gelap (Dark)'}</span>
               </button>
+            </div>
+          </div>
+
+          <div>
+            <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Palette size={14} color="var(--accent-primary)" />
+              <span>{isEn ? 'Accent Color Palette' : 'Warna Aksen Portofolio'}</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
+              {[
+                { id: 'indigo' as const, name: 'Indigo', hex: '#4F46E5' },
+                { id: 'emerald' as const, name: 'Emerald', hex: '#059669' },
+                { id: 'cyan' as const, name: 'Cyan', hex: '#0284C7' },
+                { id: 'amber' as const, name: 'Amber', hex: '#D97706' },
+                { id: 'rose' as const, name: 'Rose', hex: '#E11D48' },
+              ].map((pal) => {
+                const isSelected = accentColor === pal.id;
+                return (
+                  <button
+                    key={pal.id}
+                    type="button"
+                    onClick={() => onAccentColorChange && onAccentColorChange(pal.id)}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '4px',
+                      padding: '7px 4px',
+                      borderRadius: 'var(--radius-sm)',
+                      border: isSelected ? `2px solid ${pal.hex}` : '1px solid var(--border-subtle)',
+                      background: isSelected ? 'var(--bg-surface)' : 'transparent',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <div style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      background: pal.hex,
+                      boxShadow: isSelected ? `0 0 0 2px var(--bg-surface), 0 0 0 3px ${pal.hex}` : 'none',
+                    }} />
+                    <span style={{
+                      fontSize: '0.68rem',
+                      fontWeight: isSelected ? 700 : 500,
+                      color: isSelected ? 'var(--text-primary)' : 'var(--text-muted)',
+                    }}>
+                      {pal.name}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 

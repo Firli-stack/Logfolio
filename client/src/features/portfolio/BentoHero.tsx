@@ -1,6 +1,6 @@
 import React from 'react';
 import type { UserProfile } from '../../types';
-import { MapPin, Mail, Download, CheckCircle2, Sparkles, Share2 } from 'lucide-react';
+import { MapPin, Mail, Download, CheckCircle2, Sparkles, Share2, Printer } from 'lucide-react';
 
 interface BentoHeroProps {
   profile: UserProfile;
@@ -14,6 +14,7 @@ interface BentoHeroProps {
 export const BentoHero: React.FC<BentoHeroProps> = ({
   profile,
   onContactClick,
+  onPrintClick,
   onExportClick,
   onOpenAiDigest,
   onShareClick
@@ -115,6 +116,30 @@ export const BentoHero: React.FC<BentoHeroProps> = ({
             <Mail size={14} />
             Hubungi
           </button>
+
+          {onPrintClick && (
+            <button
+              type="button"
+              onClick={onPrintClick}
+              style={{
+                background: 'var(--bg-surface-elevated)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-subtle)',
+                padding: '9px 14px',
+                borderRadius: 'var(--radius-md)',
+                fontWeight: 600,
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+              title="Cetak atau simpan portofolio sebagai PDF resume siap lamar kerja"
+            >
+              <Printer size={14} color="var(--accent-primary)" />
+              Cetak PDF
+            </button>
+          )}
 
           {onExportClick && (
             <button

@@ -13,6 +13,7 @@ interface PublicPortfolioPageProps {
   logs: LogEntry[];
   isAuthenticated?: boolean;
   onContactClick: () => void;
+  onPrintClick?: () => void;
   onExportClick: () => void;
   onOpenAiDigest: () => void;
   onShareClick: () => void;
@@ -25,6 +26,7 @@ export const PublicPortfolioPage: React.FC<PublicPortfolioPageProps> = ({
   logs,
   isAuthenticated = false,
   onContactClick,
+  onPrintClick,
   onExportClick,
   onOpenAiDigest,
   onShareClick,
@@ -38,6 +40,7 @@ export const PublicPortfolioPage: React.FC<PublicPortfolioPageProps> = ({
       <BentoHero
         profile={profile}
         onContactClick={onContactClick}
+        onPrintClick={onPrintClick}
         onExportClick={onExportClick}
         onOpenAiDigest={isAuthenticated ? onOpenAiDigest : undefined}
         onShareClick={onShareClick}

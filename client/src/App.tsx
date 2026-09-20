@@ -19,13 +19,19 @@ import { api } from './services/api';
 import { checkAndSendStreakNudge } from './utils/notificationService';
 import type { GitHubCommitItem } from './services/githubService';
 import { parseCurrentRoute, navigateTo } from './utils/router';
+import { exportToPdfPrint } from './utils/exportData';
 
 const STORAGE_KEY_THEME = 'logfolio_theme_v1';
 const STORAGE_KEY_LANG = 'logfolio_lang_v1';
+const STORAGE_KEY_ACCENT = 'logfolio_accent_v1';
 
 export function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     return (localStorage.getItem(STORAGE_KEY_THEME) as 'light' | 'dark') || 'light';
+  });
+
+  const [accentColor, setAccentColor] = useState<'indigo' | 'emerald' | 'cyan' | 'amber' | 'rose'>(() => {
+    return (localStorage.getItem(STORAGE_KEY_ACCENT) as 'indigo' | 'emerald' | 'cyan' | 'amber' | 'rose') || 'indigo';
   });
 
   const [appLang, setAppLang] = useState<'id' | 'en'>(() => {
@@ -36,6 +42,11 @@ export function App() {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem(STORAGE_KEY_THEME, theme);
   }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-accent', accentColor);
+    localStorage.setItem(STORAGE_KEY_ACCENT, accentColor);
+  }, [accentColor]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_LANG, appLang);
@@ -256,6 +267,7 @@ export function App() {
           logs={logs}
           isAuthenticated={!!currentUser}
           onContactClick={() => setIsContactOpen(true)}
+          onPrintClick={() => exportToPdfPrint(profile, projects, logs, 'classic_ats', appLang)}
           onExportClick={() => setIsExportOpen(true)}
           onOpenAiDigest={() => setIsAiDigestOpen(true)}
           onShareClick={() => setIsShareModalOpen(true)}
@@ -337,6 +349,8 @@ export function App() {
         onResetData={handleResetData}
         theme={theme}
         onThemeChange={(newTheme: 'light' | 'dark') => setTheme(newTheme)}
+        accentColor={accentColor}
+        onAccentColorChange={(newAccent) => setAccentColor(newAccent)}
         appLang={appLang}
         onLangChange={(newLang: 'id' | 'en') => setAppLang(newLang)}
       />
