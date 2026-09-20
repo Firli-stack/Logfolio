@@ -1,32 +1,52 @@
-# React + TypeScript + Vite
+# 🚀 Logfolio Frontend Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Frontend antarmuka pengguna untuk **Logfolio** (*Micro-Journaling & Proof-of-Skill Portfolio Generator*).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ Stack Teknologi
+- **Framework**: React 18
+- **Bahasa**: TypeScript
+- **Bundler & Dev Server**: Vite
+- **Styling**: Vanilla CSS (Sistem Desain Glassmorphism kustom)
+- **Icons**: Lucide React
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## 📁 Struktur Direktori
+```
+client/src/
+├── assets/          # Ikon dan aset statis
+├── components/      # Komponen umum & modal interaktif
+│   ├── common/      # Navbar, alert, tombol umum
+│   └── modals/      # Modal kontak, export, edit profil, sync GitHub
+├── features/        # Modul fitur fungsional
+│   ├── dashboard/   # QuickLogComposer, RecruiterInboxCard, ManageLogsTable
+│   └── portfolio/   # BentoHero, RecruiterSnapshot, LogTimeline, ProjectShowcase
+├── hooks/           # Custom hooks (usePortfolioData)
+├── pages/           # Tampilan halaman (DashboardPage, PublicPortfolioPage)
+├── services/        # Service API client & integrasi GitHub
+├── types/           # Definisi interface & tipe TypeScript
+└── utils/           # Router, export PDF/Markdown/JSON, helpers
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+---
+
+## 💻 Panduan Menjalankan
+
+### Melalui Docker (Rekomendasi):
+Frontend berjalan secara otomatis di port `5173` via Nginx container:
+```bash
+docker compose up -d client
+```
+
+### Melalui Mode Dev Lokal:
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## 🎨 Standar Desain
+Mengikuti panduan di `docs/DESIGN_SYSTEM_SPEC.md` dengan palet warna glassmorphism gelap, variabel CSS seragam, dan prinsip bebas TailwindCSS.
