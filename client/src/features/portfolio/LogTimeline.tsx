@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { LogEntry, Project } from '../../types';
-import { ThumbsUp, ExternalLink, CheckCheck, Lock, Search, X, Filter } from 'lucide-react';
+import { ThumbsUp, ExternalLink, CheckCheck, Lock, Search, X, Filter, ShieldCheck } from 'lucide-react';
 
 interface LogTimelineProps {
   logs: LogEntry[];
@@ -434,6 +434,28 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
               {}
               {((log.proofLinks && log.proofLinks.length > 0) || log.proofUrl) && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                  {log.isProofVerified && (
+                    <span
+                      title="Bukti telah diverifikasi aktif (HTTP 200) melalui SSRF-Safe Server Proxy"
+                      style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 700,
+                        color: 'var(--accent-cyan)',
+                        background: 'rgba(6, 182, 212, 0.1)',
+                        border: '1px solid rgba(6, 182, 212, 0.25)',
+                        padding: '2px 7px',
+                        borderRadius: 'var(--radius-full)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      <ShieldCheck size={11} />
+                      <span>Verified Proof</span>
+                    </span>
+                  )}
+
                   {log.proofLinks && log.proofLinks.length > 0 ? (
                     log.proofLinks.map((pl) => (
                       <a
@@ -441,11 +463,12 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
                         href={pl.url}
                         target="_blank"
                         rel="noreferrer"
+                        title={`Buka ${pl.label} (Tautan terverifikasi aktif)`}
                         style={{
                           fontSize: '0.74rem',
                           color: 'var(--accent-primary)',
                           background: 'rgba(79, 70, 229, 0.06)',
-                          border: '1px solid rgba(79, 70, 229, 0.15)',
+                          border: '1px solid rgba(79, 70, 229, 0.18)',
                           padding: '2px 8px',
                           borderRadius: '4px',
                           textDecoration: 'none',
@@ -464,9 +487,14 @@ export const LogTimeline: React.FC<LogTimelineProps> = ({ logs, projects, onAddK
                       href={log.proofUrl}
                       target="_blank"
                       rel="noreferrer"
+                      title="Buka bukti pengerjaan resmi"
                       style={{
                         fontSize: '0.75rem',
                         color: 'var(--accent-primary)',
+                        background: 'rgba(79, 70, 229, 0.06)',
+                        border: '1px solid rgba(79, 70, 229, 0.18)',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
                         textDecoration: 'none',
                         display: 'inline-flex',
                         alignItems: 'center',

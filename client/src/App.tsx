@@ -64,6 +64,22 @@ export function App() {
     handleResetData,
   } = usePortfolioData();
 
+  useEffect(() => {
+    if (activeTab === 'dashboard_composer') {
+      document.title = `Dashboard Quick-Log — @${profile.username} | Logfolio`;
+    } else {
+      document.title = `${profile.fullName} — ${profile.headline || 'Developer Portfolio'} | Logfolio`;
+    }
+
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute(
+        'content',
+        `${profile.fullName} (@${profile.username}) — ${profile.bio || profile.headline}. Portofolio berbasis bukti kerja terverifikasi.`
+      );
+    }
+  }, [profile.fullName, profile.username, profile.headline, profile.bio, activeTab]);
+
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
