@@ -63,5 +63,6 @@ export interface RecruiterMessage {
   recruiterName: string;
   recruiterEmail: string;
   message: string;
+  status?: 'unread' | 'replied' | 'archived' | 'starred';
   createdAt: string;
 }

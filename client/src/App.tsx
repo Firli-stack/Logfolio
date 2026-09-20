@@ -70,6 +70,7 @@ export function App() {
     handleDeleteLog,
     handleSaveProfile,
     handleAddKudos,
+    handleUpdateMessageStatus,
     handleResetData,
   } = usePortfolioData();
 
@@ -171,6 +172,7 @@ export function App() {
           candidateUsername={profile.username}
           projects={projects}
           logs={logs}
+          streakDays={profile.streakDays}
           onAddLog={handleAddLog}
           onDeleteLog={handleDeleteLog}
           onOpenCreateProject={() => setIsCreateProjectOpen(true)}
@@ -181,6 +183,7 @@ export function App() {
         <InboxPage
           messages={recruiterMessages}
           candidateUsername={profile.username}
+          onUpdateMessageStatus={handleUpdateMessageStatus}
         />
       ) : (
         <PublicPortfolioPage

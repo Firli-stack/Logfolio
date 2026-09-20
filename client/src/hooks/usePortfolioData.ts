@@ -140,6 +140,16 @@ export function usePortfolioData() {
     await api.addKudos(logId);
   };
 
+  const handleUpdateMessageStatus = async (
+    id: string,
+    status: 'unread' | 'replied' | 'archived' | 'starred'
+  ) => {
+    setRecruiterMessages((prev) =>
+      prev.map((msg) => (msg.id === id ? { ...msg, status } : msg))
+    );
+    await api.updateContactMessageStatus(id, status);
+  };
+
   const handleResetData = () => {
     localStorage.removeItem(STORAGE_KEY_PROFILE);
     localStorage.removeItem(STORAGE_KEY_LOGS);
@@ -162,6 +172,7 @@ export function usePortfolioData() {
     handleDeleteLog,
     handleSaveProfile,
     handleAddKudos,
+    handleUpdateMessageStatus,
     handleResetData,
   };
 }

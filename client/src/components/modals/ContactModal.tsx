@@ -18,6 +18,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [websiteHoneypot, setWebsiteHoneypot] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -36,6 +37,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
       recruiterName: name,
       recruiterEmail: email,
       message,
+      honeypot: websiteHoneypot,
     });
 
     setIsSubmitting(false);
@@ -141,6 +143,18 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                   color: 'var(--text-primary)',
                   fontSize: '0.85rem'
                 }}
+              />
+            </div>
+
+            <div style={{ display: 'none', position: 'absolute', left: '-9999px' }} aria-hidden="true">
+              <label htmlFor="recruiter_website_hp">Website (Leave blank)</label>
+              <input
+                id="recruiter_website_hp"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={websiteHoneypot}
+                onChange={e => setWebsiteHoneypot(e.target.value)}
               />
             </div>
 

@@ -132,6 +132,7 @@ export const api = {
     recruiterName: string;
     recruiterEmail: string;
     message: string;
+    honeypot?: string;
   }): Promise<{ success: boolean; error?: string }> {
     try {
       const res = await fetch(`${API_BASE_URL}/contact`, {
@@ -146,6 +147,18 @@ export const api = {
       return { success: true };
     } catch {
       return { success: false, error: 'Terjadi kesalahan koneksi server.' };
+    }
+  },
+  async updateContactMessageStatus(id: string, status: 'unread' | 'replied' | 'archived' | 'starred'): Promise<boolean> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/contact/messages/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      return res.ok;
+    } catch {
+      return false;
     }
   },
   async reportProfile(payload: {

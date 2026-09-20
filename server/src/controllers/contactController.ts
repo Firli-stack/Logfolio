@@ -7,6 +7,7 @@ const contactMessageSchema = z.object({
   recruiterName: z.string().trim().min(2, 'Nama minimal 2 karakter').max(100),
   recruiterEmail: z.string().trim().email('Format email tidak valid').max(150),
   message: z.string().trim().min(10, 'Pesan minimal 10 karakter').max(2000, 'Pesan maksimal 2000 karakter'),
+  honeypot: z.string().optional(),
 });
 
 export const sendContactMessage = async (req: Request, res: Response) => {
@@ -20,7 +21,19 @@ export const sendContactMessage = async (req: Request, res: Response) => {
       });
     }
 
-    const { targetUsername, recruiterName, recruiterEmail, message } = parseResult.data;
+    const { targetUsername, recruiterName, recruiterEmail, message, honeypot } = parseResult.data;
+
+    if (honeypot && honeypot.trim().length > 0) {
+      return res.status(200).json({
+        message: 'Contact message successfully relayed to candidate',
+        data: {
+          id: 'fake-bot-id',
+          candidateUsername: targetUsername,
+          candidateName: 'Candidate',
+          createdAt: new Date().toISOString(),
+        },
+      });
+    }
 
     const candidate = await prisma.profile.findFirst({
       where: {
@@ -42,6 +55,7 @@ export const sendContactMessage = async (req: Request, res: Response) => {
         recruiterName,
         recruiterEmail,
         message,
+        status: 'unread',
       },
     });
 
@@ -89,11 +103,56 @@ export const getContactMessagesByUsername = async (req: Request, res: Response) 
         recruiterName: m.recruiterName,
         recruiterEmail: m.recruiterEmail,
         message: m.message,
+        status: m.status || 'unread',
         createdAt: m.createdAt.toISOString(),
       })),
     });
   } catch (error) {
     console.error('Error in getContactMessagesByUsername:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const updateMessageStatusSchema = z.object({
+  status: z.enum(['unread', 'replied', 'archived', 'starred']),
+});
+
+export const updateContactMessageStatus = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const parseResult = updateMessageStatusSchema.safeParse(req.body);
+
+    if (!parseResult.success) {
+      return res.status(400).json({
+        error: 'Validation Error',
+        details: parseResult.error.errors,
+      });
+    }
+
+    const { status } = parseResult.data;
+
+    const existing = await prisma.contactMessage.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    const updated = await prisma.contactMessage.update({
+      where: { id },
+      data: { status },
+    });
+
+    return res.status(200).json({
+      message: 'Message status updated',
+      data: {
+        id: updated.id,
+        status: updated.status,
+      },
+    });
+  } catch (error) {
+    console.error('Error in updateContactMessageStatus:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };

@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import type { RecruiterMessage } from '../types';
-import { Mail, Clock, Send, ChevronDown, ChevronUp, Inbox, Search, ShieldCheck } from 'lucide-react';
+import { Mail, Clock, Send, ChevronDown, ChevronUp, Inbox, Search, ShieldCheck, CheckCheck, Archive } from 'lucide-react';
 
 interface InboxPageProps {
   messages: RecruiterMessage[];
   candidateUsername: string;
+  onUpdateMessageStatus?: (id: string, status: 'unread' | 'replied' | 'archived' | 'starred') => void;
 }
 
 export const InboxPage: React.FC<InboxPageProps> = ({
   messages,
   candidateUsername,
+  onUpdateMessageStatus,
 }) => {
+  const [activeFilter, setActiveFilter] = useState<'all' | 'unread' | 'replied' | 'archived'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(messages[0]?.id || null);
 
@@ -19,6 +22,11 @@ export const InboxPage: React.FC<InboxPageProps> = ({
   };
 
   const filteredMessages = messages.filter((msg) => {
+    const status = msg.status || 'unread';
+    if (activeFilter === 'unread' && status !== 'unread') return false;
+    if (activeFilter === 'replied' && status !== 'replied') return false;
+    if (activeFilter === 'archived' && status !== 'archived') return false;
+
     const q = searchQuery.toLowerCase();
     return (
       msg.recruiterName.toLowerCase().includes(q) ||
@@ -92,7 +100,7 @@ export const InboxPage: React.FC<InboxPageProps> = ({
               gap: '6px',
             }}>
               <ShieldCheck size={14} />
-              Masked Relay Aman
+              Honeypot + Relay Aman
             </span>
             <span style={{
               fontSize: '0.78rem',
@@ -106,6 +114,38 @@ export const InboxPage: React.FC<InboxPageProps> = ({
               {messages.length} Total Pesan
             </span>
           </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+          {(['all', 'unread', 'replied', 'archived'] as const).map((filter) => {
+            const labels = {
+              all: 'Semua Pesan',
+              unread: 'Belum Dibalas',
+              replied: 'Sudah Dibalas',
+              archived: 'Diarsipkan',
+            };
+            const isActive = activeFilter === filter;
+            return (
+              <button
+                key={filter}
+                type="button"
+                onClick={() => setActiveFilter(filter)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: 'var(--radius-full)',
+                  border: '1px solid var(--border-subtle)',
+                  background: isActive ? 'var(--accent-primary)' : 'var(--bg-surface)',
+                  color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {labels[filter]}
+              </button>
+            );
+          })}
         </div>
 
         {messages.length > 0 && (
@@ -165,12 +205,13 @@ export const InboxPage: React.FC<InboxPageProps> = ({
             color: 'var(--text-muted)',
             fontSize: '0.85rem',
           }}>
-            Tidak ditemukan pesan yang cocok dengan kata kunci "{searchQuery}".
+            Tidak ditemukan pesan yang cocok dengan filter aktif.
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {filteredMessages.map((item) => {
               const isExpanded = expandedId === item.id;
+              const msgStatus = item.status || 'unread';
               return (
                 <div
                   key={item.id}
@@ -226,6 +267,31 @@ export const InboxPage: React.FC<InboxPageProps> = ({
                           <span style={{ fontSize: '0.78rem', fontWeight: 500, color: 'var(--text-muted)' }}>
                             &lt;{item.recruiterEmail}&gt;
                           </span>
+                          {msgStatus === 'replied' && (
+                            <span style={{
+                              fontSize: '0.7rem',
+                              padding: '2px 8px',
+                              borderRadius: 'var(--radius-full)',
+                              background: 'rgba(16, 185, 129, 0.12)',
+                              color: 'var(--accent-emerald)',
+                              fontWeight: 600,
+                            }}>
+                              Sudah Dibalas
+                            </span>
+                          )}
+                          {msgStatus === 'archived' && (
+                            <span style={{
+                              fontSize: '0.7rem',
+                              padding: '2px 8px',
+                              borderRadius: 'var(--radius-full)',
+                              background: 'var(--bg-surface-elevated)',
+                              border: '1px solid var(--border-subtle)',
+                              color: 'var(--text-muted)',
+                              fontWeight: 600,
+                            }}>
+                              Diarsipkan
+                            </span>
+                          )}
                         </div>
                         {!isExpanded && (
                           <p style={{
@@ -280,26 +346,81 @@ export const InboxPage: React.FC<InboxPageProps> = ({
                         {item.message}
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <a
-                          href={`mailto:${encodeURIComponent(item.recruiterEmail)}?subject=${encodeURIComponent(`Re: Respon Portofolio Logfolio - ${candidateUsername}`)}`}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            padding: '8px 16px',
-                            borderRadius: 'var(--radius-md)',
-                            background: 'var(--accent-primary)',
-                            color: '#FFFFFF',
-                            fontSize: '0.82rem',
-                            fontWeight: 600,
-                            textDecoration: 'none',
-                            boxShadow: '0 2px 6px rgba(79, 70, 229, 0.25)',
-                          }}
-                        >
-                          <Send size={14} />
-                          Balas via Email Langsung
-                        </a>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <a
+                            href={`mailto:${encodeURIComponent(item.recruiterEmail)}?subject=${encodeURIComponent(`Re: Respon Portofolio Logfolio - ${candidateUsername}`)}`}
+                            onClick={() => {
+                              if (onUpdateMessageStatus && msgStatus === 'unread') {
+                                onUpdateMessageStatus(item.id, 'replied');
+                              }
+                            }}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              padding: '8px 16px',
+                              borderRadius: 'var(--radius-md)',
+                              background: 'var(--accent-primary)',
+                              color: '#FFFFFF',
+                              fontSize: '0.82rem',
+                              fontWeight: 600,
+                              textDecoration: 'none',
+                              boxShadow: '0 2px 6px rgba(79, 70, 229, 0.25)',
+                            }}
+                          >
+                            <Send size={14} />
+                            Balas via Email Langsung
+                          </a>
+
+                          {onUpdateMessageStatus && msgStatus !== 'replied' && (
+                            <button
+                              type="button"
+                              onClick={() => onUpdateMessageStatus(item.id, 'replied')}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '8px 14px',
+                                borderRadius: 'var(--radius-md)',
+                                background: 'transparent',
+                                border: '1px solid var(--border-subtle)',
+                                color: 'var(--accent-emerald)',
+                                fontSize: '0.78rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              <CheckCheck size={14} />
+                              Tandai Dibalas
+                            </button>
+                          )}
+                        </div>
+
+                        {onUpdateMessageStatus && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <button
+                              type="button"
+                              onClick={() => onUpdateMessageStatus(item.id, msgStatus === 'archived' ? 'unread' : 'archived')}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '6px 12px',
+                                borderRadius: 'var(--radius-md)',
+                                background: 'transparent',
+                                border: '1px solid var(--border-subtle)',
+                                color: 'var(--text-secondary)',
+                                fontSize: '0.75rem',
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              <Archive size={13} />
+                              {msgStatus === 'archived' ? 'Keluarkan dari Arsip' : 'Arsipkan'}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

@@ -97,6 +97,7 @@ model ContactMessage {
   recruiterName  String   @map("recruiter_name") @db.VarChar(100)
   recruiterEmail String   @map("recruiter_email") @db.VarChar(150)
   message        String   @db.Text
+  status         String   @default("unread") @db.VarChar(20)
   createdAt      DateTime @default(now()) @map("created_at")
 
   candidate      Profile  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
