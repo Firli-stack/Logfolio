@@ -347,131 +347,151 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </div>
           </div>
 
-          {}
-          <div
-            style={{
-              border: '1px solid var(--border-subtle)',
+          {isOwner ? (
+            <>
+              <div
+                style={{
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '10px 12px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '8px',
+                  background: 'var(--bg-surface)'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 auto', minWidth: '180px' }}>
+                  <div style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'rgba(2, 132, 199, 0.1)',
+                    color: 'var(--accent-cyan)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <FileText size={14} />
+                  </div>
+                  <div>
+                    <h4 style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      Dokumen Markdown (.md)
+                    </h4>
+                    <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.25 }}>
+                      Format rapi untuk GitHub Profile README atau Notion.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleExportMd}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'var(--bg-surface-elevated)',
+                    color: 'var(--text-primary)',
+                    border: '1px solid var(--border-subtle)',
+                    fontWeight: 600,
+                    fontSize: '0.74rem',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '5px',
+                    flex: '1 1 auto',
+                    minWidth: '100px'
+                  }}
+                >
+                  <Download size={12} />
+                  <span>Unduh .md</span>
+                </button>
+              </div>
+
+              <div
+                style={{
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '10px 12px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '8px',
+                  background: 'var(--bg-surface)'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 auto', minWidth: '180px' }}>
+                  <div style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    color: 'var(--accent-amber)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <Code2 size={14} />
+                  </div>
+                  <div>
+                    <h4 style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      Raw JSON Backup (.json)
+                    </h4>
+                    <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.25 }}>
+                      Cadangan data mentah untuk migrasi & portabilitas (*Zero Lock-in*).
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleExportJson}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'var(--bg-surface-elevated)',
+                    color: 'var(--text-primary)',
+                    border: '1px solid var(--border-subtle)',
+                    fontWeight: 600,
+                    fontSize: '0.74rem',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '5px',
+                    flex: '1 1 auto',
+                    minWidth: '100px'
+                  }}
+                >
+                  <Download size={12} />
+                  <span>Unduh .json</span>
+                </button>
+              </div>
+            </>
+          ) : (
+            <div style={{
+              padding: '12px 14px',
               borderRadius: 'var(--radius-md)',
-              padding: '10px 12px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '8px',
-              background: 'var(--bg-surface)'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 auto', minWidth: '180px' }}>
-              <div style={{
-                width: '28px',
-                height: '28px',
-                borderRadius: 'var(--radius-sm)',
-                background: 'rgba(2, 132, 199, 0.1)',
-                color: 'var(--accent-cyan)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0
-              }}>
-                <FileText size={14} />
-              </div>
-              <div>
-                <h4 style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                  Dokumen Markdown (.md)
-                </h4>
-                <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.25 }}>
-                  Format rapi untuk GitHub Profile README atau Notion.
-                </p>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleExportMd}
-              style={{
-                padding: '6px 12px',
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--bg-surface-elevated)',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border-subtle)',
-                fontWeight: 600,
-                fontSize: '0.74rem',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '5px',
-                flex: '1 1 auto',
-                minWidth: '100px'
-              }}
-            >
-              <Download size={12} />
-              <span>Unduh .md</span>
-            </button>
-          </div>
-
-          {}
-          <div
-            style={{
+              background: 'var(--bg-surface-elevated)',
               border: '1px solid var(--border-subtle)',
-              borderRadius: 'var(--radius-md)',
-              padding: '10px 12px',
               display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '8px',
-              background: 'var(--bg-surface)'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 auto', minWidth: '180px' }}>
-              <div style={{
-                width: '28px',
-                height: '28px',
-                borderRadius: 'var(--radius-sm)',
-                background: 'rgba(245, 158, 11, 0.1)',
-                color: 'var(--accent-amber)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0
-              }}>
-                <Code2 size={14} />
+              flexDirection: 'column',
+              gap: '6px',
+            }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Briefcase size={14} color="var(--accent-emerald)" />
+                <span>Paket Berkas Rekruter Siap Unduh</span>
               </div>
-              <div>
-                <h4 style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                  Raw JSON Payload (.json)
-                </h4>
-                <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.25 }}>
-                  Metadata lengkap profil, wadah proyek, dan tautan bukti.
-                </p>
-              </div>
+              <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.35, margin: 0 }}>
+                Berkas PDF di atas telah diformat khusus sesuai kebutuhan penilaian rekruter (ATS-friendly, ringkasan keahlian teknis, dan verifikasi tautan bukti hasil kerja).
+              </p>
             </div>
-
-            <button
-              type="button"
-              onClick={handleExportJson}
-              style={{
-                padding: '6px 12px',
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--bg-surface-elevated)',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border-subtle)',
-                fontWeight: 600,
-                fontSize: '0.74rem',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '5px',
-                flex: '1 1 auto',
-                minWidth: '100px'
-              }}
-            >
-              <Download size={12} />
-              <span>Unduh .json</span>
-            </button>
-          </div>
+          )}
 
           {}
           <div
