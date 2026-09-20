@@ -195,7 +195,7 @@ export function App() {
         onLogout={handleLogout}
       />
 
-      {activeTab === 'dashboard_composer' ? (
+      {currentUser && activeTab === 'dashboard_composer' ? (
         <DashboardPage
           candidateUsername={profile.username}
           projects={projects}
@@ -208,7 +208,7 @@ export function App() {
           onOpenGitHubSync={() => setIsGitHubSyncOpen(true)}
           importedCommit={importedCommit}
         />
-      ) : activeTab === 'inbox' ? (
+      ) : currentUser && activeTab === 'inbox' ? (
         <InboxPage
           messages={recruiterMessages}
           candidateUsername={profile.username}
@@ -219,6 +219,7 @@ export function App() {
           profile={profile}
           projects={projects}
           logs={logs}
+          isAuthenticated={!!currentUser}
           onContactClick={() => setIsContactOpen(true)}
           onExportClick={() => setIsExportOpen(true)}
           onOpenAiDigest={() => setIsAiDigestOpen(true)}

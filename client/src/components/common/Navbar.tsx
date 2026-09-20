@@ -69,7 +69,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {onOpenAiDigest && (
+          {isAuthenticated && onOpenAiDigest && (
             <button
               type="button"
               onClick={onOpenAiDigest}
@@ -292,89 +292,93 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {}
-      <div className="header-nav-toggle" style={{ display: 'flex', background: '#F1F5F9', padding: '4px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)', width: '100%' }}>
-        <button
-          onClick={() => onTabChange('public_preview')}
-          style={{
-            flex: 1,
-            padding: '6px 12px',
-            borderRadius: 'var(--radius-full)',
-            border: 'none',
-            fontSize: '0.78rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            background: activeTab === 'public_preview' ? 'var(--accent-primary)' : 'transparent',
-            color: activeTab === 'public_preview' ? '#fff' : 'var(--text-secondary)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <Globe size={14} />
-          <span>Portofolio</span>
-        </button>
-        <button
-          onClick={() => onTabChange('dashboard_composer')}
-          style={{
-            flex: 1,
-            padding: '6px 12px',
-            borderRadius: 'var(--radius-full)',
-            border: 'none',
-            fontSize: '0.78rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            background: activeTab === 'dashboard_composer' ? 'var(--accent-primary)' : 'transparent',
-            color: activeTab === 'dashboard_composer' ? '#fff' : 'var(--text-secondary)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <PenSquare size={14} />
-          <span>Quick-Log</span>
-        </button>
-        <button
-          onClick={() => onTabChange('inbox')}
-          style={{
-            flex: 1,
-            padding: '6px 12px',
-            borderRadius: 'var(--radius-full)',
-            border: 'none',
-            fontSize: '0.78rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            background: activeTab === 'inbox' ? 'var(--accent-primary)' : 'transparent',
-            color: activeTab === 'inbox' ? '#fff' : 'var(--text-secondary)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <Mail size={14} />
-          <span>Inbox</span>
-          {unreadMessagesCount > 0 && (
-            <span style={{
-              background: activeTab === 'inbox' ? '#FFFFFF' : 'var(--accent-primary)',
-              color: activeTab === 'inbox' ? 'var(--accent-primary)' : '#FFFFFF',
+      {isAuthenticated && (
+        <div className="header-nav-toggle" style={{ display: 'flex', background: '#F1F5F9', padding: '4px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)', width: '100%' }}>
+          <button
+            type="button"
+            onClick={() => onTabChange('public_preview')}
+            style={{
+              flex: 1,
+              padding: '6px 12px',
               borderRadius: 'var(--radius-full)',
-              fontSize: '0.68rem',
-              fontWeight: 800,
-              padding: '1px 6px',
-              marginLeft: '2px',
-              lineHeight: 1.2,
-            }}>
-              {unreadMessagesCount}
-            </span>
-          )}
-        </button>
-      </div>
+              border: 'none',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              background: activeTab === 'public_preview' ? 'var(--accent-primary)' : 'transparent',
+              color: activeTab === 'public_preview' ? '#fff' : 'var(--text-secondary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <Globe size={14} />
+            <span>Portofolio</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onTabChange('dashboard_composer')}
+            style={{
+              flex: 1,
+              padding: '6px 12px',
+              borderRadius: 'var(--radius-full)',
+              border: 'none',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              background: activeTab === 'dashboard_composer' ? 'var(--accent-primary)' : 'transparent',
+              color: activeTab === 'dashboard_composer' ? '#fff' : 'var(--text-secondary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <PenSquare size={14} />
+            <span>Quick-Log</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onTabChange('inbox')}
+            style={{
+              flex: 1,
+              padding: '6px 12px',
+              borderRadius: 'var(--radius-full)',
+              border: 'none',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              background: activeTab === 'inbox' ? 'var(--accent-primary)' : 'transparent',
+              color: activeTab === 'inbox' ? '#fff' : 'var(--text-secondary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <Mail size={14} />
+            <span>Inbox</span>
+            {unreadMessagesCount > 0 && (
+              <span style={{
+                background: activeTab === 'inbox' ? '#FFFFFF' : 'var(--accent-primary)',
+                color: activeTab === 'inbox' ? 'var(--accent-primary)' : '#FFFFFF',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.68rem',
+                fontWeight: 800,
+                padding: '1px 6px',
+                marginLeft: '2px',
+                lineHeight: 1.2,
+              }}>
+                {unreadMessagesCount}
+              </span>
+            )}
+          </button>
+        </div>
+      )}
     </header>
   );
 };
