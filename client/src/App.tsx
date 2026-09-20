@@ -13,7 +13,7 @@ import { AiDigestModal } from './components/modals/AiDigestModal';
 import { SharePortfolioModal } from './components/modals/SharePortfolioModal';
 import { GitHubSyncModal } from './components/modals/GitHubSyncModal';
 import { ReportModal } from './components/modals/ReportModal';
-import { AuthModal } from './components/modals/AuthModal';
+import { AuthPage } from './pages/AuthPage';
 import { api } from './services/api';
 import type { GitHubCommitItem } from './services/githubService';
 import { parseCurrentRoute, navigateTo } from './utils/router';
@@ -39,10 +39,12 @@ export function App() {
     localStorage.setItem(STORAGE_KEY_LANG, appLang);
   }, [appLang]);
 
-  const [activeTab, setActiveTab] = useState<'public_preview' | 'dashboard_composer' | 'inbox'>(() => {
+  const [activeTab, setActiveTab] = useState<'public_preview' | 'dashboard_composer' | 'inbox' | 'login' | 'register'>(() => {
     const r = parseCurrentRoute();
     if (r.route === 'dashboard') return 'dashboard_composer';
     if (r.route === 'inbox') return 'inbox';
+    if (r.route === 'login') return 'login';
+    if (r.route === 'register') return 'register';
     return 'public_preview';
   });
 
@@ -53,6 +55,10 @@ export function App() {
         setActiveTab('dashboard_composer');
       } else if (r.route === 'inbox') {
         setActiveTab('inbox');
+      } else if (r.route === 'login') {
+        setActiveTab('login');
+      } else if (r.route === 'register') {
+        setActiveTab('register');
       } else {
         setActiveTab('public_preview');
       }
@@ -136,18 +142,21 @@ export function App() {
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [importedCommit, setImportedCommit] = useState<GitHubCommitItem | null>(null);
 
-  const handleTabChange = (tab: 'public_preview' | 'dashboard_composer' | 'inbox') => {
+  const handleTabChange = (tab: 'public_preview' | 'dashboard_composer' | 'inbox' | 'login' | 'register') => {
     setActiveTab(tab);
     if (tab === 'dashboard_composer') {
       navigateTo('/dashboard');
     } else if (tab === 'inbox') {
       navigateTo('/inbox');
+    } else if (tab === 'login') {
+      navigateTo('/login');
+    } else if (tab === 'register') {
+      navigateTo('/register');
     } else {
       navigateTo(`/p/${profile.username}`);
     }
   };
 
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<{ username: string; fullName: string; avatarUrl?: string } | null>(null);
 
   useEffect(() => {
@@ -162,8 +171,8 @@ export function App() {
 
   const handleAuthSuccess = (userProfile: { username: string; fullName: string; avatarUrl?: string }) => {
     setCurrentUser(userProfile);
+    handleTabChange('dashboard_composer');
     if (userProfile.username && userProfile.username !== profile.username) {
-      navigateTo(`/p/${userProfile.username}`);
       window.location.reload();
     }
   };
@@ -172,7 +181,7 @@ export function App() {
     if (window.confirm('Keluar dari sesi profil aktif dan beralih ke Mode Tamu?')) {
       api.logout();
       setCurrentUser(null);
-      setActiveTab('public_preview');
+      handleTabChange('public_preview');
     }
   };
 
@@ -184,18 +193,24 @@ export function App() {
     <div className="app-container">
       <Navbar
         profile={profile}
-        activeTab={activeTab}
+        activeTab={activeTab === 'login' || activeTab === 'register' ? 'public_preview' : activeTab}
         unreadMessagesCount={recruiterMessages.length}
         isAuthenticated={!!currentUser}
         onTabChange={handleTabChange}
         onOpenEditProfile={() => setIsEditProfileOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenAiDigest={() => setIsAiDigestOpen(true)}
-        onOpenAuth={() => setIsAuthOpen(true)}
+        onOpenAuth={() => handleTabChange('login')}
         onLogout={handleLogout}
       />
 
-      {currentUser && activeTab === 'dashboard_composer' ? (
+      {activeTab === 'login' || activeTab === 'register' ? (
+        <AuthPage
+          initialMode={activeTab === 'register' ? 'register' : 'login'}
+          onAuthSuccess={handleAuthSuccess}
+          onNavigateHome={() => handleTabChange('public_preview')}
+        />
+      ) : currentUser && activeTab === 'dashboard_composer' ? (
         <DashboardPage
           candidateUsername={profile.username}
           projects={projects}
@@ -325,12 +340,6 @@ export function App() {
         onClose={() => setIsGitHubSyncOpen(false)}
         defaultUsername={profile.socialLinks?.github || 'Firli-stack'}
         onSelectCommit={handleSelectGitHubCommit}
-      />
-
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onAuthSuccess={handleAuthSuccess}
       />
     </div>
   );
