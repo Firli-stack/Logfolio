@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { UserProfile } from '../../types';
-import { X, Settings, RotateCcw, Shield, Check, Sun, Moon, Languages } from 'lucide-react';
+import { X, Settings, RotateCcw, Shield, Check, Sun, Moon, Languages, Bell } from 'lucide-react';
+import { getStreakNotificationState, requestStreakNotificationPermission } from '../../utils/notificationService';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 }) => {
   const [resetConfirmed, setResetConfirmed] = useState(false);
   const [saveNotification, setSaveNotification] = useState(false);
+  const [notifEnabled, setNotifEnabled] = useState(() => getStreakNotificationState());
 
   if (!isOpen) return null;
 
@@ -248,6 +250,42 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <span>🇬🇧 English</span>
               </button>
             </div>
+          </div>
+
+          <div>
+            <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Bell size={14} color="var(--accent-emerald)" />
+              <span>{isEn ? 'Daily Streak Nudge (Notification)' : 'Pengingat Streak Harian'}</span>
+            </div>
+            <button
+              type="button"
+              onClick={async () => {
+                const granted = await requestStreakNotificationPermission();
+                setNotifEnabled(granted);
+              }}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '9px 14px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-subtle)',
+                background: notifEnabled ? 'rgba(16, 185, 129, 0.08)' : 'var(--bg-surface-elevated)',
+                color: 'var(--text-primary)',
+                fontSize: '0.76rem',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
+              <span>{notifEnabled ? 'Notifikasi Aktif (Pukul 18:00 WIB)' : 'Aktifkan Notifikasi Pengingat Streak'}</span>
+              <span style={{
+                fontWeight: 700,
+                color: notifEnabled ? 'var(--accent-emerald)' : 'var(--text-muted)'
+              }}>
+                {notifEnabled ? 'AKTIF' : 'NONAKTIF'}
+              </span>
+            </button>
           </div>
         </div>
 

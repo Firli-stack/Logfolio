@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import { getProfileByUsername, updateProfile } from '../controllers/profileController.js';
+import { getProfileByUsername, updateProfile, getAllPublicProfiles } from '../controllers/profileController.js';
 import { createLog, addKudos, deleteLog, verifyProofLink, updateLog } from '../controllers/logController.js';
 import { createProject } from '../controllers/projectController.js';
 import { 
@@ -43,6 +43,7 @@ router.post('/auth/login', authLimiter, login);
 router.post('/auth/oauth', authLimiter, oauthMockLogin);
 router.get('/auth/me', getCurrentUser);
 
+router.get('/explore', getAllPublicProfiles);
 router.get('/profile/:username', getProfileByUsername);
 router.put('/profile/:username', updateProfile);
 router.get('/profile/:username/messages', getContactMessagesByUsername);

@@ -173,3 +173,45 @@ export const updateProfile = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+export const getAllPublicProfiles = async (_req: Request, res: Response) => {
+  try {
+    const profiles = await prisma.profile.findMany({
+      where: { isPublic: true },
+      take: 50,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        username: true,
+        fullName: true,
+        headline: true,
+        bio: true,
+        avatarUrl: true,
+        timezone: true,
+        createdAt: true,
+        _count: {
+          select: {
+            logs: true,
+            projects: true,
+          },
+        },
+      },
+    });
+
+    const data = profiles.map(p => ({
+      username: p.username,
+      fullName: p.fullName,
+      headline: p.headline,
+      bio: p.bio,
+      avatarUrl: p.avatarUrl,
+      timezone: p.timezone,
+      totalLogs: p._count.logs,
+      totalProjects: p._count.projects,
+    }));
+
+    return res.status(200).json({ data });
+  } catch (error) {
+    console.error('Error in getAllPublicProfiles:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};

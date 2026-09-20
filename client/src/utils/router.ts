@@ -1,5 +1,5 @@
 export interface RouteInfo {
-  route: 'public_profile' | 'dashboard' | 'inbox' | 'home' | 'login' | 'register';
+  route: 'public_profile' | 'dashboard' | 'inbox' | 'home' | 'login' | 'register' | 'explore';
   username?: string;
 }
 
@@ -31,6 +31,11 @@ export function parseCurrentRoute(): RouteInfo {
   if (lowerPathname.startsWith('/register')) {
     return {
       route: 'register',
+    };
+  }
+  if (lowerPathname.startsWith('/explore')) {
+    return {
+      route: 'explore',
     };
   }
   return {

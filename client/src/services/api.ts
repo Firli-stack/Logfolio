@@ -2,6 +2,17 @@ import type { Project, LogEntry, RecruiterMessage } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
 
+export interface ExploreProfileItem {
+  username: string;
+  fullName: string;
+  headline?: string;
+  bio?: string;
+  avatarUrl?: string;
+  timezone?: string;
+  totalLogs: number;
+  totalProjects: number;
+}
+
 export interface ProfileResponse {
   username: string;
   fullName: string;
@@ -166,6 +177,18 @@ export const api = {
 
   logout(): void {
     localStorage.removeItem(TOKEN_STORAGE_KEY);
+  },
+
+  async getExploreProfiles(): Promise<ExploreProfileItem[]> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/explore`);
+      if (!res.ok) return [];
+      const json = await res.json();
+      return json.data || [];
+    } catch (err) {
+      console.error('API getExploreProfiles failed:', err);
+      return [];
+    }
   },
 
   async getProfile(username: string): Promise<ProfileResponse | null> {

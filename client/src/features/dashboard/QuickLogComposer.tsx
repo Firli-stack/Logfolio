@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import type { Project, LogEntry, ProofLink } from '../../types';
 import { Send, X, FolderPlus, Link as LinkIcon, Lock, Image as ImageIcon, Plus, Info, GitBranch, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { POPULAR_TECH_SUGGESTIONS } from '../../utils/techSuggestions';
+import { compressImageToWebp } from '../../utils/imageCompressor';
 import type { GitHubCommitItem } from '../../services/githubService';
 import { api } from '../../services/api';
 
@@ -160,20 +161,19 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
     }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach(file => {
-      if (images.length >= 3) return;
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setImages(prev => prev.length < 3 ? [...prev, event.target!.result as string] : prev);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    for (const file of Array.from(files)) {
+      if (images.length >= 3) break;
+      try {
+        const compressedWebp = await compressImageToWebp(file);
+        setImages(prev => prev.length < 3 ? [...prev, compressedWebp] : prev);
+      } catch (err) {
+        console.error('Gagal kompresi gambar:', err);
+      }
+    }
 
     if (fileInputRef.current) fileInputRef.current.value = '';
   };

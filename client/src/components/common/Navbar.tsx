@@ -4,10 +4,10 @@ import { Code2, Flame, Globe, PenSquare, ChevronDown, User, Settings, LogOut, Sp
 
 interface NavbarProps {
   profile: UserProfile;
-  activeTab: 'public_preview' | 'dashboard_composer' | 'inbox';
+  activeTab: 'public_preview' | 'dashboard_composer' | 'inbox' | 'explore';
   unreadMessagesCount?: number;
   isAuthenticated?: boolean;
-  onTabChange: (tab: 'public_preview' | 'dashboard_composer' | 'inbox') => void;
+  onTabChange: (tab: 'public_preview' | 'dashboard_composer' | 'inbox' | 'explore') => void;
   onOpenEditProfile: () => void;
   onOpenSettings: () => void;
   onOpenAiDigest?: () => void;
@@ -69,6 +69,28 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button
+            type="button"
+            onClick={() => onTabChange('explore')}
+            style={{
+              background: activeTab === 'explore' ? 'var(--accent-primary)' : 'var(--bg-surface-elevated)',
+              color: activeTab === 'explore' ? '#FFFFFF' : 'var(--text-primary)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-full)',
+              padding: '5px 12px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <Globe size={13} />
+            <span>Jelajahi</span>
+          </button>
+
           {isAuthenticated && onOpenAiDigest && (
             <button
               type="button"

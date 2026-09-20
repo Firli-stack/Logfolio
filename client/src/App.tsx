@@ -14,7 +14,9 @@ import { SharePortfolioModal } from './components/modals/SharePortfolioModal';
 import { GitHubSyncModal } from './components/modals/GitHubSyncModal';
 import { ReportModal } from './components/modals/ReportModal';
 import { AuthPage } from './pages/AuthPage';
+import { ExplorePage } from './pages/ExplorePage';
 import { api } from './services/api';
+import { checkAndSendStreakNudge } from './utils/notificationService';
 import type { GitHubCommitItem } from './services/githubService';
 import { parseCurrentRoute, navigateTo } from './utils/router';
 
@@ -39,12 +41,13 @@ export function App() {
     localStorage.setItem(STORAGE_KEY_LANG, appLang);
   }, [appLang]);
 
-  const [activeTab, setActiveTab] = useState<'public_preview' | 'dashboard_composer' | 'inbox' | 'login' | 'register'>(() => {
+  const [activeTab, setActiveTab] = useState<'public_preview' | 'dashboard_composer' | 'inbox' | 'login' | 'register' | 'explore'>(() => {
     const r = parseCurrentRoute();
     if (r.route === 'dashboard') return 'dashboard_composer';
     if (r.route === 'inbox') return 'inbox';
     if (r.route === 'login') return 'login';
     if (r.route === 'register') return 'register';
+    if (r.route === 'explore') return 'explore';
     return 'public_preview';
   });
 
@@ -59,6 +62,8 @@ export function App() {
         setActiveTab('login');
       } else if (r.route === 'register') {
         setActiveTab('register');
+      } else if (r.route === 'explore') {
+        setActiveTab('explore');
       } else {
         setActiveTab('public_preview');
       }
@@ -142,7 +147,7 @@ export function App() {
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [importedCommit, setImportedCommit] = useState<GitHubCommitItem | null>(null);
 
-  const handleTabChange = (tab: 'public_preview' | 'dashboard_composer' | 'inbox' | 'login' | 'register') => {
+  const handleTabChange = (tab: 'public_preview' | 'dashboard_composer' | 'inbox' | 'login' | 'register' | 'explore') => {
     setActiveTab(tab);
     if (tab === 'dashboard_composer') {
       navigateTo('/dashboard');
@@ -152,6 +157,8 @@ export function App() {
       navigateTo('/login');
     } else if (tab === 'register') {
       navigateTo('/register');
+    } else if (tab === 'explore') {
+      navigateTo('/explore');
     } else {
       navigateTo(`/p/${profile.username}`);
     }
@@ -168,6 +175,12 @@ export function App() {
     };
     checkAuth();
   }, []);
+
+  useEffect(() => {
+    const todayStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    const logsToday = logs.filter(l => l.logDate === todayStr).length;
+    checkAndSendStreakNudge(profile.streakDays, logsToday);
+  }, [logs, profile.streakDays]);
 
   const handleAuthSuccess = (userProfile: { username: string; fullName: string; avatarUrl?: string }) => {
     setCurrentUser(userProfile);
@@ -204,7 +217,14 @@ export function App() {
         onLogout={handleLogout}
       />
 
-      {activeTab === 'login' || activeTab === 'register' ? (
+      {activeTab === 'explore' ? (
+        <ExplorePage
+          onSelectUser={(username) => {
+            navigateTo(`/p/${username}`);
+            window.location.reload();
+          }}
+        />
+      ) : activeTab === 'login' || activeTab === 'register' ? (
         <AuthPage
           initialMode={activeTab === 'register' ? 'register' : 'login'}
           onAuthSuccess={handleAuthSuccess}
