@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Project, LogEntry, ProofLink } from '../../types';
-import { Send, X, FolderPlus, Link as LinkIcon, Lock, Image as ImageIcon, Plus, Info, GitBranch } from 'lucide-react';
+import { Send, X, FolderPlus, Link as LinkIcon, Lock, Image as ImageIcon, Plus, Info, GitBranch, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { POPULAR_TECH_SUGGESTIONS } from '../../utils/techSuggestions';
 import type { GitHubCommitItem } from '../../services/githubService';
+import { api } from '../../services/api';
 
 interface QuickLogComposerProps {
   projects: Project[];
@@ -134,8 +135,29 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
     }
   };
 
+  const [verifyingLinkIds, setVerifyingLinkIds] = useState<Record<string, boolean>>({});
+  const [linkStatusMap, setLinkStatusMap] = useState<Record<string, { isValid: boolean; error?: string }>>({});
+
   const handleUpdateProofLink = (id: string, field: 'url' | 'label', val: string) => {
     setProofLinks(proofLinks.map(l => l.id === id ? { ...l, [field]: val } : l));
+    if (field === 'url') {
+      setLinkStatusMap(prev => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+    }
+  };
+
+  const handleVerifyLink = async (id: string, url: string) => {
+    if (!url.trim() || verifyingLinkIds[id]) return;
+    setVerifyingLinkIds(prev => ({ ...prev, [id]: true }));
+    const res = await api.verifyProofLink(url.trim());
+    setVerifyingLinkIds(prev => ({ ...prev, [id]: false }));
+    setLinkStatusMap(prev => ({
+      ...prev,
+      [id]: { isValid: res.isValid, error: res.error },
+    }));
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -209,7 +231,7 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
       proofType: primaryProof?.includes('github') ? 'github' : 'live',
       proofLinks: validLinks,
       imageUrls: images.length > 0 ? images : undefined,
-      isProofVerified: validLinks.length > 0,
+      isProofVerified: primaryProof ? (linkStatusMap[validLinks[0].id]?.isValid ?? true) : false,
       isFeatured: false,
       isBackfill: false,
       kudosCount: 0,
@@ -483,6 +505,52 @@ export const QuickLogComposer: React.FC<QuickLogComposerProps> = ({
                     outline: 'none'
                   }}
                 />
+
+                {link.url.trim().length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => handleVerifyLink(link.id, link.url)}
+                    disabled={verifyingLinkIds[link.id]}
+                    style={{
+                      background: 'none',
+                      border: '1px solid var(--border-subtle)',
+                      borderRadius: '4px',
+                      padding: '4px 8px',
+                      fontSize: '0.7rem',
+                      fontWeight: 600,
+                      color: linkStatusMap[link.id]?.isValid
+                        ? 'var(--accent-emerald)'
+                        : linkStatusMap[link.id]?.isValid === false
+                        ? '#ef4444'
+                        : 'var(--accent-primary)',
+                      cursor: verifyingLinkIds[link.id] ? 'wait' : 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                    title={linkStatusMap[link.id]?.error || 'Cek keaktifan link (SSRF-Safe)'}
+                  >
+                    {verifyingLinkIds[link.id] ? (
+                      <>
+                        <Loader2 size={11} className="spin" />
+                        <span>Cek...</span>
+                      </>
+                    ) : linkStatusMap[link.id]?.isValid ? (
+                      <>
+                        <CheckCircle2 size={11} />
+                        <span>Valid (200)</span>
+                      </>
+                    ) : linkStatusMap[link.id]?.isValid === false ? (
+                      <>
+                        <AlertCircle size={11} />
+                        <span>Mati / SSRF</span>
+                      </>
+                    ) : (
+                      <span>Tes Link</span>
+                    )}
+                  </button>
+                )}
+
                 {proofLinks.length > 1 && (
                   <button
                     type="button"

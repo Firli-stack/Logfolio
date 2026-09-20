@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../utils/prisma.js';
+import { verifyUrlSafe } from '../utils/ssrfValidator.js';
 
 const createLogSchema = z.object({
   username: z.string().min(1),
@@ -52,6 +53,12 @@ export const createLog = async (req: Request, res: Response) => {
       skillIds.push(skill.id);
     }
 
+    let isProofVerified = false;
+    if (proofUrl) {
+      const check = await verifyUrlSafe(proofUrl);
+      isProofVerified = check.isValid;
+    }
+
     const newLog = await prisma.log.create({
       data: {
         userId: user.id,
@@ -59,6 +66,7 @@ export const createLog = async (req: Request, res: Response) => {
         content,
         proofUrl: proofUrl || null,
         proofImageUrl: proofImageUrl || null,
+        isProofVerified,
         isFeatured: !!isFeatured,
         isBackfill: !!isBackfill,
         logDate: logDate ? new Date(logDate) : new Date(),
@@ -85,6 +93,7 @@ export const createLog = async (req: Request, res: Response) => {
         content: newLog.content,
         proofUrl: newLog.proofUrl,
         proofImageUrl: newLog.proofImageUrl,
+        isProofVerified: newLog.isProofVerified,
         isFeatured: newLog.isFeatured,
         isBackfill: newLog.isBackfill,
         kudosCount: newLog.kudosCount,
@@ -96,6 +105,21 @@ export const createLog = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error creating log:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export const verifyProofLink = async (req: Request, res: Response) => {
+  try {
+    const { url } = req.body;
+    if (!url || typeof url !== 'string') {
+      return res.status(400).json({ error: 'URL wajib diisi' });
+    }
+
+    const result = await verifyUrlSafe(url);
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    console.error('Error verifying link:', error);
+    return res.status(500).json({ error: 'Failed to verify URL' });
   }
 };
 

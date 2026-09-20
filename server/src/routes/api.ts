@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getProfileByUsername, updateProfile } from '../controllers/profileController.js';
-import { createLog, addKudos, deleteLog } from '../controllers/logController.js';
+import { createLog, addKudos, deleteLog, verifyProofLink } from '../controllers/logController.js';
 import { createProject } from '../controllers/projectController.js';
 import { sendContactMessage, reportProfile, getContactMessagesByUsername } from '../controllers/contactController.js';
 
@@ -11,6 +11,7 @@ router.put('/profile/:username', updateProfile);
 router.get('/profile/:username/messages', getContactMessagesByUsername);
 
 router.post('/logs', createLog);
+router.post('/logs/verify-proof', verifyProofLink);
 router.patch('/logs/:id/kudos', addKudos);
 router.delete('/logs/:id', deleteLog);
 

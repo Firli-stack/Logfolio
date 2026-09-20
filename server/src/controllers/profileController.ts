@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../utils/prisma.js';
+import { calculateTimezoneAwareStreak } from '../utils/streakCalculator.js';
 
 export const getProfileByUsername = async (req: Request, res: Response) => {
   try {
@@ -37,10 +38,12 @@ export const getProfileByUsername = async (req: Request, res: Response) => {
     }
 
     const totalLogs = profile.logs.length;
-    const uniqueActiveDates = new Set(
-      profile.logs.map((l) => l.logDate.toISOString().split('T')[0])
+    const logDates = profile.logs.map((l) => l.logDate);
+    const streakResult = calculateTimezoneAwareStreak(
+      logDates,
+      profile.timezone || 'Asia/Jakarta',
+      profile.streakFreezeCount
     );
-    const totalActiveDays = uniqueActiveDates.size;
 
     const skillCounts: Record<string, number> = {};
     profile.logs.forEach((log) => {
@@ -62,8 +65,8 @@ export const getProfileByUsername = async (req: Request, res: Response) => {
       avatarUrl: profile.avatarUrl,
       timezone: profile.timezone,
       socialLinks: profile.socialLinks,
-      streakFreezeLeft: profile.streakFreezeCount,
-      streakDays: totalActiveDays,
+      streakFreezeLeft: streakResult.streakFreezeLeft,
+      streakDays: streakResult.streakDays,
       totalLogs,
       topSkills,
       projects: profile.projects.map((p) => ({

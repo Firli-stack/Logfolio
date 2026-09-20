@@ -11,6 +11,7 @@ import { SettingsModal } from './components/modals/SettingsModal';
 import { AiDigestModal } from './components/modals/AiDigestModal';
 import { SharePortfolioModal } from './components/modals/SharePortfolioModal';
 import { GitHubSyncModal } from './components/modals/GitHubSyncModal';
+import { ReportModal } from './components/modals/ReportModal';
 import type { GitHubCommitItem } from './services/githubService';
 import { parseCurrentRoute, navigateTo } from './utils/router';
 
@@ -71,6 +72,7 @@ export function App() {
   const [isAiDigestOpen, setIsAiDigestOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isGitHubSyncOpen, setIsGitHubSyncOpen] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
   const [importedCommit, setImportedCommit] = useState<GitHubCommitItem | null>(null);
 
   const handleTabChange = (tab: 'public_preview' | 'dashboard_composer') => {
@@ -144,8 +146,29 @@ export function App() {
         <span>Portofolio dibuat dengan <b>Logfolio</b></span>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           <span>{profile.fullName} &copy; {new Date().getFullYear()}</span>
+          <button
+            type="button"
+            onClick={() => setIsReportOpen(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-muted)',
+              fontSize: '0.78rem',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: 0,
+            }}
+          >
+            Laporkan Profil
+          </button>
         </div>
       </footer>
+
+      <ReportModal
+        isOpen={isReportOpen}
+        onClose={() => setIsReportOpen(false)}
+        targetUsername={profile.username}
+      />
 
       <ContactModal
         isOpen={isContactOpen}

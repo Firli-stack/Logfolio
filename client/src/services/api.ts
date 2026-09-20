@@ -180,4 +180,20 @@ export const api = {
       return [];
     }
   },
+  async verifyProofLink(url: string): Promise<{ isValid: boolean; httpStatus?: number; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/logs/verify-proof`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        return { isValid: false, error: json.error || 'Verifikasi gagal' };
+      }
+      return json.data || { isValid: false, error: 'Respon server tidak valid' };
+    } catch {
+      return { isValid: false, error: 'Gagal menghubungi validator URL' };
+    }
+  },
 };
