@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { UserProfile, Project, LogEntry } from '../../types';
 import { exportToMarkdown, exportToJson, exportToPdfPrint } from '../../utils/exportData';
-import type { CvTemplateStyle, CvLanguage } from '../../utils/exportData';
+import type { CvLanguage } from '../../utils/exportData';
 import { X, Download, FileText, Code2, CheckCircle2, ShieldCheck, Printer, Languages, Link2, Copy, Briefcase } from 'lucide-react';
 
 interface ExportModalProps {
@@ -22,7 +22,6 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   isOwner = false
 }) => {
   const [downloadedFormat, setDownloadedFormat] = useState<'md' | 'json' | 'pdf' | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<CvTemplateStyle>('classic_ats');
   const [selectedLang, setSelectedLang] = useState<CvLanguage>('id');
   useEffect(() => {
     if (isOpen) {
@@ -44,8 +43,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleExportPdf = (tpl: CvTemplateStyle = selectedTemplate, lang: CvLanguage = selectedLang) => {
-    exportToPdfPrint(profile, projects, logs, tpl, lang);
+  const handleExportPdf = (lang: CvLanguage = selectedLang) => {
+    exportToPdfPrint(profile, projects, logs, 'classic_ats', lang);
     setDownloadedFormat('pdf');
     setTimeout(() => setDownloadedFormat(null), 3500);
   };
@@ -219,21 +218,21 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '8px', borderTop: '1px solid rgba(79, 70, 229, 0.12)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '8px', borderTop: '1px solid rgba(79, 70, 229, 0.12)' }}>
               
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                   <Languages size={12} />
-                  Bahasa:
+                  Bahasa Resume:
                 </span>
-                <div style={{ display: 'flex', gap: '4px' }}>
+                <div style={{ display: 'flex', gap: '6px' }}>
                   <button
                     type="button"
                     onClick={() => setSelectedLang('id')}
                     style={{
-                      padding: '4px 10px',
+                      padding: '5px 12px',
                       borderRadius: '4px',
-                      fontSize: '0.72rem',
+                      fontSize: '0.74rem',
                       fontWeight: 600,
                       cursor: 'pointer',
                       border: selectedLang === 'id' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
@@ -248,9 +247,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     type="button"
                     onClick={() => setSelectedLang('en')}
                     style={{
-                      padding: '4px 10px',
+                      padding: '5px 12px',
                       borderRadius: '4px',
-                      fontSize: '0.72rem',
+                      fontSize: '0.74rem',
                       fontWeight: 600,
                       cursor: 'pointer',
                       border: selectedLang === 'en' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
@@ -264,71 +263,18 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '6px' }}>
-                <label
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '6px 8px',
-                    borderRadius: 'var(--radius-sm)',
-                    border: selectedTemplate === 'classic_ats' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
-                    background: selectedTemplate === 'classic_ats' ? '#FFFFFF' : 'transparent',
-                    cursor: 'pointer',
-                    fontSize: '0.74rem'
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="cvTemplate"
-                    checked={selectedTemplate === 'classic_ats'}
-                    onChange={() => setSelectedTemplate('classic_ats')}
-                  />
-                  <div>
-                    <b style={{ color: 'var(--text-primary)', display: 'block' }}>Klasik Profesional</b>
-                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Format 1-kolom bersih</span>
-                  </div>
-                </label>
-
-                <label
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '6px 8px',
-                    borderRadius: 'var(--radius-sm)',
-                    border: selectedTemplate === 'modern_clean' ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
-                    background: selectedTemplate === 'modern_clean' ? '#FFFFFF' : 'transparent',
-                    cursor: 'pointer',
-                    fontSize: '0.74rem'
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="cvTemplate"
-                    checked={selectedTemplate === 'modern_clean'}
-                    onChange={() => setSelectedTemplate('modern_clean')}
-                  />
-                  <div>
-                    <b style={{ color: 'var(--text-primary)', display: 'block' }}>Modern Clean</b>
-                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Tata letak minimalis</span>
-                  </div>
-                </label>
-              </div>
-
-              {}
               <button
                 type="button"
-                onClick={() => handleExportPdf(selectedTemplate, selectedLang)}
+                onClick={() => handleExportPdf(selectedLang)}
                 style={{
                   marginTop: '4px',
-                  padding: '9px 16px',
+                  padding: '10px 16px',
                   borderRadius: 'var(--radius-md)',
                   background: 'var(--accent-primary)',
                   color: '#FFFFFF',
                   border: 'none',
                   fontWeight: 600,
-                  fontSize: '0.8rem',
+                  fontSize: '0.82rem',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
